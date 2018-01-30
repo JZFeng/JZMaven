@@ -23,7 +23,6 @@ public class JsonDecoderDemo {
 	public static void main(String[] args) throws IOException {
 
 		String s = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/test.json"));
-		 System.out.println(s);
 
 		JsonParser parser = new JsonParser();
 		BufferedReader br = new BufferedReader(new FileReader("/Users/jzfeng/Desktop/O.json"));
