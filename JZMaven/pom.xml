@@ -1,0 +1,418 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.jz.quality</groupId>
+  <artifactId>JZMaven</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0.1-SNAPSHOT</version>
+  <name>JZMaven</name>
+  <description>JZ Maven Project</description>
+  	<repositories>
+		<!-- nxraptor for snapshots -->
+		<repository>
+			<id>raptor.releases</id>
+			<url>http://nxraptor.qa.ebay.com/content/repositories/releases/</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>raptor.snapshots</id>
+			<url>http://nxraptor.qa.ebay.com/content/repositories/snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>raptor.thirdparty</id>
+			<url>http://nxraptor.qa.ebay.com/content/repositories/thirdparty/</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>raptor.central</id>
+			<url>http://nxraptor.qa.ebay.com/content/repositories/central</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<!-- moving to nxraptor -->
+		<repository>
+			<id>quality</id>
+			<url>http://repository.qa.ebay.com/quality/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+		<!-- gyro reporting -->
+		<!-- <repository>
+			<id>platform-qe</id>
+			<name>Platform QE Repository</name>
+			<layout>default</layout>
+			<url>http://nxrepository.corp.ebay.com/nexus/content/repositories/ebay.platform.qe.releases</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+		wtf report dashboard
+		<repository>
+			<id>ebay.wtf.releases</id>
+			<name>WTF Repository</name>
+			<layout>default</layout>
+			<url>http://nxrepository.corp.ebay.com/nexus/content/repositories/ebay.wtf.releases</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository> -->
+		<repository>
+			<id>tradingqe.releases</id>
+			<name>tradingqe releases repo</name>
+			<url>http://repository.qa.ebay.com/tradingqe/releases</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+		<repository>
+			<id>tradingqe.snapshots</id>
+			<name>tradingqe snapshots repo</name>
+			<url>http://repository.qa.ebay.com/tradingqe/snapshots</url>
+			<layout>default</layout>
+			<snapshots>
+				<updatePolicy>always</updatePolicy>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+		</repository>
+		<repository>
+			<id>testinfrastructure.releases</id>
+			<url>http://nxrepository.qa.ebay.com/nexus/content/repositories/testinfrastructure.releases/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>testinfrastructure.snapshots</id>
+			<url>http://nxrepository.qa.ebay.com/nexus/content/repositories/testinfrastructure.snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<updatePolicy>always</updatePolicy>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<!-- <repository>
+			<id>raptor.snapshots</id>
+			<url>http://nxraptor.qa.ebay.com/content/repositories/snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</repository> -->
+
+	</repositories>
+		<pluginRepositories>
+		<pluginRepository>
+			<id>raptor.plugins</id>
+			<url>http://nxraptor.qa.ebay.com/content/repositories/plugins/</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>raptor.releases</id>
+			<url>http://nxraptor.qa.ebay.com/content/repositories/releases/</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>raptor.snapshots</id>
+			<url>http://nxraptor.qa.ebay.com/content/repositories/snapshots</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>raptor.central</id>
+			<url>http://nxraptor.qa.ebay.com/content/repositories/central</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+		<dependencies>
+		<!-- libraries -->
+		<!-- <dependency>
+			<groupId>com.ebay.quality</groupId>
+			<artifactId>inventoryhelper</artifactId>
+			<version>2.0.1-SNAPSHOT</version>
+		</dependency> -->
+		<dependency>
+			<groupId>com.ebay.testinfrastructure</groupId>
+			<artifactId>serviceautil</artifactId>
+			<version>stable-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.ebay.testinfrastructure</groupId>
+			<artifactId>testdataautil</artifactId>
+			<version>stable-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.jms</groupId>
+			<artifactId>jms</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jdmk</groupId>
+			<artifactId>jmxtools</artifactId>
+			<version>1.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jmx</groupId>
+			<artifactId>jmxri</artifactId>
+			<version>1.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>oro</groupId>
+			<artifactId>oro</artifactId>
+			<version>2.0.8</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- <dependency>
+			<groupId>com.ebay.quality</groupId>
+			<artifactId>WebAccessibilityEvaluator</artifactId>
+			<version>5.6</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.ebay.quality</groupId>
+					<artifactId>AutoBotUtils</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency> -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.15</version>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.jms</groupId>
+					<artifactId>jms</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.sun.jdmk</groupId>
+					<artifactId>jmxtools</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.sun.jmx</groupId>
+					<artifactId>jmxri</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.seleniumhq.selenium.server</groupId> -->
+		<!-- <artifactId>selenium-server</artifactId> -->
+		<!-- <version>2.35.0</version> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.testng</groupId> -->
+		<!-- <artifactId>testng</artifactId> -->
+		<!-- <version>6.1.1</version> -->
+		<!-- </dependency> -->
+
+		<!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-firefox-driver -->
+		<dependency>
+		    <groupId>org.seleniumhq.selenium</groupId>
+		    <artifactId>selenium-firefox-driver</artifactId>
+		    <version>2.52.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.7.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
+			<version>1.5</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.0-rc3</version>
+		</dependency>
+		<!-- <dependency>
+			<groupId>com.ebay.WAT</groupId>
+			<artifactId>Browser</artifactId>
+			<version>1.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.ebay.quality</groupId>
+					<artifactId>AutoBotUtils</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.ebay.WAT</groupId>
+			<artifactId>NonBrowser</artifactId>
+			<version>1.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.ebay.quality</groupId>
+					<artifactId>AutoBotUtils</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency> -->
+		<!-- projects -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.ebay.quality</groupId> -->
+		<!-- <artifactId>tape</artifactId> -->
+		<!-- <version>3.0.0-SNAPSHOT</version> -->
+		<!-- </dependency> -->
+		<!-- test reporting libraries -->
+		<!--<dependency>
+			<groupId>com.ebay.testlog</groupId>
+			<artifactId>testlog-intf</artifactId>
+			<version>0.1</version>
+		</dependency>-->
+		<!-- <dependency> -->
+		<!-- <groupId>com.ebay.qe</groupId> -->
+		<!-- <artifactId>TestReporter</artifactId> -->
+		<!-- <version>2.0.1</version> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.ebay.WTF</groupId> -->
+		<!-- <artifactId>wtf-dash</artifactId> -->
+		<!-- <version>1.1.14</version> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.mongodb</groupId> -->
+		<!-- <artifactId>mongo-java-driver</artifactId> -->
+		<!-- <version>2.7.3</version> -->
+		<!-- </dependency> -->
+		<dependency>
+			<groupId>com.ebay.maui</groupId>
+			<artifactId>mauiutil</artifactId>
+			<version>1.1.5</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.ebay.quality</groupId>
+					<artifactId>AutoBotUtils</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.ebay.maui.mauiutil-ext</groupId>
+					<artifactId>tape-util</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.seleniumhq.selenium</groupId>
+					<artifactId>selenium-java</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.ebay.quality</groupId>
+			<artifactId>AutoBotUtils</artifactId>
+			<version>1.2.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.seleniumhq.selenium</groupId>
+					<artifactId>selenium-java</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.ebay.maui.mauiutil-ext</groupId>
+			<artifactId>tape-util</artifactId>
+			<version>1.0.2-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.ebay.quality</groupId>
+					<artifactId>AutoBotUtils</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+            <groupId>com.ebay.maui.identity.utils</groupId>
+            <artifactId>identity-util</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <exclusions>
+				<exclusion>
+					<groupId>com.ebay.quality</groupId>
+					<artifactId>AutoBotUtils</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	</dependencies>
+	
+</project>
