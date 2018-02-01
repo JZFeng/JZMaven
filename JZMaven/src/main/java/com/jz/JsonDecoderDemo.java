@@ -103,6 +103,7 @@ public class JsonDecoderDemo {
 			} else {
 				continue;
 			}
+
 		}
 
 		return true;
