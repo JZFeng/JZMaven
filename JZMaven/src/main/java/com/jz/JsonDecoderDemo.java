@@ -123,7 +123,6 @@ public class JsonDecoderDemo {
 		}
 
 		br.close();
-		System.out.print("xxx");
 
 		return sb.toString().trim();
 	}
