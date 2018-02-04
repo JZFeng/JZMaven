@@ -30,6 +30,7 @@ public class JsonDecoderDemo {
 		br.close();
 		JsonObject root = parser.parse(json).getAsJsonObject();
 		JsonObject o1 = getJsonObjectByKey(root, "VLS");
+		System.out.print(o1);
 
 		br = new BufferedReader(new FileReader("/Users/jzfeng/Desktop/D.json"));
 		json = br.readLine();
@@ -46,6 +47,50 @@ public class JsonDecoderDemo {
 		System.out.println(isEqual(o1, o2, set));
 
 	}
+
+	private static void compareJsons(JsonElement o1, JsonElement o2) {
+
+		Queue<JsonElement> queue = new LinkedList<JsonElement>();
+		queue.offer(o1);
+
+
+
+//		if(o1.isJsonObject() && o2.isJsonObject()) {
+//			compareJsons(o1)
+//		}
+
+
+
+
+//		JsonObject res = new JsonObject();
+//		if (root.isJsonObject()) {
+//			Queue<JsonObject> queue = new LinkedList<JsonObject>();
+//			queue.offer(root);
+//			while (!queue.isEmpty()) {
+//				int size = queue.size();
+//				for (int i = 0; i < size; i++) {
+//					JsonObject jo = queue.poll();
+//					for (Map.Entry<String, JsonElement> entry : jo.entrySet()) {
+//						if (entry.getValue().isJsonObject()) {
+//							if (entry.getKey().equalsIgnoreCase(key)) {
+//								JsonObject tmp = entry.getValue().getAsJsonObject();
+//								return tmp;
+//							} else {
+//								queue.offer(entry.getValue().getAsJsonObject());
+//							}
+//						}
+//					}
+//				}
+//			}
+//
+//		}
+
+
+	}
+
+
+
+
 
 	// find the VLS JsonObject by passing Key = "VLS";
 	private static JsonObject getJsonObjectByKey(JsonObject root, String key) {
