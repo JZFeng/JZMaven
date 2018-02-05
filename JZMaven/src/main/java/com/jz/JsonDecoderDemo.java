@@ -4,11 +4,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Set;
 
 import com.google.gson.*;
 
@@ -20,9 +18,7 @@ public class JsonDecoderDemo {
         BufferedReader br = new BufferedReader(new FileReader("/Users/jzfeng/Desktop/O.json"));
         String json = br.readLine();
         br.close();
-
-        JsonObject root = parser.parse(json).getAsJsonObject();
-        JsonObject o1 = getJsonObjectByKey(root, "VLS");
+        JsonObject o1 = parser.parse(json).getAsJsonObject();
 
         br = new BufferedReader(new FileReader("/Users/jzfeng/Desktop/D.json"));
         json = br.readLine();
@@ -62,7 +58,6 @@ public class JsonDecoderDemo {
         q2.offer(o2);
 
         //iterate all nodes;
-
         while (!q1.isEmpty()) {
             //iterate q1 and q2
             int size = q1.size();
@@ -103,7 +98,6 @@ public class JsonDecoderDemo {
                         } else {
                             q1.offer(value);
                             q2.offer(jo2.get(key));
-//                            compareJson(value, jo2.get(key));
                         }
                     }
 
@@ -122,117 +116,6 @@ public class JsonDecoderDemo {
             }
 
         }
-
-
-    }
-
-    private static void iterateJson(JsonElement root) {
-        if (root == null) {
-            return;
-        }
-
-        Queue<JsonElement> q = new LinkedList<JsonElement>();
-        q.offer(root);
-        while (!q.isEmpty()) {
-            int size = q.size();
-            for (int i = 0; i < size; i++) {
-                JsonElement je = q.poll();
-                if (je.isJsonPrimitive()) {
-//					System.out.print(je.getAsJsonPrimitive());
-                } else if (je.isJsonArray()) {
-                    System.out.print(je.getAsJsonArray());
-                } else if (je.isJsonObject()) {
-                    JsonObject jo = je.getAsJsonObject();
-                    for (Map.Entry<String, JsonElement> entry : jo.entrySet()) {
-//						System.out.println(entry.getKey() + " : " + entry.getValue());
-                        q.offer(entry.getValue());
-
-
-                    }
-                } else if (je.isJsonNull()) {
-                    System.out.print(je.getAsJsonNull());
-                }
-
-
-            }
-            System.out.println("该层结束");
-
-        }
-
-
-
-
-/*		if (root.isJsonObject()) {
-			Queue<JsonObject> queue = new LinkedList<JsonObject>();
-			queue.offer(root);
-			while (!queue.isEmpty()) {
-				int size = queue.size();
-				for (int i = 0; i < size; i++) {
-					JsonObject jo = queue.poll();
-					for (Map.Entry<String, JsonElement> entry : jo.entrySet()) {
-						if (entry.getValue().isJsonObject()) {
-							if (entry.getKey().equalsIgnoreCase(key)) {
-								JsonObject tmp = entry.getValue().getAsJsonObject();
-								return tmp;
-							} else {
-								queue.offer(entry.getValue().getAsJsonObject());
-							}
-						}
-					}
-				}
-			}
-
-		}
-
-		return res; */
-
-    }
-
-
-    private static void compareJsons(JsonElement o1, JsonElement o2) {
-
-        Queue<JsonElement> queue = new LinkedList<JsonElement>();
-        queue.offer(o1);
-
-
-        if (o1.isJsonObject()) {
-
-        } else if (o1.isJsonArray()) {
-
-        } else if (o1.isJsonPrimitive()) {
-
-        } else if (o1.isJsonNull()) {
-
-        }
-
-
-//		if(o1.isJsonObject() && o2.isJsonObject()) {
-//			compareJsons(o1)
-//		}
-
-
-//		JsonObject res = new JsonObject();
-//		if (root.isJsonObject()) {
-//			Queue<JsonObject> queue = new LinkedList<JsonObject>();
-//			queue.offer(root);
-//			while (!queue.isEmpty()) {
-//				int size = queue.size();
-//				for (int i = 0; i < size; i++) {
-//					JsonObject jo = queue.poll();
-//					for (Map.Entry<String, JsonElement> entry : jo.entrySet()) {
-//						if (entry.getValue().isJsonObject()) {
-//							if (entry.getKey().equalsIgnoreCase(key)) {
-//								JsonObject tmp = entry.getValue().getAsJsonObject();
-//								return tmp;
-//							} else {
-//								queue.offer(entry.getValue().getAsJsonObject());
-//							}
-//						}
-//					}
-//				}
-//			}
-//
-//		}
 
 
     }
@@ -267,39 +150,6 @@ public class JsonDecoderDemo {
 
     }
 
-    public static boolean isEqual(JsonObject o1, JsonObject o2) {
-        Set<String> set = new HashSet<String>();
-        return isEqual(o1, o2, set);
-    }
-
-    public static boolean isEqual(JsonObject o1, JsonObject o2, Set<String> exclusion) {
-        if (o1 == null || o2 == null) {
-            return true;
-        }
-        if (!o1.isJsonObject() || !o2.isJsonObject()) {
-            return false;
-        }
-
-        Set<Map.Entry<String, JsonElement>> set1 = o1.entrySet();
-        Set<Map.Entry<String, JsonElement>> set2 = o2.entrySet();
-
-        for (Map.Entry<String, JsonElement> entry : set1) {
-            String key = entry.getKey();
-            if (!exclusion.contains(key)) {
-                if (!o2.has(key)) {
-                    return false;
-                } else {
-                    continue;
-                }
-            } else {
-                continue;
-            }
-
-        }
-
-        return true;
-    }
-
     private static String convertFormattedJson2Raw(File f) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(f));
         String json = br.readLine();
@@ -312,7 +162,6 @@ public class JsonDecoderDemo {
             sb.append(json);
             json = br.readLine();
         }
-
         br.close();
 
         return sb.toString().trim();
