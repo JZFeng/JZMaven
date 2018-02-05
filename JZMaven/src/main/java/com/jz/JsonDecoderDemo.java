@@ -19,11 +19,14 @@ public class JsonDecoderDemo {
         String json = br.readLine();
         br.close();
         JsonObject o1 = parser.parse(json).getAsJsonObject();
+        o1 = getJsonObjectByKey(o1, "VLS");
+        System.out.println(o1);
 
         br = new BufferedReader(new FileReader("/Users/jzfeng/Desktop/D.json"));
         json = br.readLine();
         br.close();
         JsonObject o2 = parser.parse(json).getAsJsonObject();
+        System.out.println(o2);
 
         compareJson(o1, o2);
         System.out.println("Number of Missing Properties : " + numOfMissingProperties);
@@ -47,7 +50,7 @@ public class JsonDecoderDemo {
         if (o1 == null && o2 == null) {
             return;
         }
-        if(o1.isJsonNull() && o2.isJsonNull()) {
+        if (o1.isJsonNull() && o2.isJsonNull()) {
             return;
         }
 
@@ -59,7 +62,6 @@ public class JsonDecoderDemo {
 
         //iterate all nodes;
         while (!q1.isEmpty()) {
-            //iterate q1 and q2
             int size = q1.size();
 
             for (int i = 0; i < size; i++) {
@@ -96,11 +98,13 @@ public class JsonDecoderDemo {
                             System.out.println("Destination Json does not have key : " + "\"" + key + "\"");
                             numOfMissingProperties++;
                         } else {
+                            //only store JsonElements that have same "key";
                             q1.offer(value);
                             q2.offer(jo2.get(key));
                         }
                     }
 
+                    // Need iterate all nodes in Destination JsonObject.
                     for (Map.Entry<String, JsonElement> entry : jo2.entrySet()) {
                         String key = entry.getKey();
                         JsonElement value = entry.getValue();
