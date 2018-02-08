@@ -1,4 +1,4 @@
-package com.jz;
+package com.jz.json;
 
 import java.io.BufferedReader;
 import java.io.File;
