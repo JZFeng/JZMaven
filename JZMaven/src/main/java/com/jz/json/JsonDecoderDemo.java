@@ -31,16 +31,6 @@ public class JsonDecoderDemo {
         compareJson(o1, o2);
         System.out.println("Number of Missing Properties : " + numOfMissingProperties);
         System.out.println("Number of Unequal Value : " + numOfUnequalValue);
-        /*
-        br = new BufferedReader(new FileReader("/Users/jzfeng/Desktop/test.json"));
-        json = br.readLine();
-        br.close();
-
-        String s = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/test.json"));
-
-        JsonObject test = parser.parse(s).getAsJsonObject();
-        System.out.println(test);
-        */
     }
 
     private static int numOfMissingProperties = 0;
