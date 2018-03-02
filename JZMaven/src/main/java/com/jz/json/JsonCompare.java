@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.*;
 
 import com.google.gson.*;
+import com.google.sitebricks.client.transport.Json;
 
 public class JsonCompare {
 
@@ -54,37 +55,15 @@ public class JsonCompare {
 
 /*
 要定义一个二元组
-class JsonElementWithLevel {
-    private JsonElement jsonElement;
-    private String level;
-
-
-    public JsonElement getJsonElement() {
-        return jsonElement;
-    }
-
-    public String getLevel() {
-        return level;
-    }
-
-    JsonElementWithLevel(JsonElement jsonElement, String level) {
-        this.jsonElement = jsonElement;
-        this.level = level;
-    }
-
-    public void setLevel(String level) {
-        this.level = level;
-    }
-
-}
 
 所以Queue中放入的就是二元组而不是JsonElement;
 根目录为 new JsonElementWithLevel(o1, "#");
 
-
-
   */
 
+    public static void compareJson(JsonObject o1, JsonObject o2) {
+        compareJson((JsonElement) o1, (JsonElement) o2);
+    }
 
     public static void compareJson(JsonElement o1, JsonElement o2) {
         if (o1 == null && o2 == null) {
@@ -95,24 +74,29 @@ class JsonElementWithLevel {
         }
 
 
-        Queue<JsonElement> q1 = new LinkedList<JsonElement>();
-        Queue<JsonElement> q2 = new LinkedList<JsonElement>();
-        q1.offer(o1);
-        q2.offer(o2);
-        int currentLevel = 0;
+        Queue<JsonElementWithLevel> q1 = new LinkedList<JsonElementWithLevel>();
+        Queue<JsonElementWithLevel> q2 = new LinkedList<JsonElementWithLevel>();
+        q1.offer(new JsonElementWithLevel(o1, "$"));
+        q2.offer(new JsonElementWithLevel(o2, "#"));
+
+
         //iterate all nodes;
         while (!q1.isEmpty()) {
             int size = q1.size();
-            currentLevel++;
             for (int i = 0; i < size; i++) {
-                JsonElement je1 = q1.poll();
-                JsonElement je2 = q2.poll();
+                JsonElementWithLevel org = q1.poll();
+                JsonElementWithLevel dest = q2.poll();
+                String currentLevelOfOrg = org.getLevel();
+                String currentLevelOfDest = dest.getLevel();
+                JsonElement je1 = org.getJsonElement();
+                JsonElement je2 = dest.getJsonElement();
+
                 if (je1.isJsonPrimitive()) {
                     //compare two JsonPrimitive
                     String s1 = je1.getAsString().trim();
                     String s2 = je2.getAsString().trim();
                     if (!s1.equalsIgnoreCase(s2)) {
-                        System.out.println("Two primitive elements are not equal : " + s1 + " , " + s2);
+                        System.out.println("Two primitive elements are not equal : " + currentLevelOfOrg + ", " + s1 + " , " + s2);
                         numOfUnequalValue++;
                     }
                 } else if (je1.isJsonArray()) {
@@ -135,12 +119,12 @@ class JsonElementWithLevel {
                         String key = entry.getKey();
                         JsonElement value = entry.getValue();
                         if (!jo2.has(key)) {
-                            System.out.println("Destination Json does not have key : " + "\"" + key + "\"");
+                            System.out.println("Destination Json does not have key : " + currentLevelOfOrg + "." + key);
                             numOfMissingProperties++;
                         } else {
                             //only store JsonElements that have same "key";
-                            q1.offer(value);
-                            q2.offer(jo2.get(key));
+                            q1.offer(new JsonElementWithLevel(value, currentLevelOfOrg + "." + key));
+                            q2.offer(new JsonElementWithLevel(jo2.get(key), currentLevelOfOrg + "." + key));
                         }
                     }
 
@@ -148,8 +132,9 @@ class JsonElementWithLevel {
                     for (Map.Entry<String, JsonElement> entry : jo2.entrySet()) {
                         String key = entry.getKey();
                         JsonElement value = entry.getValue();
+
                         if (!jo1.has(key)) {
-                            System.out.println("Origin Json does not have key " + key);
+                            System.out.println("Origin Json does not have key " + currentLevelOfDest + "." + key);
                             numOfMissingProperties++;
                         }
                     }
@@ -236,17 +221,8 @@ class JsonElementWithLevel {
 
 
     /**
-     * <p>Looks to see if candidate field is a possible unique key across a array of objects.
-     * Returns true IFF:</p>
-     * <ol>
-     *   <li>array is an array of JSONObject
-     *   <li>candidate is a top-level field in each of of the objects in the array
-     *   <li>candidate is a simple value (not JsonObject or JsonArray)
-     *   <li>candidate is unique across all elements in the array
-     * </ol>
-     *
      * @param candidate is usable as a unique key if every element in the
-     * @param array is a JSONObject having that key, and no two values are the same.
+     * @param array     is a JSONObject having that key, and no two values are the same.
      * @return true if the candidate can work as a unique id across array
      */
 
@@ -283,13 +259,14 @@ class JsonElementWithLevel {
 
         return keys;
     }
+
     //JsonPrimitive value as unique key
     public static boolean isSimpleValue(Object o) {
         return !(o instanceof JsonObject) && !(o instanceof JsonArray) && (o instanceof JsonPrimitive);
     }
 
     // build hashmap
-    public static Map<JsonPrimitive, JsonObject> arrayOfJsonObjectToMap(JsonArray array, String uniqueKey)  {
+    public static Map<JsonPrimitive, JsonObject> arrayOfJsonObjectToMap(JsonArray array, String uniqueKey) {
         Map<JsonPrimitive, JsonObject> valueMap = new HashMap<JsonPrimitive, JsonObject>();
         for (int i = 0; i < array.size(); ++i) {
             JsonObject jsonObject = (JsonObject) array.get(i);
