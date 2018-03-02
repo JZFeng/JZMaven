@@ -4,13 +4,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 
 import com.google.gson.*;
 
-public class JsonDecoderDemo {
+public class JsonCompare {
 
     public static void main(String[] args) throws IOException {
 
@@ -31,10 +29,62 @@ public class JsonDecoderDemo {
         compareJson(o1, o2);
         System.out.println("Number of Missing Properties : " + numOfMissingProperties);
         System.out.println("Number of Unequal Value : " + numOfUnequalValue);
+
     }
 
     private static int numOfMissingProperties = 0;
     private static int numOfUnequalValue = 0;
+
+    public static void compareJsonPrimitive(JsonElement o1, JsonElement o2) {
+
+    }
+
+    public static void compareJsonArrayofJsonObjects(JsonElement o1, JsonElement o2) {
+
+    }
+
+    public static void compareJsonArrayofJsonPrimitive(JsonElement o1, JsonElement o2) {
+
+    }
+
+    public static void compareJsonArray(JsonElement o1, JsonElement o2) {
+
+    }
+
+
+/*
+要定义一个二元组
+class JsonElementWithLevel {
+    private JsonElement jsonElement;
+    private String level;
+
+
+    public JsonElement getJsonElement() {
+        return jsonElement;
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    JsonElementWithLevel(JsonElement jsonElement, String level) {
+        this.jsonElement = jsonElement;
+        this.level = level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
+    }
+
+}
+
+所以Queue中放入的就是二元组而不是JsonElement;
+根目录为 new JsonElementWithLevel(o1, "#");
+
+
+
+  */
+
 
     public static void compareJson(JsonElement o1, JsonElement o2) {
         if (o1 == null && o2 == null) {
@@ -49,11 +99,11 @@ public class JsonDecoderDemo {
         Queue<JsonElement> q2 = new LinkedList<JsonElement>();
         q1.offer(o1);
         q2.offer(o2);
-
+        int currentLevel = 0;
         //iterate all nodes;
         while (!q1.isEmpty()) {
             int size = q1.size();
-
+            currentLevel++;
             for (int i = 0; i < size; i++) {
                 JsonElement je1 = q1.poll();
                 JsonElement je2 = q2.poll();
@@ -103,6 +153,7 @@ public class JsonDecoderDemo {
                             numOfMissingProperties++;
                         }
                     }
+
 
                 }
 
@@ -159,5 +210,92 @@ public class JsonDecoderDemo {
         br.close();
 
         return sb.toString().trim();
+    }
+
+
+    /**
+     * Searches for the unique key of the {@code expected} JSON array.
+     *
+     * @param array the array to find the unique key of
+     * @return the unique key if there's any, otherwise null
+     */
+    public static String findUniqueKey(JsonArray array) {
+        // Find a unique key for the object (id, name, whatever)
+        if (array.size() > 0 && (array.get(0) instanceof JsonObject)) {
+            JsonObject o = ((JsonObject) array.get(0)).getAsJsonObject();
+            Set<String> keys = getKeys(o);
+            for (String candidate : keys) {
+                if (isUsableAsUniqueKey(candidate, array)) {
+                    return candidate;
+                }
+            }
+        }
+
+        return null;
+    }
+
+
+    /**
+     * <p>Looks to see if candidate field is a possible unique key across a array of objects.
+     * Returns true IFF:</p>
+     * <ol>
+     *   <li>array is an array of JSONObject
+     *   <li>candidate is a top-level field in each of of the objects in the array
+     *   <li>candidate is a simple value (not JsonObject or JsonArray)
+     *   <li>candidate is unique across all elements in the array
+     * </ol>
+     *
+     * @param candidate is usable as a unique key if every element in the
+     * @param array is a JSONObject having that key, and no two values are the same.
+     * @return true if the candidate can work as a unique id across array
+     */
+
+    public static boolean isUsableAsUniqueKey(String candidate, JsonArray array) {
+        Set<JsonElement> seenValues = new HashSet<JsonElement>();
+        for (int i = 0; i < array.size(); i++) {
+            JsonElement item = array.get(i);
+            if (item instanceof JsonObject) {
+                JsonObject o = (JsonObject) item;
+                if (o.has(candidate)) {
+                    JsonElement value = o.get(candidate);
+                    if (isSimpleValue(value) && !seenValues.contains(value)) {
+                        seenValues.add(value);
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+//get keys from a JsonObject
+    public static Set<String> getKeys(JsonObject o) {
+        Set<String> keys = new TreeSet<String>();
+        for (Map.Entry<String, JsonElement> entry : o.entrySet()) {
+            keys.add(entry.getKey().trim());
+        }
+
+        return keys;
+    }
+    //JsonPrimitive value as unique key
+    public static boolean isSimpleValue(Object o) {
+        return !(o instanceof JsonObject) && !(o instanceof JsonArray) && (o instanceof JsonPrimitive);
+    }
+
+    // build hashmap
+    public static Map<JsonPrimitive, JsonObject> arrayOfJsonObjectToMap(JsonArray array, String uniqueKey)  {
+        Map<JsonPrimitive, JsonObject> valueMap = new HashMap<JsonPrimitive, JsonObject>();
+        for (int i = 0; i < array.size(); ++i) {
+            JsonObject jsonObject = (JsonObject) array.get(i);
+            JsonPrimitive id = jsonObject.get(uniqueKey).getAsJsonPrimitive();
+            valueMap.put(id, jsonObject);
+        }
+        return valueMap;
     }
 }
