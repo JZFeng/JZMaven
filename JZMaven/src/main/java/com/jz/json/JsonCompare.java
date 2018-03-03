@@ -14,11 +14,11 @@ public class JsonCompare {
     public static void main(String[] args) throws IOException {
 
         JsonParser parser = new JsonParser();
-        String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/AA.json"));
+        String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/O.json"));
         JsonObject o1 = parser.parse(json).getAsJsonObject();
-        System.out.println(o1);
+//        System.out.println(o1);
 
-        json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/BB.json"));
+        json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/D.json"));
         JsonObject o2 = parser.parse(json).getAsJsonObject();
         System.out.println(o2);
 
@@ -99,7 +99,7 @@ public class JsonCompare {
                     JsonArray ja1 = je1.getAsJsonArray();
                     JsonArray ja2 = je2.getAsJsonArray();
                     if (ja1.size() != ja2.size()) {
-                        System.out.println("JsonArrays are not identical");
+                        System.out.println("JsonArrays are not identical" + " " + currentLevelOfOrg);
                         numOfUnequalValue++;
                     } else {
                         for (int j = 0; j < ja1.size(); j++) {
