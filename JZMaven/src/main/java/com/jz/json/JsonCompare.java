@@ -14,16 +14,11 @@ public class JsonCompare {
     public static void main(String[] args) throws IOException {
 
         JsonParser parser = new JsonParser();
-        BufferedReader br = new BufferedReader(new FileReader("/Users/jzfeng/Desktop/O.json"));
-        String json = br.readLine();
-        br.close();
+        String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/AA.json"));
         JsonObject o1 = parser.parse(json).getAsJsonObject();
-        o1 = getJsonObjectByKey(o1, "VLS");
         System.out.println(o1);
 
-        br = new BufferedReader(new FileReader("/Users/jzfeng/Desktop/D.json"));
-        json = br.readLine();
-        br.close();
+        json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/BB.json"));
         JsonObject o2 = parser.parse(json).getAsJsonObject();
         System.out.println(o2);
 
@@ -61,9 +56,9 @@ public class JsonCompare {
 
   */
 
-    public static void compareJson(JsonObject o1, JsonObject o2) {
-        compareJson((JsonElement) o1, (JsonElement) o2);
-    }
+//    public static void compareJson(JsonObject o1, JsonObject o2) {
+//        compareJson((JsonElement) o1, (JsonElement) o2);
+//    }
 
     public static void compareJson(JsonElement o1, JsonElement o2) {
         if (o1 == null && o2 == null) {
@@ -77,7 +72,7 @@ public class JsonCompare {
         Queue<JsonElementWithLevel> q1 = new LinkedList<JsonElementWithLevel>();
         Queue<JsonElementWithLevel> q2 = new LinkedList<JsonElementWithLevel>();
         q1.offer(new JsonElementWithLevel(o1, "$"));
-        q2.offer(new JsonElementWithLevel(o2, "#"));
+        q2.offer(new JsonElementWithLevel(o2, "$"));
 
 
         //iterate all nodes;
