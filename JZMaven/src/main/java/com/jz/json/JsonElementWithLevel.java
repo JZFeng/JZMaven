@@ -23,6 +23,14 @@ class JsonElementWithLevel {
         this.level = level;
     }
 
+    public static void main(String[] args) {
+        String a = "$.listing.seller.ebayStore";
+        String currentLevel = "$.dateValue.value";
+        if(a.startsWith("$")) {
+            currentLevel = a + currentLevel.substring(1);
+        }
 
+        System.out.print(currentLevel);
+    }
 
 }

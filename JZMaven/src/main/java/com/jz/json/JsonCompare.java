@@ -14,15 +14,15 @@ public class JsonCompare {
     public static void main(String[] args) throws IOException {
 
         JsonParser parser = new JsonParser();
-        String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/O.json"));
+        String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/AA.json"));
         JsonObject o1 = parser.parse(json).getAsJsonObject();
-//        System.out.println(o1);
+        System.out.println(o1);
 
-        json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/D.json"));
+        json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/BB.json"));
         JsonObject o2 = parser.parse(json).getAsJsonObject();
-        System.out.println(o2);
+        System.out.println("\r\n" + o2 + "\r\n");
 
-        compareJson(o1, o2);
+        compareJson(o1, o2, "");
         System.out.println("Number of Missing Properties : " + numOfMissingProperties);
         System.out.println("Number of Unequal Value : " + numOfUnequalValue);
 
@@ -54,13 +54,17 @@ public class JsonCompare {
 所以Queue中放入的就是二元组而不是JsonElement;
 根目录为 new JsonElementWithLevel(o1, "#");
 
+在递归之前，需要传入ParentLevel。
+什么时候更新parentLevel呢？在有JsonArray的时候。
+
   */
 
 //    public static void compareJson(JsonObject o1, JsonObject o2) {
 //        compareJson((JsonElement) o1, (JsonElement) o2);
 //    }
 
-    public static void compareJson(JsonElement o1, JsonElement o2) {
+    public static void compareJson(JsonElement o1, JsonElement o2, String parentLevel) {
+
         if (o1 == null && o2 == null) {
             return;
         }
@@ -68,12 +72,10 @@ public class JsonCompare {
             return;
         }
 
-
         Queue<JsonElementWithLevel> q1 = new LinkedList<JsonElementWithLevel>();
         Queue<JsonElementWithLevel> q2 = new LinkedList<JsonElementWithLevel>();
         q1.offer(new JsonElementWithLevel(o1, "$"));
         q2.offer(new JsonElementWithLevel(o2, "$"));
-
 
         //iterate all nodes;
         while (!q1.isEmpty()) {
@@ -91,19 +93,24 @@ public class JsonCompare {
                     String s1 = je1.getAsString().trim();
                     String s2 = je2.getAsString().trim();
                     if (!s1.equalsIgnoreCase(s2)) {
+//                        String level = parentLevel;
+//                        if(parentLevel.startsWith("$")) {
+//                            level = parentLevel + currentLevelOfOrg.substring(1);
+//                        }
                         System.out.println("Two primitive elements are not equal : " + currentLevelOfOrg + ", " + s1 + " , " + s2);
                         numOfUnequalValue++;
                     }
                 } else if (je1.isJsonArray()) {
                     //compare two JsonArray;
+                    //update parentLevel
                     JsonArray ja1 = je1.getAsJsonArray();
                     JsonArray ja2 = je2.getAsJsonArray();
                     if (ja1.size() != ja2.size()) {
-                        System.out.println("JsonArrays are not identical" + " " + currentLevelOfOrg);
+                        System.out.println("JsonArrays size are different : " + " " + currentLevelOfOrg + ", size: " + ja1.size() + ", size: " + ja2.size());
                         numOfUnequalValue++;
                     } else {
                         for (int j = 0; j < ja1.size(); j++) {
-                            compareJson(ja1.get(j), ja2.get(j));
+                            compareJson(ja1.get(j), ja2.get(j), currentLevelOfOrg + "[" + j + "]");
                         }
                     }
                 } else if (je1.isJsonObject()) {
@@ -118,8 +125,12 @@ public class JsonCompare {
                             numOfMissingProperties++;
                         } else {
                             //only store JsonElements that have same "key";
-                            q1.offer(new JsonElementWithLevel(value, currentLevelOfOrg + "." + key));
-                            q2.offer(new JsonElementWithLevel(jo2.get(key), currentLevelOfOrg + "." + key));
+                            String level = currentLevelOfOrg + "." + key;
+                            if(parentLevel.startsWith("$")) {
+                                level = parentLevel + level.substring(1);
+                            }
+                            q1.offer(new JsonElementWithLevel(value, level));
+                            q2.offer(new JsonElementWithLevel(jo2.get(key), level));
                         }
                     }
 
@@ -133,8 +144,6 @@ public class JsonCompare {
                             numOfMissingProperties++;
                         }
                     }
-
-
                 }
 
 
@@ -270,4 +279,10 @@ public class JsonCompare {
         }
         return valueMap;
     }
+
+    public void printCompareResults() {
+        System.out.println(numOfMissingProperties +  numOfUnequalValue);
+        //print all FailureFields
+    }
+
 }
