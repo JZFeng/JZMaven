@@ -7,29 +7,23 @@ import java.io.IOException;
 import java.util.*;
 
 import com.google.gson.*;
-import com.google.sitebricks.client.transport.Json;
 
 public class JsonCompare {
 
     public static void main(String[] args) throws IOException {
-
         JsonParser parser = new JsonParser();
-        String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/AA.json"));
+        String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/O.json"));
         JsonObject o1 = parser.parse(json).getAsJsonObject();
-        System.out.println(o1);
 
-        json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/BB.json"));
+        json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/D.json"));
         JsonObject o2 = parser.parse(json).getAsJsonObject();
-        System.out.println("\r\n" + o2 + "\r\n");
 
-        compareJson(o1, o2, "");
-        System.out.println("Number of Missing Properties : " + numOfMissingProperties);
-        System.out.println("Number of Unequal Value : " + numOfUnequalValue);
-
+        JsonCompareResult jsonCompareResult = compareJson(o1, o2);
+//        System.out.println(jsonCompareResult);
+        System.out.println(jsonCompareResult.getResultDetails());
     }
 
-    private static int numOfMissingProperties = 0;
-    private static int numOfUnequalValue = 0;
+    public static JsonCompareResult jsonCompareResult = new JsonCompareResult();
 
     public static void compareJsonPrimitive(JsonElement o1, JsonElement o2) {
 
@@ -47,23 +41,21 @@ public class JsonCompare {
 
     }
 
+  /*
+   */
 
-/*
-要定义一个二元组
+    public static JsonCompareResult compareJson(JsonObject o1, JsonObject o2) {
+        return null;
+    }
 
-所以Queue中放入的就是二元组而不是JsonElement;
-根目录为 new JsonElementWithLevel(o1, "#");
+    //support wild card. regressExpression
+    // Can define a separate classs called filter , or simply passing JsonPath.
 
-在递归之前，需要传入ParentLevel。
-什么时候更新parentLevel呢？在有JsonArray的时候。
+    public static JsonCompareResult compareJson(JsonObject o1, JsonObject o2, Set<String> filters) {
+        return null;
+    }
 
-  */
-
-//    public static void compareJson(JsonObject o1, JsonObject o2) {
-//        compareJson((JsonElement) o1, (JsonElement) o2);
-//    }
-
-    public static void compareJson(JsonElement o1, JsonElement o2, String parentLevel) {
+    private static void compareJson(JsonElement o1, JsonElement o2, String parentLevel) {
 
         if (o1 == null && o2 == null) {
             return;
@@ -76,7 +68,7 @@ public class JsonCompare {
         Queue<JsonElementWithLevel> q2 = new LinkedList<JsonElementWithLevel>();
         q1.offer(new JsonElementWithLevel(o1, "$"));
         q2.offer(new JsonElementWithLevel(o2, "$"));
-
+        FieldComparisonFailure failure = new FieldComparisonFailure();
         //iterate all nodes;
         while (!q1.isEmpty()) {
             int size = q1.size();
@@ -93,12 +85,9 @@ public class JsonCompare {
                     String s1 = je1.getAsString().trim();
                     String s2 = je2.getAsString().trim();
                     if (!s1.equalsIgnoreCase(s2)) {
-//                        String level = parentLevel;
-//                        if(parentLevel.startsWith("$")) {
-//                            level = parentLevel + currentLevelOfOrg.substring(1);
-//                        }
-                        System.out.println("Two primitive elements are not equal : " + currentLevelOfOrg + ", " + s1 + " , " + s2);
-                        numOfUnequalValue++;
+//                        System.out.println("Two primitive elements are not equal : " + currentLevelOfOrg + ", " + s1 + " , " + s2);
+                        failure = new FieldComparisonFailure(currentLevelOfOrg, FieldComparisonFailureType.UNEQUAL_VALUE, je1, je2);
+                        jsonCompareResult.addFieldComparisonFailure(failure);
                     }
                 } else if (je1.isJsonArray()) {
                     //compare two JsonArray;
@@ -106,8 +95,9 @@ public class JsonCompare {
                     JsonArray ja1 = je1.getAsJsonArray();
                     JsonArray ja2 = je2.getAsJsonArray();
                     if (ja1.size() != ja2.size()) {
-                        System.out.println("JsonArrays size are different : " + " " + currentLevelOfOrg + ", size: " + ja1.size() + ", size: " + ja2.size());
-                        numOfUnequalValue++;
+//                        System.out.println("JsonArrays size are different : " + " " + currentLevelOfOrg + ", size: " + ja1.size() + ", size: " + ja2.size());
+                        failure = new FieldComparisonFailure(currentLevelOfOrg, FieldComparisonFailureType.DIFFERENT_JSONARRY_SIZE, ja1, ja2);
+                        jsonCompareResult.addFieldComparisonFailure(failure);
                     } else {
                         for (int j = 0; j < ja1.size(); j++) {
                             compareJson(ja1.get(j), ja2.get(j), currentLevelOfOrg + "[" + j + "]");
@@ -120,15 +110,18 @@ public class JsonCompare {
                     for (Map.Entry<String, JsonElement> entry : jo1.entrySet()) {
                         String key = entry.getKey();
                         JsonElement value = entry.getValue();
+                        String level = currentLevelOfOrg + "." + key;
+                        if (parentLevel.startsWith("$") && !level.contains(parentLevel)) {
+                            level = parentLevel + level.substring(1);
+                        }
+
                         if (!jo2.has(key)) {
-                            System.out.println("Destination Json does not have key : " + currentLevelOfOrg + "." + key);
-                            numOfMissingProperties++;
+//                            System.out.println("Destination Json does not have key : " + level);
+                            failure = new FieldComparisonFailure(level, FieldComparisonFailureType.MISSING_FIELD );
+                            failure.setExpected(jo1.get(key));
+                            jsonCompareResult.addFieldComparisonFailure(failure);
                         } else {
                             //only store JsonElements that have same "key";
-                            String level = currentLevelOfOrg + "." + key;
-                            if(parentLevel.startsWith("$")) {
-                                level = parentLevel + level.substring(1);
-                            }
                             q1.offer(new JsonElementWithLevel(value, level));
                             q2.offer(new JsonElementWithLevel(jo2.get(key), level));
                         }
@@ -140,18 +133,15 @@ public class JsonCompare {
                         JsonElement value = entry.getValue();
 
                         if (!jo1.has(key)) {
-                            System.out.println("Origin Json does not have key " + currentLevelOfDest + "." + key);
-                            numOfMissingProperties++;
+//                            System.out.println("Origin Json does not have key " + currentLevelOfDest + "." + key);
+                            failure = new FieldComparisonFailure(currentLevelOfDest + "." + key, FieldComparisonFailureType.UNEXPECTED_FIELD);
+                            failure.setActual(jo2.get(key));
+                            jsonCompareResult.addFieldComparisonFailure(failure);
                         }
                     }
                 }
-
-
             }
-
         }
-
-
     }
 
 
@@ -177,7 +167,6 @@ public class JsonCompare {
                     }
                 }
             }
-
         }
 
         return res;
@@ -208,7 +197,7 @@ public class JsonCompare {
      * @param array the array to find the unique key of
      * @return the unique key if there's any, otherwise null
      */
-    public static String findUniqueKey(JsonArray array) {
+    private static String findUniqueKey(JsonArray array) {
         // Find a unique key for the object (id, name, whatever)
         if (array.size() > 0 && (array.get(0) instanceof JsonObject)) {
             JsonObject o = ((JsonObject) array.get(0)).getAsJsonObject();
@@ -230,7 +219,7 @@ public class JsonCompare {
      * @return true if the candidate can work as a unique id across array
      */
 
-    public static boolean isUsableAsUniqueKey(String candidate, JsonArray array) {
+    private static boolean isUsableAsUniqueKey(String candidate, JsonArray array) {
         Set<JsonElement> seenValues = new HashSet<JsonElement>();
         for (int i = 0; i < array.size(); i++) {
             JsonElement item = array.get(i);
@@ -255,7 +244,7 @@ public class JsonCompare {
     }
 
     //get keys from a JsonObject
-    public static Set<String> getKeys(JsonObject o) {
+    private static Set<String> getKeys(JsonObject o) {
         Set<String> keys = new TreeSet<String>();
         for (Map.Entry<String, JsonElement> entry : o.entrySet()) {
             keys.add(entry.getKey().trim());
@@ -265,12 +254,12 @@ public class JsonCompare {
     }
 
     //JsonPrimitive value as unique key
-    public static boolean isSimpleValue(Object o) {
+    private static boolean isSimpleValue(Object o) {
         return !(o instanceof JsonObject) && !(o instanceof JsonArray) && (o instanceof JsonPrimitive);
     }
 
     // build hashmap
-    public static Map<JsonPrimitive, JsonObject> arrayOfJsonObjectToMap(JsonArray array, String uniqueKey) {
+    private static Map<JsonPrimitive, JsonObject> arrayOfJsonObjectToMap(JsonArray array, String uniqueKey) {
         Map<JsonPrimitive, JsonObject> valueMap = new HashMap<JsonPrimitive, JsonObject>();
         for (int i = 0; i < array.size(); ++i) {
             JsonObject jsonObject = (JsonObject) array.get(i);
@@ -280,9 +269,9 @@ public class JsonCompare {
         return valueMap;
     }
 
-    public void printCompareResults() {
-        System.out.println(numOfMissingProperties +  numOfUnequalValue);
-        //print all FailureFields
+    private static void applyFilterstoResult(JsonCompareResult result, Set<String> filters) {
+        // list, iterate the list, get field, if contains , ignore.
+        //
     }
 
 }
