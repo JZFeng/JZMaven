@@ -17,10 +17,22 @@ public class JsonCompare {
 
         json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/D.json"));
         JsonObject o2 = parser.parse(json).getAsJsonObject();
+        String[] strs = new String[]{
+                "$._type"
+                ,"$.errorMessage"
+                ,"$.extension"
+                ,"$.listing.termsAndPolicies.logisticsTerms.logisticsPlan[0].minDeliveryEstimate.estimateTreatment"
+                ,"$.listing.listingProperties[2].propertyValues[0].dateValue"
+                ,"$.listing.tradingSummary.lastVisitDate"
+                ,"$.listing.listingLifecycle.scheduledStartDate.value"};
+        Set<String> filters = new TreeSet<String>();
+        for(String s : strs) {
+            filters.add(s);
+        }
 
-        JsonCompareResult jsonCompareResult = compareJson(o1, o2);
-//        System.out.println(jsonCompareResult);
-        System.out.println(jsonCompareResult.getResultDetails());
+        JsonCompareResult jsonCompareResult = compareJson(o1, o2, filters);
+        System.out.println(jsonCompareResult);
+
     }
 
     public static JsonCompareResult jsonCompareResult = new JsonCompareResult();
@@ -38,21 +50,21 @@ public class JsonCompare {
     }
 
     public static void compareJsonArray(JsonElement o1, JsonElement o2) {
-
     }
 
   /*
    */
 
     public static JsonCompareResult compareJson(JsonObject o1, JsonObject o2) {
-        return null;
+        compareJson((JsonElement) o1, (JsonElement)o2, "");
+        return applyFilterstoResult(jsonCompareResult, new TreeSet<String>());
     }
 
-    //support wild card. regressExpression
+    //need support wild card. regressExpression?
     // Can define a separate classs called filter , or simply passing JsonPath.
-
     public static JsonCompareResult compareJson(JsonObject o1, JsonObject o2, Set<String> filters) {
-        return null;
+        compareJson((JsonElement) o1, (JsonElement)o2, "");
+        return applyFilterstoResult(jsonCompareResult, filters);
     }
 
     private static void compareJson(JsonElement o1, JsonElement o2, String parentLevel) {
@@ -269,9 +281,23 @@ public class JsonCompare {
         return valueMap;
     }
 
-    private static void applyFilterstoResult(JsonCompareResult result, Set<String> filters) {
-        // list, iterate the list, get field, if contains , ignore.
-        //
+    private static JsonCompareResult applyFilterstoResult(JsonCompareResult result, Set<String> filters) {
+
+        if(filters == null || filters.size() == 0 ) {
+            return result;
+        }
+
+        List<FieldComparisonFailure> failures = result.getFieldFailures();
+        Iterator<FieldComparisonFailure> itr = failures.iterator();
+        while(itr.hasNext()) {
+            FieldComparisonFailure f = itr.next();
+            String field = f.getField();
+            if(filters.contains(field)) {
+                itr.remove();
+            }
+        }
+
+        return new JsonCompareResult(failures);
     }
 
 }

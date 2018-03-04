@@ -1,12 +1,9 @@
 package com.jz.json;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class JsonCompareResult {
-    private List<FieldComparisonFailure> fieldFailures = new ArrayList<FieldComparisonFailure>();
+    private List<FieldComparisonFailure> fieldFailures = new LinkedList<FieldComparisonFailure>();
 
     public  boolean isEqual() {
         return (fieldFailures.size() == 0) ;
@@ -31,6 +28,10 @@ public class JsonCompareResult {
 
     public String getResultDetails() {
         return getResultInfo(true);
+    }
+
+    public List<FieldComparisonFailure> getFieldFailures() {
+        return fieldFailures;
     }
 
     private String getResultInfo(boolean withDetails) {

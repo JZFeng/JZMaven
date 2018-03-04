@@ -206,16 +206,6 @@
 			<version>2.0.1-SNAPSHOT</version>
 		</dependency> -->
 		<dependency>
-			<groupId>com.ebay.testinfrastructure</groupId>
-			<artifactId>serviceautil</artifactId>
-			<version>stable-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.ebay.testinfrastructure</groupId>
-			<artifactId>testdataautil</artifactId>
-			<version>stable-SNAPSHOT</version>
-		</dependency>
-		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
 			<version>1.4</version>
@@ -312,55 +302,6 @@
 			<artifactId>commons-httpclient</artifactId>
 			<version>3.0-rc3</version>
 		</dependency>
-		<!-- <dependency>
-			<groupId>com.ebay.WAT</groupId>
-			<artifactId>Browser</artifactId>
-			<version>1.0</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.ebay.quality</groupId>
-					<artifactId>AutoBotUtils</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.ebay.WAT</groupId>
-			<artifactId>NonBrowser</artifactId>
-			<version>1.0</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.ebay.quality</groupId>
-					<artifactId>AutoBotUtils</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency> -->
-		<!-- projects -->
-		<!-- <dependency> -->
-		<!-- <groupId>com.ebay.quality</groupId> -->
-		<!-- <artifactId>tape</artifactId> -->
-		<!-- <version>3.0.0-SNAPSHOT</version> -->
-		<!-- </dependency> -->
-		<!-- test reporting libraries -->
-		<!--<dependency>
-			<groupId>com.ebay.testlog</groupId>
-			<artifactId>testlog-intf</artifactId>
-			<version>0.1</version>
-		</dependency>-->
-		<!-- <dependency> -->
-		<!-- <groupId>com.ebay.qe</groupId> -->
-		<!-- <artifactId>TestReporter</artifactId> -->
-		<!-- <version>2.0.1</version> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>com.ebay.WTF</groupId> -->
-		<!-- <artifactId>wtf-dash</artifactId> -->
-		<!-- <version>1.1.14</version> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.mongodb</groupId> -->
-		<!-- <artifactId>mongo-java-driver</artifactId> -->
-		<!-- <version>2.7.3</version> -->
-		<!-- </dependency> -->
 		<dependency>
 			<groupId>com.ebay.maui</groupId>
 			<artifactId>mauiutil</artifactId>
