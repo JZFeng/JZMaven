@@ -182,5 +182,23 @@ public class JsonCompareUtil {
 
         return new JsonCompareResult(failures);
     }
+
+    public static boolean allSimpleValues(JsonArray array)  {
+        for (int i = 0; i < array.size(); ++i) {
+            if (!isSimpleValue(array.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean allJsonObjects(JsonArray array) {
+        for (int i = 0; i < array.size(); ++i) {
+            if (!(array.get(i) instanceof JsonObject)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
 
