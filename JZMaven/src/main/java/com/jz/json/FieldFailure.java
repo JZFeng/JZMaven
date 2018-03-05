@@ -1,30 +1,28 @@
 package com.jz.json;
 
 import com.google.gson.JsonElement;
-import com.jz.json.FieldComparisonFailure;
-import com.jz.json.FieldComparisonFailureType;
 
-public class FieldComparisonFailure {
+public class FieldFailure {
     private String field; //absolute JsonPath
-    private FieldComparisonFailureType failureType; //enum
+    private FieldFailureType failureType; //enum
     private JsonElement expected;
     private JsonElement actual;
 
-    FieldComparisonFailure(String field, FieldComparisonFailureType failureType, JsonElement expected, JsonElement actual) {
+    FieldFailure(String field, FieldFailureType failureType, JsonElement expected, JsonElement actual) {
         this.field = field;
         this.failureType = failureType;
         this.expected = expected;
         this.actual = actual;
     }
 
-    FieldComparisonFailure(String field, FieldComparisonFailureType failureType) {
+    FieldFailure(String field, FieldFailureType failureType) {
         this.field = field;
         this.failureType = failureType;
         this.expected = null;
         this.actual = null;
     }
 
-    FieldComparisonFailure() {
+    FieldFailure() {
         this.field = null;
         this.failureType = null;
         this.expected = null;
@@ -35,7 +33,7 @@ public class FieldComparisonFailure {
         return field;
     }
 
-    public FieldComparisonFailureType getFailureType() {
+    public FieldFailureType getFailureType() {
         return failureType;
     }
 
@@ -51,7 +49,7 @@ public class FieldComparisonFailure {
         this.field = field;
     }
 
-    public void setFailureType(FieldComparisonFailureType failureType) {
+    public void setFailureType(FieldFailureType failureType) {
         this.failureType = failureType;
     }
 
@@ -74,7 +72,7 @@ public class FieldComparisonFailure {
         return sb.toString().trim();
     }
 
-    public static String getFailureReason(FieldComparisonFailureType failureType) {
+    public static String getFailureReason(FieldFailureType failureType) {
         String failureReason = "";
         switch (failureType) {
             case UNEQUAL_VALUE: {
@@ -93,6 +91,19 @@ public class FieldComparisonFailure {
                 failureReason = "DifferentJsonArraySize";
                 break;
             }
+            case MISSING_JSONARRAY_ELEMENT: {
+                failureReason = "MissingJsonArrayElement";
+                break;
+            }
+            case UNEXPECTED_JSONARRAY_ELEMENT: {
+                failureReason = "UnexpectedJsonArrayElement";
+                break;
+            }
+            case DIFFERENT_OCCURENCE_JSONARRAY_ELEMENT: {
+                failureReason = "DifferentOccurenceOfAJsonArrayElement";
+                break;
+            }
+
             default: {
                 failureReason = "UnknownReason";
                 break;
