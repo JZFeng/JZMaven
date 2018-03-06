@@ -54,6 +54,7 @@ public class JsonCompareUtil {
             Set<String> keys = getKeys(o);
             for (String candidate : keys) {
                 if (isUsableAsUniqueKey(candidate, array)) {
+                    System.out.println("The unique key of JsonArray is ["  + candidate +"]");
                     return candidate;
                 }
             }
@@ -111,11 +112,14 @@ public class JsonCompareUtil {
     // build hashmap, KEY is UniqueKey's Value, VALUE is JsonObject;
     public static Map<JsonPrimitive, JsonObject> arrayOfJsonObjectToMap(JsonArray array, String uniqueKey) {
         Map<JsonPrimitive, JsonObject> valueMap = new HashMap<JsonPrimitive, JsonObject>();
-        for (int i = 0; i < array.size(); ++i) {
-            JsonObject jsonObject = (JsonObject) array.get(i);
-            JsonPrimitive id = jsonObject.get(uniqueKey).getAsJsonPrimitive();
-            valueMap.put(id, jsonObject);
+        if(uniqueKey != null) {
+            for (int i = 0; i < array.size(); ++i) {
+                JsonObject jsonObject = (JsonObject) array.get(i);
+                JsonPrimitive id = jsonObject.get(uniqueKey).getAsJsonPrimitive();
+                valueMap.put(id, jsonObject);
+            }
         }
+
         return valueMap;
     }
 

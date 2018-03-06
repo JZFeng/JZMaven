@@ -34,6 +34,8 @@ public class JsonCompareResult {
         return fieldFailures;
     }
 
+    public int totalFailures() { return fieldFailures.size();}
+
     private String getResultInfo(boolean withDetails) {
         StringBuilder sb = new StringBuilder();
         sb.append("Total " + fieldFailures.size() + " failures : ");

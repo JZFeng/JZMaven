@@ -1,5 +1,15 @@
 package com.jz.json;
 
+
+/*
+Open Question: JsonArray 的filter怎么做？JsonArray的某一个值不需要比。
+JsonPaths:
+$.store.book[?(@.author =~ /.*RESS/i )]
+$.store.book[?(@.price < 10 && @.category == 'fiction')]
+
+
+
+ */
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -12,10 +22,10 @@ public class JsonCompare {
 
     public static void main(String[] args) throws IOException {
         JsonParser parser = new JsonParser();
-        String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/O.json"));
+        String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/JA1.json"));
         JsonObject o1 = parser.parse(json).getAsJsonObject();
 
-        json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/D.json"));
+        json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/JA2.json"));
         JsonObject o2 = parser.parse(json).getAsJsonObject();
         String[] strs = new String[]{
                 "$._type"
@@ -30,7 +40,9 @@ public class JsonCompare {
             filters.add(s);
         }
 
-        System.out.println(compareJson(o1, o2));
+        JsonCompareResult result = compareJson(o1, o2);
+        System.out.println(result);
+//        System.out.println("Number for failures: " + compareJson(o1, o2).totalFailures());
 
     }
 
@@ -44,6 +56,7 @@ public class JsonCompare {
         return r;
     }
 
+
     //need support wild card. regressExpression?
     //Can define a separate classs called filter , or simply passing JsonPath.
     public static JsonCompareResult compareJson(JsonObject o1, JsonObject o2, Set<String> filters) {
@@ -52,13 +65,14 @@ public class JsonCompare {
         return applyFilterstoResult(r, filters);
     }
 
+
     public static JsonCompareResult compareJsonArray(String parentLevel, JsonArray expected, JsonArray actual) {
         JsonCompareResult r = new JsonCompareResult();
         compareJsonArray(parentLevel, expected, actual, r);
         return r;
     }
 
-    private static void compareJson(String parentLevel, JsonElement o2, JsonElement o1, JsonCompareResult result) {
+    private static void compareJson(String parentLevel, JsonElement o1, JsonElement o2, JsonCompareResult result) {
 
         if (o1 == null && o2 == null) {
             return;
@@ -147,16 +161,14 @@ public class JsonCompare {
             return; // Nothing to compare
         }
 
-        if (mode == JsonCompareMode.LENIENT) {
+        if (mode == JsonCompareMode.STRICT) {
             compareJsonArrayWithStrictOrder(parentLevel, expected, actual, result);
         } else if (allSimpleValues(expected)) {
             compareJsonArrayOfJsonPrimitives(parentLevel, expected, actual, result);
         } else if (allJsonObjects(expected)) {
             compareJsonArrayOfJsonObjects(parentLevel, expected, actual, result);
-        } else {
-            // An expensive last resort
-            recursivelyCompareJsonArray(parentLevel, expected, actual, result);
         }
+
     }
 
     public static void compareJsonPrimitive(String parentLevel, JsonPrimitive o1, JsonPrimitive o2, JsonCompareResult result) {
@@ -181,32 +193,32 @@ public class JsonCompare {
     }
 
     //要传入level信息，这样可以new一个FieldComparisonFailure()
-    protected static void compareJsonArrayOfJsonObjects(String currentLevelOfOrg, JsonArray expected, JsonArray actual, JsonCompareResult result) {
+    protected static void compareJsonArrayOfJsonObjects(String parentLevel, JsonArray expected, JsonArray actual, JsonCompareResult result) {
 
         String uniqueKey = findUniqueKey(expected);
         FieldFailure failure = new FieldFailure();
 
         if (uniqueKey == null || !isUsableAsUniqueKey(uniqueKey, actual)) {
-            //recursivelyCompareJSONArray();
+            recursivelyCompareJsonArray(parentLevel, expected, actual, result);
         }
 
         Map<JsonPrimitive, JsonObject> expectedValueMap = arrayOfJsonObjectToMap(expected, uniqueKey);
         Map<JsonPrimitive, JsonObject> actualValueMap = arrayOfJsonObjectToMap(actual, uniqueKey);
         for (JsonPrimitive id : expectedValueMap.keySet()) {
             if (!actualValueMap.containsKey(id)) {
-                System.out.println(currentLevelOfOrg + "actual JsonArray w/o " + uniqueKey + "==" + id);
-                failure = new FieldFailure(currentLevelOfOrg, FieldFailureType.MISSING_JSONARRAY_ELEMENT, expected, actual);
+                System.out.println(parentLevel + "actual JsonArray w/o " + uniqueKey + "==" + id);
+                failure = new FieldFailure(parentLevel, FieldFailureType.MISSING_JSONARRAY_ELEMENT, expected, actual);
                 result.addFieldComparisonFailure(failure);
                 continue;
             }
             JsonObject expectedValue = expectedValueMap.get(id);
             JsonObject actualValue = actualValueMap.get(id);
-            compareJson(currentLevelOfOrg, (JsonElement) actualValue, (JsonElement) expectedValue, result); //或者是currentLevelOfOrg[*] ???
+            compareJson(parentLevel, (JsonElement) actualValue, (JsonElement) expectedValue, result); //或者是currentLevelOfOrg[*] ???
         }
         for (JsonPrimitive id : actualValueMap.keySet()) {
             if (!expectedValueMap.containsKey(id)) {
-                System.out.println(currentLevelOfOrg + "expected JsonArray w/o " + uniqueKey + "==" + id);
-                failure = new FieldFailure(currentLevelOfOrg, FieldFailureType.UNEXPECTED_JSONARRAY_ELEMENT, expected, actual);
+                System.out.println(parentLevel + "expected JsonArray w/o " + uniqueKey + "==" + id);
+                failure = new FieldFailure(parentLevel, FieldFailureType.UNEXPECTED_JSONARRAY_ELEMENT, expected, actual);
                 result.addFieldComparisonFailure(failure);
             }
         }
@@ -219,10 +231,12 @@ public class JsonCompare {
         FieldFailure failure = new FieldFailure();
         for (JsonElement o : expectedCount.keySet()) {
             if (!actualCount.containsKey(o)) {
+                System.out.println("Missing JsonArray Element " + o);
                 failure = new FieldFailure(parentLevel, FieldFailureType.MISSING_JSONARRAY_ELEMENT);
                 failure.setExpected(o);
                 result.addFieldComparisonFailure(failure);
             } else if (!actualCount.get(o).equals(expectedCount.get(o))) {
+                System.out.println("occurences of " + o + " : " + expectedCount.get(0) + " VS " +  actualCount.get(o));
                 failure = new FieldFailure(parentLevel, FieldFailureType.DIFFERENT_OCCURENCE_JSONARRAY_ELEMENT, o, o);
                 result.addFieldComparisonFailure(failure);
             }
@@ -230,6 +244,7 @@ public class JsonCompare {
 
         for (JsonElement o : actualCount.keySet()) {
             if (!expectedCount.containsKey(o)) {
+                System.out.println("Unexpected JsonArray Element " + o);
                 failure = new FieldFailure(parentLevel, FieldFailureType.UNEXPECTED_JSONARRAY_ELEMENT);
                 failure.setActual(o);
                 result.addFieldComparisonFailure(failure);
@@ -270,6 +285,10 @@ public class JsonCompare {
                 }
             }
             if (!matchFound) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(parentLevel + "[" + i +"]\r\n" +  expectedElement + "NOT found in actualJsonArray.");
+
+                System.out.println(sb.toString());
                 FieldFailure failure = new FieldFailure(parentLevel, FieldFailureType.MISSING_JSONARRAY_ELEMENT);//need more details;
                 failure.setExpected(expectedElement);
                 result.addFieldComparisonFailure(failure);
