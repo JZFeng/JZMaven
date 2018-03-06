@@ -22,10 +22,10 @@ public class JsonCompare {
 
     public static void main(String[] args) throws IOException {
         JsonParser parser = new JsonParser();
-        String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/JA1.json"));
+        String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/O.json"));
         JsonObject o1 = parser.parse(json).getAsJsonObject();
 
-        json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/JA2.json"));
+        json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/D.json"));
         JsonObject o2 = parser.parse(json).getAsJsonObject();
         String[] strs = new String[]{
                 "$._type"
@@ -256,7 +256,8 @@ public class JsonCompare {
     // This is expensive (O(n^2) -- yuck), but may be the only resort for some cases with loose array ordering, and no
     // easy way to uniquely identify each element.
 
-    protected static void recursivelyCompareJsonArray(String parentLevel, JsonArray expected, JsonArray actual, JsonCompareResult result)  {
+    protected static void recursivelyCompareJsonArray(String parentLevel, JsonArray expected, JsonArray actual, JsonCompareResult result)
+    {
         Set<Integer> matched = new HashSet<Integer>(); //保存actual里已经被匹配的元素。
         for (int i = 0; i < expected.size(); ++i) {
             JsonElement expectedElement = expected.get(i);
@@ -267,7 +268,7 @@ public class JsonCompare {
                     continue;
                 }
                 if (expectedElement instanceof JsonObject) {
-                    if (compareJson(((JsonObject) expectedElement).getAsJsonObject(), actualElement.getAsJsonObject()).isPassed()) {
+                    if (compareJson(expectedElement.getAsJsonObject(), actualElement.getAsJsonObject()).isPassed()) {
                         matched.add(j);
                         matchFound = true;
                         break;
@@ -289,11 +290,20 @@ public class JsonCompare {
                 sb.append(parentLevel + "[" + i +"]\r\n" +  expectedElement + "NOT found in actualJsonArray.");
 
                 System.out.println(sb.toString());
-                FieldFailure failure = new FieldFailure(parentLevel, FieldFailureType.MISSING_JSONARRAY_ELEMENT);//need more details;
+                FieldFailure failure = new FieldFailure(parentLevel + "[" + i + "]", FieldFailureType.MISSING_JSONARRAY_ELEMENT);//need more details;
                 failure.setExpected(expectedElement);
                 result.addFieldComparisonFailure(failure);
-                return;  //找不到一个元素，就失败？？？ 还是需要遍历所有的元素？？
+                //return;  //找不到一个元素，就失败？？？ 还是需要遍历所有的元素？？
             }
+        }
+
+        for(int j = 0 ; j < actual.size();j++) {
+            if(matched.contains(j)) {
+                continue;
+            }
+            FieldFailure failure = new FieldFailure(parentLevel + "[" + j + "]", FieldFailureType.UNEXPECTED_JSONARRAY_ELEMENT);//need more details;
+            failure.setActual(actual.get(j));
+            result.addFieldComparisonFailure(failure);
         }
     }
 }
