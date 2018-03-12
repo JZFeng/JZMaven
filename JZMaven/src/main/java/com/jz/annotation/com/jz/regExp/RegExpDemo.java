@@ -12,12 +12,12 @@ public class RegExpDemo {
 
         String newURL = "";
         while (m.find()) {
-            newURL = new StringBuilder(url).replace(m.start(1), m.end(1), "uk." + m.group(1)).toString();
+            newURL = new StringBuilder(url).replace(m.start(1), m.end(1), "uk." + m.group(1) + "stratus.").toString();
         }
 
         url = "https://www.m.qa.ebay.com/itm/11001224845";
         regExp = "(.*\\.)(m\\.)(.*\\.com)";
-        String a = url.replaceAll(regExp, "$1uk.$2$3");
+        String a = url.replaceAll(regExp, "$1"+"uk." + "$2"+"stratus."+"$3");
 
         System.out.println(a);
     }
