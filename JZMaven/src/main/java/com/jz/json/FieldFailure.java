@@ -7,6 +7,15 @@ public class FieldFailure {
     private FieldFailureType failureType; //enum
     private JsonElement expected;
     private JsonElement actual;
+    private String failureMsg;
+
+    FieldFailure(String field, FieldFailureType failureType, JsonElement expected, JsonElement actual, String failureMsg) {
+        this.field = field;
+        this.failureType = failureType;
+        this.expected = expected;
+        this.actual = actual;
+        this.failureMsg = failureMsg;
+    }
 
     FieldFailure(String field, FieldFailureType failureType, JsonElement expected, JsonElement actual) {
         this.field = field;
@@ -45,6 +54,10 @@ public class FieldFailure {
         return actual;
     }
 
+    public String getFailureMsg() {
+        return failureMsg;
+    }
+
     public void setField(String field) {
         this.field = field;
     }
@@ -65,14 +78,15 @@ public class FieldFailure {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("FIELD : " + field + "\r\n");
-//        sb.append("FAILURE REASON : " + getFailureReason(failureType) + "\r\n");
-        sb.append("EXPECTED : " + getExpected() + "\r\n");
-        sb.append("ACTUAL : " + getActual() + "\r\n");
+        sb.append("Reason : " + failureMsg + "\r\n");
+//        sb.append("EXPECTED : " + getExpected() + "\r\n");
+//        sb.append("ACTUAL : " + getActual() + "\r\n");
 
         return sb.toString().trim();
     }
 
-    public static String getFailureReason(FieldFailureType failureType) {
+
+    /*public static String getFailureReason(FieldFailureType failureType) {
         String failureReason = "";
         switch (failureType) {
             case UNEQUAL_VALUE: {
@@ -111,5 +125,5 @@ public class FieldFailure {
         }
 
         return failureReason;
-    }
+    }*/
 }

@@ -1,0 +1,18 @@
+{
+  "logisticsPlan": [
+    {
+      "steps": [
+        {
+          "stepExtension": {
+            "shippingOption": [
+              {
+                "deliveryEstimate": {
+                }                
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
