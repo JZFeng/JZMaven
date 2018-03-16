@@ -13,6 +13,7 @@ $.store.book[?(@.price < 10 && @.category == 'fiction')]
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.*;
 
 import com.google.gson.*;
@@ -208,7 +209,6 @@ public class JsonCompare {
 
     //要传入level信息，这样可以new一个FieldComparisonFailure()
     protected static void compareJsonArrayOfJsonObjects(String parentLevel, JsonArray expected, JsonArray actual, JsonCompareResult result) {
-
         String uniqueKey = findUniqueKey(expected);
         FieldFailure failure = new FieldFailure();
         String failureMsg = null;
@@ -224,7 +224,7 @@ public class JsonCompare {
             if (!actualValueMap.containsKey(id)) {
                 failureMsg = "\"" + expectedValueMap.get(id) + "\"" + " is missing from actual JsonArray.";
                 failure = new FieldFailure(parentLevel, FieldFailureType.MISSING_JSONARRAY_ELEMENT, expectedValueMap.get(id), null, failureMsg);
-                result.addFieldComparisonFailure(failure);
+                result.getFieldFailures().add(failure);
                 continue;
             }
             JsonObject expectedValue = expectedValueMap.get(id);
@@ -235,7 +235,7 @@ public class JsonCompare {
             if (!expectedValueMap.containsKey(id)) {
                 failureMsg = "\"" + actualValueMap.get(id) + "\"" + " is unexpected from actual JsonArray.";
                 failure = new FieldFailure(parentLevel, FieldFailureType.UNEXPECTED_JSONARRAY_ELEMENT, null, actualValueMap.get(id), failureMsg);
-                result.addFieldComparisonFailure(failure);
+                result.getFieldFailures().add(failure);
             }
         }
 
