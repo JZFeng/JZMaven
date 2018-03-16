@@ -25,10 +25,10 @@ public class JsonCompare {
     public static void main(String[] args) throws IOException {
 
         JsonParser parser = new JsonParser();
-        String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/JAM1.json"));
+        String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/O.json"));
         JsonObject o1 = parser.parse(json).getAsJsonObject();
 
-        json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/JAM2.json"));
+        json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/D.json"));
         JsonObject o2 = parser.parse(json).getAsJsonObject();
         String[] strs = new String[]{
                 "$._type"
@@ -49,7 +49,7 @@ public class JsonCompare {
     }
 
     public static JsonCompareResult jsonCompareResult = new JsonCompareResult();
-    public static JsonCompareMode mode = JsonCompareMode.LENIENT;
+    public static JsonCompareMode mode = JsonCompareMode.STRICT;
 
 
     public static JsonCompareResult compareJson(JsonObject o1, JsonObject o2) {
@@ -231,7 +231,7 @@ public class JsonCompare {
             }
             JsonObject expectedValue = expectedValueMap.get(id);
             JsonObject actualValue = actualValueMap.get(id);
-            compareJson(parentLevel, (JsonElement) actualValue, (JsonElement) expectedValue, result); //或者是currentLevelOfOrg[*] ???
+            compareJson(parentLevel,  (JsonElement) expectedValue,(JsonElement) actualValue, result); //或者是currentLevelOfOrg[*] ???
         }
         for (JsonPrimitive id : actualValueMap.keySet()) {
             if (!expectedValueMap.containsKey(id)) {
@@ -292,7 +292,7 @@ public class JsonCompare {
                 }
                 if (expectedElement instanceof JsonObject) {
                     JsonCompareResult r =compareJson(parentLevel, expectedElement.getAsJsonObject(), actualElement.getAsJsonObject());
-                    //这里已经有两个最终结果了
+                    //要把所有结果的记录下来，返回之前de-dupe.
                     result.addAll(r.getFieldFailures());
 
                     if (r.isPassed() == true) {
