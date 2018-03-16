@@ -25,10 +25,10 @@ public class JsonCompare {
     public static void main(String[] args) throws IOException {
 
         JsonParser parser = new JsonParser();
-        String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/VIExpSvc.json"));
+        String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/JAM1.json"));
         JsonObject o1 = parser.parse(json).getAsJsonObject();
 
-        json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/VLS.json"));
+        json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/JAM2.json"));
         JsonObject o2 = parser.parse(json).getAsJsonObject();
         String[] strs = new String[]{
                 "$._type"
@@ -154,7 +154,7 @@ public class JsonCompare {
 
                         if (!jo1.has(key)) {
 //                            System.out.println("Origin Json does not have key " + currentLevelOfDest + "." + key);
-                            failureMsg = "Unexpected field \"" + currentLevelOfDest + key + "\"" + " from actual result.";
+                            failureMsg = "Unexpected field \"" + currentLevelOfDest + "." + key + "\"" + " from actual result.";
                             failure = new FieldFailure(currentLevelOfDest + "." + key, FieldFailureType.UNEXPECTED_FIELD, null, jo2, failureMsg);
                             result.addFieldComparisonFailure(failure);
                         }
@@ -216,8 +216,10 @@ public class JsonCompare {
         if (uniqueKey == null || !isUsableAsUniqueKey(uniqueKey, actual)) {
             List<FieldFailure> jsonArrayCompareResult = recursivelyCompareJsonArray(parentLevel, expected, actual);
             result.getFieldFailures().addAll(jsonArrayCompareResult);
+            return;
         }
 
+        System.out.println("Unique key is " + uniqueKey);
         Map<JsonPrimitive, JsonObject> expectedValueMap = arrayOfJsonObjectToMap(expected, uniqueKey);
         Map<JsonPrimitive, JsonObject> actualValueMap = arrayOfJsonObjectToMap(actual, uniqueKey);
         for (JsonPrimitive id : expectedValueMap.keySet()) {
@@ -289,7 +291,11 @@ public class JsonCompare {
                     continue;
                 }
                 if (expectedElement instanceof JsonObject) {
-                    if (compareJson(parentLevel, expectedElement.getAsJsonObject(), actualElement.getAsJsonObject()).isPassed()) {
+                    JsonCompareResult r =compareJson(parentLevel, expectedElement.getAsJsonObject(), actualElement.getAsJsonObject());
+                    //这里已经有两个最终结果了
+                    result.addAll(r.getFieldFailures());
+
+                    if (r.isPassed() == true) {
                         matched.add(j);
                         matchFound = true;
                         break;
@@ -324,8 +330,27 @@ public class JsonCompare {
             result.add(failure);
         }
 
+        result = dedupleJsonArrayCompareResult(result);
+
         return result;
     }
 
+    private static List<FieldFailure> dedupleJsonArrayCompareResult(List<FieldFailure> result) {
+        Set<String> set = new HashSet<>();
+        Iterator<FieldFailure> itr = result.iterator();
+        while(itr.hasNext()) {
+            FieldFailure failure = itr.next();
+            String field = failure.getField();
+            for(String s : set) {
+                if(s.contains(field)) {
+                    itr.remove();
+                    break;
+                }
+            }
+            set.add(field);
+        }
+
+        return result;
+    }
 
 }
