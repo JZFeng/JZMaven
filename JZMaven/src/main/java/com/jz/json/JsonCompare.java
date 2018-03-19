@@ -24,11 +24,12 @@ public class JsonCompare {
 
     public static void main(String[] args) throws IOException {
 
+
         JsonParser parser = new JsonParser();
-        String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/O.json"));
+        String json = convertFormattedJson2Raw(new File("./JZMaven/src/main/java/com/jz/json/testdata/O.json"));
         JsonObject o1 = parser.parse(json).getAsJsonObject();
 
-        json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/D.json"));
+        json = convertFormattedJson2Raw(new File("./JZMaven/src/main/java/com/jz/json/testdata/D.json"));
         JsonObject o2 = parser.parse(json).getAsJsonObject();
         String[] strs = new String[]{
                 "$._type"
@@ -48,8 +49,9 @@ public class JsonCompare {
 
     }
 
+
     public static JsonCompareResult jsonCompareResult = new JsonCompareResult();
-    public static JsonCompareMode mode = JsonCompareMode.STRICT;
+    public static JsonCompareMode mode = JsonCompareMode.LENIENT;
 
 
     public static JsonCompareResult compareJson(JsonObject o1, JsonObject o2) {
@@ -219,7 +221,7 @@ public class JsonCompare {
             return;
         }
 
-        System.out.println("Unique key is " + uniqueKey);
+//        System.out.println("Unique key is " + uniqueKey);
         Map<JsonPrimitive, JsonObject> expectedValueMap = arrayOfJsonObjectToMap(expected, uniqueKey);
         Map<JsonPrimitive, JsonObject> actualValueMap = arrayOfJsonObjectToMap(actual, uniqueKey);
         for (JsonPrimitive id : expectedValueMap.keySet()) {
@@ -314,7 +316,7 @@ public class JsonCompare {
             }
             if (!matchFound) {
                 String failureMsg = "\"" + expectedElement + "\"" + " is missing from actual JsonArray.";
-                FieldFailure failure = new FieldFailure(parentLevel, FieldFailureType.MISSING_JSONARRAY_ELEMENT, expectedElement, null, failureMsg);
+                FieldFailure failure = new FieldFailure(parentLevel, FieldFailureType.UNEXPECTED_JSONARRAY_ELEMENT, expectedElement, null, failureMsg);
                 result.add(failure);
             }
         }
@@ -330,14 +332,17 @@ public class JsonCompare {
             result.add(failure);
         }
 
-        result = dedupleJsonArrayCompareResult(result);
+//        result = dedupleJsonArrayCompareResult(result);
 
         return result;
     }
 
+    /*
+    不确定是否真的需要这个filter过滤一下,VLS那个Json，比较下来没有问题。
+     */
     private static List<FieldFailure> dedupleJsonArrayCompareResult(List<FieldFailure> result) {
         Set<String> set = new HashSet<>();
-        Iterator<FieldFailure> itr = result.iterator();
+  /*      Iterator<FieldFailure> itr = result.iterator();
         while(itr.hasNext()) {
             FieldFailure failure = itr.next();
             String field = failure.getField();
@@ -348,7 +353,7 @@ public class JsonCompare {
                 }
             }
             set.add(field);
-        }
+        }*/
 
         return result;
     }
