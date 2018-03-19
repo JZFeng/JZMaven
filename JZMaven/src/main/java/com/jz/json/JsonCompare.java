@@ -13,7 +13,6 @@ $.store.book[?(@.price < 10 && @.category == 'fiction')]
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.*;
 
 import com.google.gson.*;
@@ -45,7 +44,7 @@ public class JsonCompare {
         }
 
         JsonCompareResult result = compareJson(o1, o2);
-        System.out.println(result.getResultDetails());
+        System.out.println(result);
 
     }
 
@@ -72,7 +71,7 @@ public class JsonCompare {
     public static JsonCompareResult compareJson(JsonObject o1, JsonObject o2, Set<String> filters) {
         JsonCompareResult r = new JsonCompareResult();
         compareJson("", (JsonElement) o2, (JsonElement) o1, r);
-        return applyFilterstoResult(r, filters);
+        return applyFilters(r, filters);
     }
 
 

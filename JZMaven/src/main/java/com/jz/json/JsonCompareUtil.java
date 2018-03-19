@@ -168,7 +168,7 @@ public class JsonCompareUtil {
         return sb.toString().trim();
     }
 
-    public static JsonCompareResult applyFilterstoResult(JsonCompareResult result, Set<String> filters) {
+    public static JsonCompareResult applyFilters(JsonCompareResult result, Set<String> filters) {
 
         if (filters == null || filters.size() == 0) {
             return result;
