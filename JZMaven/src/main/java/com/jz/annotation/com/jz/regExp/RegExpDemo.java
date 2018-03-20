@@ -1,5 +1,7 @@
 package com.jz.annotation.com.jz.regExp;
 
+import org.junit.Assert;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,7 +32,9 @@ public class RegExpDemo {
         Matcher m = Pattern.compile(regex).matcher(source);
         for (int i = 0; i < groupOccurrence; i++)
             if (!m.find()) return source; // pattern not met, may also throw an exception here
+
         return new StringBuilder(source).replace(m.start(groupToReplace), m.end(groupToReplace), replacement).toString();
+
     }
 
 
