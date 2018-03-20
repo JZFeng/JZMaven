@@ -21,8 +21,21 @@ import static com.jz.json.JsonCompareUtil.*;
 
 public class JsonCompare {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, Exception {
 
+        /*
+        String field =  "$.listing.listingLifecycle.scheduledStartDate.value";
+        String filter= "$.listing.listingLifecycle.scheduledStartDate.value";
+        String regex = filter.replaceAll("(\\[)(\\d{0,})(\\])", "\\\\" + "$1" + "$2" + "\\\\" + "$3" );
+        if(regex.startsWith("$")) {
+            regex = "\\$" + regex.substring(1);
+
+        }
+
+        System.out.println(regex);
+        System.out.println(field);
+        System.out.println(field.matches(".*" + regex + ".*"));
+*/
 
         JsonParser parser = new JsonParser();
         String json = convertFormattedJson2Raw(new File("./JZMaven/src/main/java/com/jz/json/testdata/O.json"));
@@ -30,38 +43,35 @@ public class JsonCompare {
 
         json = convertFormattedJson2Raw(new File("./JZMaven/src/main/java/com/jz/json/testdata/D.json"));
         JsonObject o2 = parser.parse(json).getAsJsonObject();
-        String[] strs = new String[]{
-                "$._type"
-                , "$.errorMessage"
-                , "$.extension"
-                , "$.listing.termsAndPolicies.logisticsTerms.logisticsPlan[0].minDeliveryEstimate.estimateTreatment"
-                , "$.listing.listingProperties[2].propertyValues[0].dateValue"
-                , "$.listing.tradingSummary.lastVisitDate"
-                , "$.listing.listingLifecycle.scheduledStartDate.value"};
-        Set<String> filters = new TreeSet<String>();
-        for (String s : strs) {
-            filters.add(s);
-        }
+
+
+        Filter filter = new Filter(
+                new String[]{},
+                new String[]{"lastVisitDate", "$.listing.listingLifecycle.scheduledStartDate.value"});
 
         JsonCompareResult result = compareJson(o1, o2);
+        result = result.applyFilter(filter);
         System.out.println(result);
+
+
 
     }
 
 
-    public static JsonCompareResult jsonCompareResult = new JsonCompareResult();
     public static JsonCompareMode mode = JsonCompareMode.LENIENT;
+    public static JsonCompareResult jsonCompareResult = new JsonCompareResult(mode);
 
 
     public static JsonCompareResult compareJson(JsonObject o1, JsonObject o2) {
-        JsonCompareResult r = new JsonCompareResult();
+//        JsonCompareResult r = new JsonCompareResult();
+        JsonCompareResult r = new JsonCompareResult(mode);
         compareJson("", (JsonElement) o1, (JsonElement) o2, r);
         return r;
     }
 
 
     private static JsonCompareResult compareJson(String parentLevel, JsonObject o1, JsonObject o2) {
-        JsonCompareResult r = new JsonCompareResult();
+        JsonCompareResult r = new JsonCompareResult(mode);
         compareJson(parentLevel, (JsonElement) o1, (JsonElement) o2, r);
         return r;
     }
@@ -69,14 +79,16 @@ public class JsonCompare {
     //need support wild card. regressExpression?
     //Can define a separate classs called filter , or simply passing JsonPath.
     public static JsonCompareResult compareJson(JsonObject o1, JsonObject o2, Set<String> filters) {
-        JsonCompareResult r = new JsonCompareResult();
+//        JsonCompareResult r = new JsonCompareResult();
+        JsonCompareResult r = new JsonCompareResult(mode);
         compareJson("", (JsonElement) o2, (JsonElement) o1, r);
         return applyFilters(r, filters);
     }
 
 
     public static JsonCompareResult compareJsonArray(String parentLevel, JsonArray expected, JsonArray actual) {
-        JsonCompareResult r = new JsonCompareResult();
+//        JsonCompareResult r = new JsonCompareResult();
+        JsonCompareResult r = new JsonCompareResult(mode);
         compareJsonArray(parentLevel, expected, actual, r);
         return r;
     }

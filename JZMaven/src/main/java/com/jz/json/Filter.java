@@ -1,55 +1,52 @@
 package com.jz.json;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Filter {
-    List<String> fields;
-    List<FieldFailureType> types;
+    List<FieldFailureType> types = new ArrayList<FieldFailureType>();
+    List<String> fields = new ArrayList<String>();
 
     Filter() {
-        this.fields = new ArrayList<String>();
-        this.types = new ArrayList<FieldFailureType>();
+
     }
 
-    Filter(String[] fields, FieldFailureType[] types, boolean isOr) {
-        List<String> f = new ArrayList<>();
+
+    Filter(String[] types, String[] fields) {
+        Set<String> set = new HashSet<>();
+        for (FieldFailureType type : FieldFailureType.values()) {
+            set.add(type.name());
+        }
+        for(String type : types) {
+            if(set.contains(type)) {
+                this.types.add(FieldFailureType.valueOf(type));
+            }
+        }
+
         for (String field : fields) {
-            f.add(field);
+            if(field.length() > 0) {
+                this.fields.add(field);
+            }
         }
-
-        List<FieldFailureType> t = new ArrayList<>();
-        for (FieldFailureType type : types) {
-            t.add(type);
-        }
-
-        this.fields = f;
-        this.types = t;
     }
 
-    Filter(String[] fields, FieldFailureType[] types) {
-        List<String> f = new ArrayList<>();
+
+    Filter(FieldFailureType[] types, String[] fields) {
+        for (FieldFailureType type : types) {
+            this.types.add(type);
+        }
+
         for (String field : fields) {
-            f.add(field);
+            this.fields.add(field);
         }
 
-        List<FieldFailureType> t = new ArrayList<>();
-        for (FieldFailureType type : types) {
-            t.add(type);
-        }
-
-        this.fields = f;
-        this.types = t;
     }
 
-    Filter(List<String> fields, List<FieldFailureType> types, boolean isOr) {
-        this.fields = fields;
+    Filter(List<FieldFailureType> types, List<String> fields) {
         this.types = types;
-    }
-
-    Filter(List<String> fields, List<FieldFailureType> types) {
         this.fields = fields;
-        this.types = types;
     }
 
 }
