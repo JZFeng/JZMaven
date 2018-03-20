@@ -2,41 +2,41 @@ package com.jz.json;
 
 import java.util.*;
 
-public class JsonCompareResult {
-    private JsonCompareMode mode ;
-    private List<FieldFailure> fieldFailures = new ArrayList<FieldFailure>();
+public class CompareResult {
+    private CompareMode mode ;
+    private List<Failure> failures = new ArrayList<Failure>();
 
     public boolean isPassed() {
-        return (fieldFailures.size() == 0);
+        return (failures.size() == 0);
     }
 
-    JsonCompareResult() {
+    CompareResult() {
 
     }
 
-    JsonCompareResult(JsonCompareMode mode) {
+    CompareResult(CompareMode mode) {
         this.mode = mode;
     }
 
-    JsonCompareResult(JsonCompareMode mode, List<FieldFailure> failures) {
+    CompareResult(CompareMode mode, List<Failure> failures) {
         this.mode = mode;
-        this.fieldFailures.addAll(failures);
+        this.failures.addAll(failures);
     }
 
     public static void main(String[] args) {
     }
 
 
-    public void setMode(JsonCompareMode mode) {
+    public void setMode(CompareMode mode) {
         this.mode = mode;
     }
 
-    JsonCompareResult(List<FieldFailure> fieldFailures) {
-        this.fieldFailures.addAll(fieldFailures);
+    CompareResult(List<Failure> failures) {
+        this.failures.addAll(failures);
     }
 
-    public boolean addFieldComparisonFailure(FieldFailure failure) {
-        return this.fieldFailures.add(failure);
+    public boolean addFieldComparisonFailure(Failure failure) {
+        return this.failures.add(failure);
     }
 
     @Override
@@ -48,44 +48,44 @@ public class JsonCompareResult {
         return getResultInfo(true);
     }
 
-    public List<FieldFailure> getFieldFailures() {
-        return fieldFailures;
+    public List<Failure> getFailures() {
+        return failures;
     }
 
     public int totalFailures() {
-        return fieldFailures.size();
+        return failures.size();
     }
 
 
-    public JsonCompareResult applyFilter(Filter filter) throws Exception {
+    public CompareResult applyFilter(Filter filter) throws Exception {
         //????????LinkedList???????,????????List<>?????????
-        List<FieldFailure> result = new LinkedList<>();
+        List<Failure> result = new LinkedList<>();
 
-        Map<FieldFailureType, List<FieldFailure>> map = getFieldFailureTypeListMap(fieldFailures);
+        Map<FailureType, List<Failure>> map = getFieldFailureTypeListMap(failures);
 
         if(mode != null && isValidFilter(filter)) {
 
-            List<FieldFailureType> typesToIgnore = filter.types;
+            List<FailureType> typesToIgnore = filter.types;
             List<String> fieldsToIgnore = filter.fields;
 
             //apply types
-            for(FieldFailureType type : typesToIgnore) {
+            for(FailureType type : typesToIgnore) {
                 if(map.containsKey(type)) {
                     map.remove(type);
                 }
             }
 
             //apply fields
-            for(Map.Entry<FieldFailureType, List<FieldFailure>> entry : map.entrySet()) {
+            for(Map.Entry<FailureType, List<Failure>> entry : map.entrySet()) {
                 result.addAll(entry.getValue());
             }
 
             for(String field : fieldsToIgnore) {
                 String regex = generateRegex(field);
 
-                Iterator<FieldFailure> itr = result.iterator();
+                Iterator<Failure> itr = result.iterator();
                 while(itr.hasNext()) {
-                    FieldFailure failure = itr.next();
+                    Failure failure = itr.next();
                     if(failure.getField().matches(regex)) {
                         itr.remove();
                     }
@@ -93,7 +93,7 @@ public class JsonCompareResult {
             }
         }
 
-        return new JsonCompareResult(mode, result );
+        return new CompareResult(mode, result );
     }
 
     private String generateRegex(String field) {
@@ -108,17 +108,17 @@ public class JsonCompareResult {
 
     private String getResultInfo(boolean withDetails) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Total " + fieldFailures.size() + " failures : ");
+        sb.append("Total " + failures.size() + " failures : ");
 
-        Map<FieldFailureType, List<FieldFailure>> map = getFieldFailureTypeListMap(fieldFailures);
+        Map<FailureType, List<Failure>> map = getFieldFailureTypeListMap(failures);
 
-        for (Map.Entry<FieldFailureType, List<FieldFailure>> entry : map.entrySet()) {
-            FieldFailureType type = entry.getKey();
-            List<FieldFailure> failures = entry.getValue();
+        for (Map.Entry<FailureType, List<Failure>> entry : map.entrySet()) {
+            FailureType type = entry.getKey();
+            List<Failure> failures = entry.getValue();
             int numOfFailures = failures.size();
             sb.append("\n\r" + "****************************************************\n\r");
             sb.append("[Failure Reason = " + type + "; " + "Number of Failures:" + numOfFailures + "]\r\n");
-            for (FieldFailure f : failures) {
+            for (Failure f : failures) {
                 if (withDetails) {
                     sb.append(f.toString());
                 } else {
@@ -132,14 +132,14 @@ public class JsonCompareResult {
     }
 
     private boolean isValidFilter(Filter filter) throws Exception {
-        Map<FieldFailureType, List<FieldFailure>> map = getFieldFailureTypeListMap(fieldFailures);
+        Map<FailureType, List<Failure>> map = getFieldFailureTypeListMap(failures);
 
         //validate type
-        Set<FieldFailureType> set = new HashSet<>();
-        for (FieldFailureType type : FieldFailureType.values()) {
+        Set<FailureType> set = new HashSet<>();
+        for (FailureType type : FailureType.values()) {
             set.add(type);
         }
-        for (FieldFailureType type : filter.types) {
+        for (FailureType type : filter.types) {
             if (!set.contains(type)) {
                 throw new Exception("\"" + type + "\"" + "is not a valid Failure type.");
             }
@@ -156,9 +156,9 @@ public class JsonCompareResult {
     }
 
 
-//    private boolean isValidField(String field, JsonCompareMode mode) {
-    private static boolean isValidField(String field, JsonCompareMode mode) {
-        if(mode == JsonCompareMode.LENIENT) {
+//    private boolean isValidField(String field, CompareMode mode) {
+    private static boolean isValidField(String field, CompareMode mode) {
+        if(mode == CompareMode.LENIENT) {
             int index = field.indexOf("[");
             while (index != -1) {
                 char c = field.charAt(index + 1);
@@ -169,7 +169,7 @@ public class JsonCompareResult {
                 field = field.substring(field.indexOf("]") + 1);
                 index = field.indexOf("[");
             }
-        } else if (mode == JsonCompareMode.STRICT) {
+        } else if (mode == CompareMode.STRICT) {
             int index = field.indexOf("[");
             while (index != -1) {
                 char c = field.charAt(index + 1);
@@ -186,12 +186,12 @@ public class JsonCompareResult {
     }
 
 
-    private Map<FieldFailureType, List<FieldFailure>> getFieldFailureTypeListMap(List<FieldFailure> failures ) {
-        Map<FieldFailureType, List<FieldFailure>> map = new HashMap<FieldFailureType, List<FieldFailure>>();
-        for (FieldFailure f : failures) {
-            FieldFailureType type = f.getFailureType();
+    private Map<FailureType, List<Failure>> getFieldFailureTypeListMap(List<Failure> failures ) {
+        Map<FailureType, List<Failure>> map = new HashMap<FailureType, List<Failure>>();
+        for (Failure f : failures) {
+            FailureType type = f.getFailureType();
             if (!map.containsKey(type)) {
-                map.put(type, new ArrayList<FieldFailure>());
+                map.put(type, new ArrayList<Failure>());
             }
             map.get(type).add(f);
         }

@@ -1,7 +1,7 @@
 package com.jz.json;
 
 //First Jason file as reference;
-public enum FieldFailureType {
+public enum FailureType {
     UNEQUAL_VALUE,
     MISSING_FIELD,
     UNEXPECTED_FIELD,

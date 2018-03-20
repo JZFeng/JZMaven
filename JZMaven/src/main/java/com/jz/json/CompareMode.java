@@ -1,5 +1,5 @@
 package com.jz.json;
 
-public enum JsonCompareMode {
+public enum CompareMode {
     STRICT, LENIENT;
 }

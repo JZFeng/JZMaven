@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 public class Filter {
-    List<FieldFailureType> types = new ArrayList<FieldFailureType>();
+    List<FailureType> types = new ArrayList<FailureType>();
     List<String> fields = new ArrayList<String>();
 
     Filter() {
@@ -16,12 +16,12 @@ public class Filter {
 
     Filter(String[] types, String[] fields) {
         Set<String> set = new HashSet<>();
-        for (FieldFailureType type : FieldFailureType.values()) {
+        for (FailureType type : FailureType.values()) {
             set.add(type.name());
         }
         for(String type : types) {
             if(set.contains(type)) {
-                this.types.add(FieldFailureType.valueOf(type));
+                this.types.add(FailureType.valueOf(type));
             }
         }
 
@@ -33,8 +33,8 @@ public class Filter {
     }
 
 
-    Filter(FieldFailureType[] types, String[] fields) {
-        for (FieldFailureType type : types) {
+    Filter(FailureType[] types, String[] fields) {
+        for (FailureType type : types) {
             this.types.add(type);
         }
 
@@ -44,7 +44,7 @@ public class Filter {
 
     }
 
-    Filter(List<FieldFailureType> types, List<String> fields) {
+    Filter(List<FailureType> types, List<String> fields) {
         this.types = types;
         this.fields = fields;
     }

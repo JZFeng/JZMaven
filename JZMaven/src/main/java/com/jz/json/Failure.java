@@ -2,14 +2,14 @@ package com.jz.json;
 
 import com.google.gson.JsonElement;
 
-public class FieldFailure {
+public class Failure {
     private String field; //absolute JsonPath
-    private FieldFailureType failureType; //enum
+    private FailureType failureType; //enum
     private JsonElement expected;
     private JsonElement actual;
     private String failureMsg;
 
-    FieldFailure(String field, FieldFailureType failureType, JsonElement expected, JsonElement actual, String failureMsg) {
+    Failure(String field, FailureType failureType, JsonElement expected, JsonElement actual, String failureMsg) {
         this.field = field;
         this.failureType = failureType;
         this.expected = expected;
@@ -17,21 +17,21 @@ public class FieldFailure {
         this.failureMsg = failureMsg;
     }
 
-    FieldFailure(String field, FieldFailureType failureType, JsonElement expected, JsonElement actual) {
+    Failure(String field, FailureType failureType, JsonElement expected, JsonElement actual) {
         this.field = field;
         this.failureType = failureType;
         this.expected = expected;
         this.actual = actual;
     }
 
-    FieldFailure(String field, FieldFailureType failureType) {
+    Failure(String field, FailureType failureType) {
         this.field = field;
         this.failureType = failureType;
         this.expected = null;
         this.actual = null;
     }
 
-    FieldFailure() {
+    Failure() {
         this.field = null;
         this.failureType = null;
         this.expected = null;
@@ -42,7 +42,7 @@ public class FieldFailure {
         return field;
     }
 
-    public FieldFailureType getFailureType() {
+    public FailureType getFailureType() {
         return failureType;
     }
 
@@ -62,7 +62,7 @@ public class FieldFailure {
         this.field = field;
     }
 
-    public void setFailureType(FieldFailureType failureType) {
+    public void setFailureType(FailureType failureType) {
         this.failureType = failureType;
     }
 
@@ -86,7 +86,7 @@ public class FieldFailure {
     }
 
 
-    /*public static String getFailureReason(FieldFailureType failureType) {
+    /*public static String getFailureReason(FailureType failureType) {
         String failureReason = "";
         switch (failureType) {
             case UNEQUAL_VALUE: {

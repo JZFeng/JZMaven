@@ -11,7 +11,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-public class JsonCompareUtil {
+public class Utils {
 
     public static List<JsonElement> jsonArrayToList(JsonArray expected) {
         List<JsonElement> jsonElements = new ArrayList<JsonElement>(expected.size());
@@ -168,23 +168,23 @@ public class JsonCompareUtil {
         return sb.toString().trim();
     }
 
-    public static JsonCompareResult applyFilters(JsonCompareResult result, Set<String> filters) {
+    public static CompareResult applyFilters(CompareResult result, Set<String> filters) {
 
         if (filters == null || filters.size() == 0) {
             return result;
         }
 
-        List<FieldFailure> failures = result.getFieldFailures();
-        Iterator<FieldFailure> itr = failures.iterator();
+        List<Failure> failures = result.getFailures();
+        Iterator<Failure> itr = failures.iterator();
         while (itr.hasNext()) {
-            FieldFailure f = itr.next();
+            Failure f = itr.next();
             String field = f.getField();
             if (filters.contains(field)) {
                 itr.remove();
             }
         }
 
-        return new JsonCompareResult(failures);
+        return new CompareResult(failures);
     }
 
     public static boolean allSimpleValues(JsonArray array) {
