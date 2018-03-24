@@ -1,16 +1,5 @@
 package com.jz.json;
 
-
-/*
-Open Question: JsonArray 的filter怎么做？JsonArray的某一个值不需要比。
-JsonPaths:
-$.store.book[?(@.author =~ /.*RESS/i )]
-$.store.book[?(@.price < 10 && @.category == 'fiction')]
-
-
-
- */
-
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -45,9 +34,7 @@ public class JsonCompare {
     public static CompareMode mode = CompareMode.STRICT;
     public static CompareResult jsonCompareResult = new CompareResult(mode);
 
-
     public static CompareResult compareJson(JsonObject o1, JsonObject o2) {
-//        CompareResult r = new CompareResult();
         CompareResult r = new CompareResult(mode);
         compareJson("", (JsonElement) o1, (JsonElement) o2, r);
         return r;
@@ -60,10 +47,7 @@ public class JsonCompare {
         return r;
     }
 
-    //need support wild card. regressExpression?
-    //Can define a separate classs called filter , or simply passing JsonPath.
     public static CompareResult compareJson(JsonObject o1, JsonObject o2, Set<String> filters) {
-//        CompareResult r = new CompareResult();
         CompareResult r = new CompareResult(mode);
         compareJson("", (JsonElement) o2, (JsonElement) o1, r);
         return applyFilters(r, filters);
@@ -71,14 +55,12 @@ public class JsonCompare {
 
 
     public static CompareResult compareJsonArray(String parentLevel, JsonArray expected, JsonArray actual) {
-//        CompareResult r = new CompareResult();
         CompareResult r = new CompareResult(mode);
         compareJsonArray(parentLevel, expected, actual, r);
         return r;
     }
 
     private static void compareJson(String parentLevel, JsonElement o1, JsonElement o2, CompareResult result) {
-
         if (o1 == null && o2 == null) {
             return;
         }
@@ -118,7 +100,7 @@ public class JsonCompare {
                         failure = new Failure(currentLevelOfOrg, FailureType.DIFFERENT_JSONARRY_SIZE, ja1, ja2, failureMsg);
                         result.addFieldComparisonFailure(failure);
                     } else {
-                        compareJsonArray(currentLevelOfOrg, ja1, ja2, result); //休要修改成返回为List<>;
+                        compareJsonArray(currentLevelOfOrg, ja1, ja2, result);
                     }
                 } else if (je1.isJsonObject()) {
                     //Compare two JsonObject;
@@ -204,7 +186,6 @@ public class JsonCompare {
         }
     }
 
-    //要传入level信息，这样可以new一个FieldComparisonFailure()
     protected static void compareJsonArrayOfJsonObjects(String parentLevel, JsonArray expected, JsonArray actual, CompareResult result) {
         String uniqueKey = findUniqueKey(expected);
         Failure failure = new Failure();
@@ -228,7 +209,7 @@ public class JsonCompare {
             }
             JsonObject expectedValue = expectedValueMap.get(id);
             JsonObject actualValue = actualValueMap.get(id);
-            compareJson(parentLevel,  (JsonElement) expectedValue,(JsonElement) actualValue, result); //或者是currentLevelOfOrg[*] ???
+            compareJson(parentLevel, (JsonElement) expectedValue, (JsonElement) actualValue, result); //或者是currentLevelOfOrg[*] ???
         }
         for (JsonPrimitive id : actualValueMap.keySet()) {
             if (!expectedValueMap.containsKey(id)) {
@@ -278,7 +259,7 @@ public class JsonCompare {
 
     protected static List<Failure> recursivelyCompareJsonArray(String parentLevel, JsonArray expected, JsonArray actual) {
         List<Failure> result = new ArrayList<>();
-        Set<Integer> matched = new HashSet<Integer>(); //保存actual里已经被匹配的元素。
+        Set<Integer> matched = new HashSet<Integer>(); //Save the matched element from actual
         for (int i = 0; i < expected.size(); ++i) {
             JsonElement expectedElement = expected.get(i);
             boolean matchFound = false;
@@ -288,8 +269,8 @@ public class JsonCompare {
                     continue;
                 }
                 if (expectedElement instanceof JsonObject) {
-                    CompareResult r =compareJson(parentLevel, expectedElement.getAsJsonObject(), actualElement.getAsJsonObject());
-                    //要把所有结果的记录下来，返回之前de-dupe.
+                    CompareResult r = compareJson(parentLevel, expectedElement.getAsJsonObject(), actualElement.getAsJsonObject());
+                    //save all the results, can de-dupe if necessary.
                     result.addAll(r.getFailures());
 
                     if (r.isPassed() == true) {
@@ -333,7 +314,7 @@ public class JsonCompare {
     }
 
     /*
-    不确定是否真的需要这个filter过滤一下,VLS那个Json，比较下来没有问题。
+    Not sure whether we need this kind of filter.
      */
     private static List<Failure> dedupleJsonArrayCompareResult(List<Failure> result) {
         Set<String> set = new HashSet<>();
