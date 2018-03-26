@@ -40,7 +40,7 @@ public class JsonCompare {
     }
 
     public static CompareResult compareJson(JsonObject o1, JsonObject o2, String m) {
-        mode = CompareMode.valueOf(m);
+        mode = CompareMode.valueOf(m.trim().toUpperCase());
         CompareResult r = new CompareResult(mode);
         compareJson("", (JsonElement) o1, (JsonElement) o2, r);
         return r;
