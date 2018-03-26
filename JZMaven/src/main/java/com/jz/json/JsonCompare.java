@@ -22,17 +22,16 @@ public class JsonCompare {
 
         Filter filter = new Filter(
                 new String[]{},
-                new String[]{"lastVisitDate", "$.listing.listingLifecycle.scheduledStartDate.value", "listingProperties[2]"});
+                new String[]{"lastVisitDate", "$.listing.listingLifecycle.scheduledStartDate.value", "listingProperties[]"});
 
-        CompareResult result = compareJson(o1, o2);
+        CompareResult result = compareJson(o1, o2, "LENIENT");
         result = result.applyFilter(filter);
         System.out.println(result);
 
     }
 
 
-    public static CompareMode mode = CompareMode.STRICT;
-    public static CompareResult jsonCompareResult = new CompareResult(mode);
+    private static CompareMode mode = CompareMode.STRICT;
 
     public static CompareResult compareJson(JsonObject o1, JsonObject o2) {
         CompareResult r = new CompareResult(mode);
@@ -40,23 +39,16 @@ public class JsonCompare {
         return r;
     }
 
+    public static CompareResult compareJson(JsonObject o1, JsonObject o2, String m) {
+        mode = CompareMode.valueOf(m);
+        CompareResult r = new CompareResult(mode);
+        compareJson("", (JsonElement) o1, (JsonElement) o2, r);
+        return r;
+    }
 
     private static CompareResult compareJson(String parentLevel, JsonObject o1, JsonObject o2) {
         CompareResult r = new CompareResult(mode);
         compareJson(parentLevel, (JsonElement) o1, (JsonElement) o2, r);
-        return r;
-    }
-
-    public static CompareResult compareJson(JsonObject o1, JsonObject o2, Set<String> filters) {
-        CompareResult r = new CompareResult(mode);
-        compareJson("", (JsonElement) o2, (JsonElement) o1, r);
-        return applyFilters(r, filters);
-    }
-
-
-    public static CompareResult compareJsonArray(String parentLevel, JsonArray expected, JsonArray actual) {
-        CompareResult r = new CompareResult(mode);
-        compareJsonArray(parentLevel, expected, actual, r);
         return r;
     }
 
@@ -143,8 +135,14 @@ public class JsonCompare {
         }
     }
 
+    private static CompareResult compareJsonArray(String parentLevel, JsonArray expected, JsonArray actual) {
+        CompareResult r = new CompareResult(mode);
+        compareJsonArray(parentLevel, expected, actual, r);
+        return r;
+    }
 
-    public static void compareJsonArray(String parentLevel, JsonArray expected, JsonArray actual, CompareResult result) {
+    private static void compareJsonArray(
+            String parentLevel, JsonArray expected, JsonArray actual, CompareResult result) {
         if (expected.size() != actual.size()) {
             String failureMsg = "Different JsonArray size: " + expected.size() + " VS " + actual.size() + "\n\r" + expected + ";\n\r" + actual;
             Failure failure = new Failure(parentLevel, FailureType.DIFFERENT_JSONARRY_SIZE, expected, actual, failureMsg);
@@ -164,7 +162,8 @@ public class JsonCompare {
 
     }
 
-    public static void compareJsonPrimitive(String parentLevel, JsonPrimitive o1, JsonPrimitive o2, CompareResult result) {
+    private static void compareJsonPrimitive(
+            String parentLevel, JsonPrimitive o1, JsonPrimitive o2, CompareResult result) {
 
         String s1 = o1.getAsString().trim();
         String s2 = o2.getAsString().trim();
@@ -177,7 +176,8 @@ public class JsonCompare {
     }
 
 
-    protected static void compareJsonArrayWithStrictOrder(String parentLevel, JsonArray expected, JsonArray actual, CompareResult result) {
+    private static void compareJsonArrayWithStrictOrder(
+            String parentLevel, JsonArray expected, JsonArray actual, CompareResult result) {
         for (int j = 0; j < expected.size(); ++j) {
             JsonElement expectedValue = expected.get(j);
             JsonElement actualValue = actual.get(j);
@@ -186,7 +186,8 @@ public class JsonCompare {
         }
     }
 
-    protected static void compareJsonArrayOfJsonObjects(String parentLevel, JsonArray expected, JsonArray actual, CompareResult result) {
+    private static void compareJsonArrayOfJsonObjects(
+            String parentLevel, JsonArray expected, JsonArray actual, CompareResult result) {
         String uniqueKey = findUniqueKey(expected);
         Failure failure = new Failure();
         String failureMsg = null;
@@ -221,7 +222,8 @@ public class JsonCompare {
 
     }
 
-    protected static List<Failure> compareJsonArrayOfJsonPrimitives(String parentLevel, JsonArray expected, JsonArray actual) {
+    private static List<Failure> compareJsonArrayOfJsonPrimitives(
+            String parentLevel, JsonArray expected, JsonArray actual) {
         List<Failure> result = new ArrayList<>();
         Map<JsonElement, Integer> expectedCount = Utils.getCardinalityMap(jsonArrayToList(expected));
         Map<JsonElement, Integer> actualCount = Utils.getCardinalityMap(jsonArrayToList(actual));
@@ -257,7 +259,7 @@ public class JsonCompare {
     // This is expensive (O(n^2) -- yuck), but may be the only resort for some cases with loose array ordering, and no
     // easy way to uniquely identify each element.
 
-    protected static List<Failure> recursivelyCompareJsonArray(String parentLevel, JsonArray expected, JsonArray actual) {
+    private static List<Failure> recursivelyCompareJsonArray(String parentLevel, JsonArray expected, JsonArray actual) {
         List<Failure> result = new ArrayList<>();
         Set<Integer> matched = new HashSet<Integer>(); //Save the matched element from actual
         for (int i = 0; i < expected.size(); ++i) {
