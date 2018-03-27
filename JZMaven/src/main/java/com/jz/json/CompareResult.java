@@ -91,6 +91,8 @@ public class CompareResult {
                     }
                 }
             }
+        } else {
+            System.out.println("Please correct your filter first.");
         }
 
         return new CompareResult(mode, result );
@@ -108,7 +110,9 @@ public class CompareResult {
 
     private String getResultInfo(boolean withDetails) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Total " + failures.size() + " failures : ");
+        if(failures.size() != 0) {
+            sb.append("Total " + failures.size() + " failures : ");
+        }
 
         Map<FailureType, List<Failure>> map = getFieldFailureTypeListMap(failures);
 
@@ -149,7 +153,7 @@ public class CompareResult {
         //validate fields
         for (String field : filter.fields) {
             if (!isValidField(field, mode)) {
-                System.out.println(field + " is not a valid filter" );
+                System.out.println(field + " is not a valid field filter" );
                 return false;
             }
         }
@@ -165,7 +169,6 @@ public class CompareResult {
             while (index != -1) {
                 char c = field.charAt(index + 1);
                 if (c != ']') {
-                    System.out.println("In " + mode + " mode, " + field + " should have not number between [].");
                     return false;
                 }
                 field = field.substring(field.indexOf("]") + 1);
@@ -176,7 +179,6 @@ public class CompareResult {
             while (index != -1) {
                 char c = field.charAt(index + 1);
                 if (c == ']') {
-                    System.out.println("In " + mode + " mode, " + field + " should have number between [].");
                     return false;
                 }
                 field = field.substring(field.indexOf("]") + 1);

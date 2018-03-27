@@ -32,7 +32,7 @@ public class JsonCompare {
 
         Filter filter = new Filter(
                 new String[]{},
-                new String[]{ /*"lastVisitDate", "$.listing.listingLifecycle.scheduledStartDate.value", "listingProperties[2]" */});
+                new String[]{ "lastVisitDate", "$.listing.listingLifecycle.scheduledStartDate.value", "listingProperties[2]" });
 
         CompareResult result = compareJson(o1, o2, "LENIENT");
         result = result.applyFilter(filter);
