@@ -1,11 +1,23 @@
+/**
+ * Refactoring needed: avoid mutable static state
+ */
+
 package com.jz.json;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonParser;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
-
-import com.google.gson.*;
-
+import java.util.Set;
+import java.util.Map;
+import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Queue;
+import java.util.List;
+import java.util.HashSet;
 import static com.jz.json.Utils.*;
 
 public class JsonCompare {
@@ -31,7 +43,7 @@ public class JsonCompare {
     }
 
 
-    private static CompareMode mode = CompareMode.STRICT;
+    private static CompareMode mode = CompareMode.LENIENT;
 
     public static CompareResult compareJson(JsonObject o1, JsonObject o2) {
         CompareResult r = new CompareResult(mode);
