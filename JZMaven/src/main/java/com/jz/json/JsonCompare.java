@@ -20,7 +20,7 @@ import static com.jz.json.Utils.*;
 
 public class JsonCompare {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, WrongFilterException {
 
         JsonParser parser = new JsonParser();
         String json = convertFormattedJson2Raw(new File("./JZMaven/src/main/java/com/jz/json/testdata/O.json"));

@@ -57,7 +57,7 @@ public class CompareResult {
     }
 
 
-    public CompareResult applyFilter(Filter filter)  {
+    public CompareResult applyFilter(Filter filter) throws WrongFilterException {
 
         List<Failure> result = new LinkedList<>();
 
@@ -135,7 +135,7 @@ public class CompareResult {
         return sb.toString().trim();
     }
 
-    private boolean isValidFilter(Filter filter)  {
+    private boolean isValidFilter(Filter filter) throws WrongFilterException {
         Map<FailureType, List<Failure>> map = getFieldFailureTypeListMap(failures);
 
         //validate type
@@ -145,16 +145,15 @@ public class CompareResult {
         }
         for (FailureType type : filter.types) {
             if (!set.contains(type)) {
-                System.out.println("\"" + type + "\"" + "is not a valid Failure type.");
-                return false;
+                throw new WrongFilterException("\"" + type + "\"" + "is not a valid Failure type.");
+//                System.out.println("\"" + type + "\"" + "is not a valid Failure type.");
             }
         }
 
         //validate fields
         for (String field : filter.fields) {
             if (!isValidField(field, mode)) {
-                System.out.println(field + " is not a valid field filter" );
-                return false;
+                throw new WrongFilterException(field + " is not a valid field filter" );
             }
         }
 
