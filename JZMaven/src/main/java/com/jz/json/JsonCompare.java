@@ -20,7 +20,7 @@ import static com.jz.json.Utils.*;
 
 public class JsonCompare {
 
-    public static void main(String[] args) throws IOException, Exception {
+    public static void main(String[] args) throws IOException {
 
         JsonParser parser = new JsonParser();
         String json = convertFormattedJson2Raw(new File("./JZMaven/src/main/java/com/jz/json/testdata/O.json"));
@@ -32,9 +32,9 @@ public class JsonCompare {
 
         Filter filter = new Filter(
                 new String[]{},
-                new String[]{"lastVisitDate", "$.listing.listingLifecycle.scheduledStartDate.value", "listingProperties[2]"});
+                new String[]{ /*"lastVisitDate", "$.listing.listingLifecycle.scheduledStartDate.value", "listingProperties[2]" */});
 
-        CompareResult result = compareJson(o1, o2, "STRICT");
+        CompareResult result = compareJson(o1, o2, "LENIENT");
         result = result.applyFilter(filter);
         System.out.println(result);
 
