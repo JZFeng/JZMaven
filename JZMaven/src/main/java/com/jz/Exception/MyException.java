@@ -8,6 +8,18 @@ package com.jz.Exception;
  */
 public class MyException extends RuntimeException {
 
+    public static void main(String[] args) {
+
+        String[] sexs = {"MAN", "WOMAN", "NEUTRAL"};
+        for (int i = 0; i < sexs.length; i++) {
+            if ("NEUTRAL".equals(sexs[i])) {
+                throw new MyException("You are neutral.");
+            } else {
+                System.out.println(sexs[i]);
+            }
+        }
+    }
+
     private static final long serialVersionUID = 1L;
 
     /**
