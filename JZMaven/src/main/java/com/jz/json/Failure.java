@@ -85,45 +85,4 @@ public class Failure {
         return sb.toString().trim();
     }
 
-
-    /*public static String getFailureReason(FailureType failureType) {
-        String failureReason = "";
-        switch (failureType) {
-            case UNEQUAL_VALUE: {
-                failureReason = "FieldValueNotIdentical";
-                break;
-            }
-            case MISSING_FIELD: {
-                failureReason = "MissingFieldFrom2ndJsonObject";
-                break;
-            }
-            case UNEXPECTED_FIELD: {
-                failureReason = "UnexpectedFieldFrom2ndJsonObject";
-                break;
-            }
-            case DIFFERENT_JSONARRY_SIZE: {
-                failureReason = "DifferentJsonArraySize";
-                break;
-            }
-            case MISSING_JSONARRAY_ELEMENT: {
-                failureReason = "MissingJsonArrayElement";
-                break;
-            }
-            case UNEXPECTED_JSONARRAY_ELEMENT: {
-                failureReason = "UnexpectedJsonArrayElement";
-                break;
-            }
-            case DIFFERENT_OCCURENCE_JSONARRAY_ELEMENT: {
-                failureReason = "DifferentOccurenceOfAJsonArrayElement";
-                break;
-            }
-
-            default: {
-                failureReason = "UnknownReason";
-                break;
-            }
-        }
-
-        return failureReason;
-    }*/
 }
