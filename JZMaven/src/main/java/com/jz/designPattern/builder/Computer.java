@@ -9,11 +9,11 @@ public class Computer {
     private List<String> parts = new ArrayList<String>();
 
     //用于将组件组装到电脑里
-    public void Add(String part) {
+    public void add(String part) {
         parts.add(part);
     }
 
-    public void Show() {
+    public void show() {
         for (int i = 0; i < parts.size(); i++) {
             System.out.println("组件" + parts.get(i) + "装好了");
         }

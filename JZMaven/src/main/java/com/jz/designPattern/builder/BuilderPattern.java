@@ -9,12 +9,12 @@ public class BuilderPattern {
         Builder builder = new ConcreteBuilder();
 
 //沟通需求后，老板叫装机人员去装电脑
-        director.Construct(builder);
+        director.construct(builder);
 
 //装完后，组装人员搬来组装好的电脑
-        Computer computer = builder.GetComputer();
+        Computer computer = builder.getComputer();
 //组装人员展示电脑给小成看
-        computer.Show();
+        computer.show();
 
     }
 

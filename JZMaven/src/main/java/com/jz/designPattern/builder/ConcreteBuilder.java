@@ -6,23 +6,23 @@ public class ConcreteBuilder extends Builder {
 
     //组装产品
     @Override
-    public void BuildCPU() {
-        computer.Add("组装CPU");
+    public void buildCPU() {
+        computer.add("组装CPU");
     }
 
     @Override
-    public void BuildMainboard() {
-        computer.Add("组装主板");
+    public void buildMainboard() {
+        computer.add("组装主板");
     }
 
-    public void BuilderHD() {
-        computer.Add("组装主板");
+    public void builderHD() {
+        computer.add("组装主板");
     }
 
 
     //返回组装成功的电脑
     @Override
-    public Computer GetComputer() {
+    public Computer getComputer() {
         return computer;
     }
 }
