@@ -6,6 +6,7 @@ public class Pizza {
     private boolean pepperoni;
     private boolean bacon;
 
+    //user builder to construct a pizza
     private Pizza(Builder builder) {
         this.size = builder.size;
         this.cheese = builder.cheese;

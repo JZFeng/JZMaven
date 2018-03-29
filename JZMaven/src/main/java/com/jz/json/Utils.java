@@ -151,21 +151,24 @@ public class Utils {
 
     }
 
+//    refactor, using try with resource statement
     public static String convertFormattedJson2Raw(File f) throws IOException {
-        BufferedReader br = new BufferedReader(new FileReader(f));
-        String json = br.readLine();
-        StringBuilder sb = new StringBuilder();
-        while (json != null && json.length() > 0) {
-            json = json.trim();
-            while (json.startsWith("\t")) {
-                json = json.replaceFirst("\t", "");
+        try(BufferedReader br = new BufferedReader(new FileReader(f))) {
+            String json = br.readLine();
+            StringBuilder sb = new StringBuilder();
+            while (json != null && json.length() > 0) {
+                json = json.trim();
+                while (json.startsWith("\t")) {
+                    json = json.replaceFirst("\t", "");
+                }
+                sb.append(json);
+                json = br.readLine();
             }
-            sb.append(json);
-            json = br.readLine();
-        }
-        br.close();
+            br.close();
 
-        return sb.toString().trim();
+            return sb.toString().trim();
+        }
+
     }
 
     public static CompareResult applyFilters(CompareResult result, Set<String> filters) {
