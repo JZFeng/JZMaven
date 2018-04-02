@@ -1,9 +1,6 @@
 package com.jz.json;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import com.google.gson.*;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -151,9 +148,9 @@ public class Utils {
 
     }
 
-//    refactor, using try with resource statement
+    //    refactor, using try with resource statement
     public static String convertFormattedJson2Raw(File f) throws IOException {
-        try(BufferedReader br = new BufferedReader(new FileReader(f))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
             String json = br.readLine();
             StringBuilder sb = new StringBuilder();
             while (json != null && json.length() > 0) {
@@ -207,5 +204,262 @@ public class Utils {
         }
         return true;
     }
+
+    public static List<JsonElementWithLevel> getJsonElementByPath(String path, JsonObject source) {
+        List<JsonElementWithLevel> result = new ArrayList<>();
+        if (path == null || path.length() == 0 || source == null || source.isJsonNull()) {
+            return result;
+        }
+
+        Map<String, List<Range>> ranges = generateRanges(path);
+        Map<String, List<Range>> matchedRanges = new LinkedHashMap<>();
+        String regex = generateRegex(path);
+
+        Queue<JsonElementWithLevel> queue = new LinkedList<JsonElementWithLevel>();
+        queue.offer(new JsonElementWithLevel(source, "$"));
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            for (int i = 0; i < size; i++) {
+                JsonElementWithLevel org = queue.poll();
+                String currentLevel = org.getLevel();
+                JsonElement je1 = org.getJsonElement();
+                System.out.println(currentLevel);
+
+                if (currentLevel.matches(regex) && isMatched(currentLevel, ranges, matchedRanges)) {
+                    result.add(org);
+                }
+
+                if (je1.isJsonPrimitive()) {
+                    //do nothing
+                } else if (je1.isJsonArray()) {
+                    JsonArray ja1 = je1.getAsJsonArray();
+                    for (int j = 0; j < ja1.size(); j++) {
+                        queue.offer(new JsonElementWithLevel(ja1.get(j), currentLevel + "[" + j + "]"));
+                    }
+                } else if (je1.isJsonObject()) {
+                    JsonObject jo1 = je1.getAsJsonObject();
+                    for (Map.Entry<String, JsonElement> entry : jo1.entrySet()) {
+                        String key = entry.getKey();
+                        JsonElement value = entry.getValue();
+                        String level = currentLevel + "." + key;
+                        queue.offer(new JsonElementWithLevel(value, level));
+                    }
+                }
+            }
+        }
+
+
+        return result;
+    }
+
+
+    /**
+     * @param currentLevel  $.courses[i].grade
+     * @param ranges
+     * @param matchedRanges
+     * @return true if i in matchedRange();
+     */
+
+    private static boolean isMatched(
+            String currentLevel, Map<String, List<Range>> ranges, Map<String, List<Range>> matchedRanges) {
+
+        StringBuilder prefix = new StringBuilder();
+        int index = 0;
+        while ((index = currentLevel.indexOf('[')) != -1) {
+            //update matchedRanges
+            prefix.append(currentLevel.substring(0, index) + "[]");
+            int i = Integer.parseInt(currentLevel.substring(index + 1, currentLevel.indexOf(']')));
+
+            if (!matchedRanges.containsKey(prefix)) {
+                for (Map.Entry<String, List<Range>> entry : ranges.entrySet()) {
+                    String key = entry.getKey();
+                    List<Range> value = entry.getValue();
+                    int idx = prefix.indexOf(key);
+                    if (idx != -1 && prefix.toString().substring(idx).equals(key)) {
+                        matchedRanges.put(prefix.toString(), value);
+                    }
+                }
+            }
+
+            /*
+            ???????
+            modules.RETURNS.maxView.value[]
+            modules.RETURNS.maxView.value[].value[]
+            modules.RETURNS.maxView.value[].value[].textSpans[].text
+            */
+            boolean tmp = isMatching(matchedRanges, prefix.toString(), i);
+            if (tmp) {
+                currentLevel = currentLevel.substring(currentLevel.indexOf(']') + 1);
+            } else {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
+    private static boolean isMatching(Map<String, List<Range>> matchedRanges, String prefix, int i) {
+        List<Range> rangeList = matchedRanges.get(prefix.toString().trim());
+        if (rangeList != null && rangeList.size() > 0) {
+            for (Range range : rangeList) {
+                if (i >= range.start && i <= range.end) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+
+    //update matchedRanges per currentLevel
+    private static void updateRangesByCurrentLevel(
+            String currentLevel, Map<String, List<Range>> ranges, Map<String, List<Range>> matchedRanges) {
+        if (!matchedRanges.containsKey(currentLevel)) {
+            //minView.actions[]  -> [2,2],[3,3]
+            //minView.actions[].[] -> [2,4]
+            //$.modules.BINSUMMARY.minView.actions[]
+            for (Map.Entry<String, List<Range>> entry : ranges.entrySet()) {
+                String key = entry.getKey();
+                List<Range> value = entry.getValue();
+                int idx = currentLevel.indexOf(key);
+                if (idx != -1 && currentLevel.substring(idx).equals(key)) {
+                    matchedRanges.put(currentLevel, value);
+                }
+            }
+
+        }
+    }
+
+
+    private static String generateRegex(String path) {
+        if (path.startsWith("$")) {
+            path = "\\$" + path.substring(1);
+        }
+
+        String regex = "(.*)(" + (path.replaceAll("(\\[)(\\d{0,})(\\])", "\\\\" + "$1" + "\\\\d{1,}" + "\\\\" + "$3")) + ")";
+
+        return regex;
+    }
+
+    //  x >= start && x <= end
+    public static class Range {
+        int start;
+        int end;
+
+        Range(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
+
+        @Override
+        public String toString() {
+            return "Start : " + start + " , end :" + end;
+        }
+    }
+
+    /**
+     * @param path minView.actions[  2 ,  3].action[2:5].URL
+     * @return minView.actions[] : [(2,2),(3,3)]
+     * minView.actions[].action[] : [(2,5)]
+     */
+    private static Map<String, List<Range>> generateRanges(String path) {
+        Map<String, List<Range>> ranges = new LinkedHashMap<>();
+        if (path == null || path.length() == 0) {
+            return ranges;
+        }
+
+        StringBuilder prefix = new StringBuilder();
+        int index = 0;
+        while ((index = path.indexOf('[')) != -1) {
+            prefix.append(path.substring(0, index) + "[]");
+            String r = path.substring(index + 1, path.indexOf(']'));
+            List<Range> range = generateRange(r);
+            if (range != null && range.size() > 0) {
+                ranges.put(prefix.toString().trim(), range);
+            }
+            path = path.substring(path.indexOf(']') + 1);
+        }
+
+        /*String regex = "\\[.*\\]";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(path);
+        while(matcher.find()) {
+        }*/
+
+        return ranges;
+    }
+
+
+    /**
+     * @param r String in []
+     *          [2]
+     *          [-2]
+     *          [0,1]
+     *          [:2]
+     *          [1:2]
+     *          [-2:]
+     *          [2:]
+     */
+    private static List<Range> generateRange(String r) {
+        List<Range> result = new ArrayList<>();
+        r = r.trim();
+        if (r == null || r.length() == 0) {
+            return result;
+        }
+
+        if (r.contains(",")) {
+            //[1,3,5]
+            String[] strs = r.split("\\s*,\\s*|\\s*:\\s*");
+            for (String str : strs) {
+                result.add(new Range(Integer.parseInt(str), Integer.parseInt(str)));
+            }
+        } else if (r.contains(":")) {
+            String[] strs = r.split("\\s*,\\s*|\\s*:\\s*");
+            if (strs.length == 2) { //[0:3]
+                if (strs[0].length() == 0 || strs[0].equalsIgnoreCase("")) {
+                    result.add(new Range(0, Integer.parseInt(strs[1]) - 1));
+                } else {
+                    result.add(new Range(Integer.parseInt(strs[0]), Integer.parseInt(strs[1]) - 1));
+                }
+            } else if (strs.length == 1) {
+                int index = Integer.parseInt(strs[0]);
+                if (r.startsWith(":")) { //[ : 2]
+                    result.add(new Range(0, index - 1));
+                } else {
+                    if (index > 0) {
+                        result.add(new Range(index, Integer.MAX_VALUE));
+                    } else {
+                        result.add(new Range(index, -1)); // [-2],for negative range, i - array.length;
+                    }
+                }
+            }
+        } else if (r.equalsIgnoreCase("*")) { //[*]
+            result.add(new Range(0, Integer.MAX_VALUE));
+        } else if (Integer.parseInt(r) >= 0) {
+            result.add(new Range(Integer.parseInt(r), Integer.parseInt(r)));
+        } else if (Integer.parseInt(r) < 0) { //[-2] ?????
+            result.add(new Range(Integer.parseInt(r), Integer.parseInt(r)));
+        }
+
+        return result;
+    }
+
+
+    public static void main(String[] args) throws IOException {
+        String path = "modules.RETURNS.maxView.value[3].value[0].textSpans[0]";
+        JsonParser parser = new JsonParser();
+        String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/O.json"));
+        JsonObject o1 = parser.parse(json).getAsJsonObject();
+
+        List<JsonElementWithLevel> res = getJsonElementByPath(path, o1);
+        System.out.println("*********");
+        for (JsonElementWithLevel e : res) {
+            System.out.println(e);
+        }
+
+    }
+
 }
 

@@ -23,5 +23,10 @@ class JsonElementWithLevel {
         this.level = level;
     }
 
+    @Override
+    public String toString() {
+        return level + " : " + jsonElement;
+    }
+
 
 }

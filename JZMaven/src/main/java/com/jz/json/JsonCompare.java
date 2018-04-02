@@ -23,10 +23,58 @@ public class JsonCompare {
     public static void main(String[] args) throws IOException, WrongFilterException {
 
         JsonParser parser = new JsonParser();
-        String json = convertFormattedJson2Raw(new File("./JZMaven/src/main/java/com/jz/json/testdata/O.json"));
+        String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/JA1.json"));
         JsonObject o1 = parser.parse(json).getAsJsonObject();
 
-        json = convertFormattedJson2Raw(new File("./JZMaven/src/main/java/com/jz/json/testdata/D.json"));
+        getJsonElementByPath("abcde", o1);
+/*
+        $.modules.BINSUMMARY.minView.actions[2,3].action[2:3].URL
+        HashMap: (key:PATH , value: 范围；)
+
+
+
+        regex = $.modules.BINSUMMARY.minView.actions[\d{1,}].action[\d{1,3}].URL
+
+        当前路径匹配的，才加到Queue里
+        (modules.BINSUMMARY.minView.actions, 1 - 100)
+        (modules.BINSUMMARY.minView.actions[2].action, 1 - 3)
+
+
+
+        store.book[*].author
+        book[2]
+        book[-2]
+        book[0,1]
+        book[:2]
+        book[1:2]
+        book[-2:]
+        book[2:]
+
+
+
+        if(currentPath.matches(regex) &&  validinHashMap() ) {
+            result.add(je1);
+        }
+
+
+
+
+        currentLevel =  $.modules.BINSUMMARY.minView.actions[i],
+        if( i >= 2 && i <= 3) {
+
+        }
+
+*/
+
+        String a = "1,3"; //表示一个区间，那么i >= and i <=
+        String b = "1:2";
+        String[] aa = a.split(",");
+        String[] bb = b.split(":");
+
+
+
+
+        json = convertFormattedJson2Raw(new File("./JZMaven/src/main/java/com/jz/json/testdata/O.json"));
         JsonObject o2 = parser.parse(json).getAsJsonObject();
 
 
@@ -37,9 +85,7 @@ public class JsonCompare {
         CompareResult result = compareJson(o1, o2, "LENIENT");
         result = result.applyFilter(filter);
         System.out.println(result);
-
     }
-
 
     public static CompareResult compareJson(JsonObject o1, JsonObject o2) {
         CompareMode mode = CompareMode.LENIENT;
