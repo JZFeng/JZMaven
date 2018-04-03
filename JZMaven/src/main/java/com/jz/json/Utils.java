@@ -120,34 +120,6 @@ public class Utils {
         return valueMap;
     }
 
-    // find the VLS JsonObject by passing Key = "VLS";
-    public static JsonObject getJsonObjectByKey(JsonObject root, String key) {
-        JsonObject res = new JsonObject();
-        if (root.isJsonObject()) {
-            Queue<JsonObject> queue = new LinkedList<JsonObject>();
-            queue.offer(root);
-            while (!queue.isEmpty()) {
-                int size = queue.size();
-                for (int i = 0; i < size; i++) {
-                    JsonObject jo = queue.poll();
-                    for (Map.Entry<String, JsonElement> entry : jo.entrySet()) {
-                        if (entry.getValue().isJsonObject()) {
-                            if (entry.getKey().equalsIgnoreCase(key)) {
-                                JsonObject tmp = entry.getValue().getAsJsonObject();
-                                return tmp;
-                            } else {
-                                queue.offer(entry.getValue().getAsJsonObject());
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return res;
-
-    }
-
     //    refactor, using try with resource statement
     public static String convertFormattedJson2Raw(File f) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(f))) {
@@ -205,7 +177,25 @@ public class Utils {
         return true;
     }
 
-    public static List<JsonElementWithLevel> getJsonElementByPath(String path, JsonObject source) {
+    /**
+     * @param source the source of JsonObject
+     *               Sample JsonObject:{"store": {"book": [{"category": "reference","author": "Nigel Rees","title": "Sayings of the Century","price": 8.95},{"category": "fiction","author": "Evelyn Waugh","title": "Sword of Honour","price": 12.99},{"category": "fiction","author": "Herman Melville","title": "Moby Dick","isbn": "0-553-21311-3","price": 8.99},{"category": "fiction","author": "J. R. R. Tolkien","title": "The Lord of the Rings","isbn": "0-395-19395-8","price": 22.99}],"bicycle": {"color": "red","price": 19.95}},"expensive": 10}
+     * @param path   now supporting standard JsonPath. Partial JsonPath is also supported.
+     *               $.store.book[*].author	The authors of all books
+     *               $.store 	All things, both books and bicycles
+     *               book[2]	    The third book
+     *               book[-2]	The second to last book
+     *               book[0,1]	The first two books
+     *               book[:2]	All books from index 0 (inclusive) until index 2 (exclusive)
+     *               book[1:2]	All books from index 1 (inclusive) until index 2 (exclusive)
+     *               book[-2:]	Last two books
+     *               book[2:]	Book number two from tail
+     *               book[first()]
+     *               book[last()]
+     * @return returns a a list of {@link JsonElementWithLevel}
+     */
+
+    public static List<JsonElementWithLevel> getJsonElementByPath(JsonObject source, String path) {
         List<JsonElementWithLevel> result = new ArrayList<>();
         if (path == null || path.length() == 0 || source == null || source.isJsonNull()) {
             return result;
@@ -223,27 +213,33 @@ public class Utils {
                 JsonElementWithLevel org = queue.poll();
                 String currentLevel = org.getLevel();
                 JsonElement je1 = org.getJsonElement();
-                System.out.println(currentLevel);
-
-
-                if (currentLevel.matches(regex) && isMatched(currentLevel, ranges, matchedRanges)) {
-                    result.add(org);
-                }
+//                System.out.println(currentLevel);
 
                 if (je1.isJsonPrimitive()) {
                     //do nothing
                 } else if (je1.isJsonArray()) {
                     JsonArray ja1 = je1.getAsJsonArray();
+                    int length = ja1.size();
                     for (int j = 0; j < ja1.size(); j++) {
-                        queue.offer(new JsonElementWithLevel(ja1.get(j), currentLevel + "[" + j + "]"));
+                        String level = currentLevel + "[" + j + "]";
+                        JsonElementWithLevel tmp = new JsonElementWithLevel(ja1.get(j), level);
+                        queue.offer(tmp);
+                        if (level.matches(regex) && isMatched(level, ranges, matchedRanges, length)) {
+                            result.add(tmp);
+                        }
                     }
                 } else if (je1.isJsonObject()) {
                     JsonObject jo1 = je1.getAsJsonObject();
+                    int length = jo1.entrySet().size();
                     for (Map.Entry<String, JsonElement> entry : jo1.entrySet()) {
                         String key = entry.getKey();
                         JsonElement value = entry.getValue();
                         String level = currentLevel + "." + key;
-                        queue.offer(new JsonElementWithLevel(value, level));
+                        JsonElementWithLevel tmp = new JsonElementWithLevel(value, level);
+                        queue.offer(tmp);
+                        if (level.matches(regex) && isMatched(level, ranges, matchedRanges, length)) {
+                            result.add(tmp);
+                        }
                     }
                 }
             }
@@ -262,7 +258,7 @@ public class Utils {
      */
 
     private static boolean isMatched(
-            String currentLevel, Map<String, List<Range>> ranges, Map<String, List<Range>> matchedRanges) {
+            String currentLevel, Map<String, List<Range>> ranges, Map<String, List<Range>> matchedRanges, int length) {
         StringBuilder prefix = new StringBuilder();
         int index = 0;
         while ((index = currentLevel.indexOf('[')) != -1) {
@@ -281,7 +277,7 @@ public class Utils {
                 }
             }
 
-            boolean tmp = isCurrentFieldMatched(matchedRanges.get(prefix.toString().trim()), prefix.toString(), i);
+            boolean tmp = isCurrentFieldMatched(matchedRanges.get(prefix.toString().trim()), prefix.toString(), i, length);
             if (tmp) {
                 currentLevel = currentLevel.substring(currentLevel.indexOf(']') + 1);
             } else {
@@ -300,18 +296,17 @@ public class Utils {
      * @param i      index of a JsonArray
      * @return return true if  i in any of the range [(0, 0), (3,3)], otherwise return false;
      */
-
-    //to-do modify this function to support range
-    //last()
-    //first()
-    //position() <= 3
-    //-2
-
-    private static boolean isCurrentFieldMatched(List<Range> rangeList, String prefix, int i) {
+    private static boolean isCurrentFieldMatched(List<Range> rangeList, String prefix, int i, int length) {
         if (rangeList != null && rangeList.size() > 0) {
             for (Range range : rangeList) {
-                if (i >= range.start && i <= range.end) {
-                    return true;
+                if (range.start < 0 && range.end < 0) {
+                    if ((i - length) >= range.start && (i - length) <= range.end) {
+                        return true;
+                    }
+                } else {
+                    if (i >= range.start && i <= range.end) {
+                        return true;
+                    }
                 }
             }
         }
@@ -372,6 +367,14 @@ public class Utils {
      *          [1:2]
      *          [-2:]
      *          [2:]
+     *          last()
+     *          first()
+     *          <p>
+     *          to-do : supporting filter; Owner: JZ
+     *          $..book[?(@.isbn)]	All books with an ISBN number
+     *          $.store.book[?(@.price < 10)]	All books in store cheaper than 10
+     *          $..book[?(@.price <= $['expensive'])]	All books in store that are not "expensive"
+     *          $..book[?(@.author =~ /.*REES/i)]	All books matching regex (ignore case)
      */
     private static List<Range> generateRange(String r) {
         List<Range> result = new ArrayList<>();
@@ -380,8 +383,13 @@ public class Utils {
             return result;
         }
 
-        if (r.contains(",")) {
-            //[1,3,5]
+        if (r.equalsIgnoreCase("first()")) {
+            result.add(new Range(0, 0));
+        } else if (r.equalsIgnoreCase("last()")) {
+            result.add(new Range(-1, -1));
+        } else if (r.contains("positon()")) {
+            //to-do
+        } else if (r.contains(",")) {
             String[] strs = r.split("\\s*,\\s*|\\s*:\\s*");
             for (String str : strs) {
                 result.add(new Range(Integer.parseInt(str), Integer.parseInt(str)));
@@ -419,12 +427,12 @@ public class Utils {
 
 
     public static void main(String[] args) throws IOException {
-        String path = "$.modules.RETURNS.maxView.value[0,3].value[*].textSpans[0:].text";
+        String path = "$.modules.RETURNS.maxView.value[last()]";
         JsonParser parser = new JsonParser();
         String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/O.json"));
         JsonObject o1 = parser.parse(json).getAsJsonObject();
 
-        List<JsonElementWithLevel> res = getJsonElementByPath(path, o1);
+        List<JsonElementWithLevel> res = getJsonElementByPath(o1, path);
         System.out.println("*********");
         for (JsonElementWithLevel e : res) {
             System.out.println(e);

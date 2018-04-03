@@ -26,61 +26,13 @@ public class JsonCompare {
         String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/JA1.json"));
         JsonObject o1 = parser.parse(json).getAsJsonObject();
 
-        getJsonElementByPath("abcde", o1);
-/*
-        $.modules.BINSUMMARY.minView.actions[2,3].action[2:3].URL
-        HashMap: (key:PATH , value: 范围；)
-
-
-
-        regex = $.modules.BINSUMMARY.minView.actions[\d{1,}].action[\d{1,3}].URL
-
-        当前路径匹配的，才加到Queue里
-        (modules.BINSUMMARY.minView.actions, 1 - 100)
-        (modules.BINSUMMARY.minView.actions[2].action, 1 - 3)
-
-
-
-        store.book[*].author
-        book[2]
-        book[-2]
-        book[0,1]
-        book[:2]
-        book[1:2]
-        book[-2:]
-        book[2:]
-
-
-
-        if(currentPath.matches(regex) &&  validinHashMap() ) {
-            result.add(je1);
-        }
-
-
-
-
-        currentLevel =  $.modules.BINSUMMARY.minView.actions[i],
-        if( i >= 2 && i <= 3) {
-
-        }
-
-*/
-
-        String a = "1,3"; //表示一个区间，那么i >= and i <=
-        String b = "1:2";
-        String[] aa = a.split(",");
-        String[] bb = b.split(":");
-
-
-
-
         json = convertFormattedJson2Raw(new File("./JZMaven/src/main/java/com/jz/json/testdata/O.json"));
         JsonObject o2 = parser.parse(json).getAsJsonObject();
 
 
         Filter filter = new Filter(
                 new String[]{},
-                new String[]{ "lastVisitDate", "$.listing.listingLifecycle.scheduledStartDate.value", "listingProperties[2]" });
+                new String[]{"lastVisitDate", "$.listing.listingLifecycle.scheduledStartDate.value", "listingProperties[]"});
 
         CompareResult result = compareJson(o1, o2, "LENIENT");
         result = result.applyFilter(filter);
@@ -146,7 +98,7 @@ public class JsonCompare {
 //                        System.out.println("JsonArrays size are different : " + " " + currentLevelOfOrg + ", size: " + ja1.size() + ", size: " + ja2.size());
                         failureMsg = "Different JsonArray size: " + ja1.size() + " VS " + ja2.size() + "\n\r" + ja1 + ";\n\r" + ja2;
                         failure = new Failure(currentLevelOfOrg, FailureType.DIFFERENT_JSONARRY_SIZE, ja1, ja2, failureMsg);
-                        result.addFieldComparisonFailure(failure);
+                        result.addFailure(failure);
                     } else {
                         compareJsonArray(currentLevelOfOrg, ja1, ja2, result, mode);
                     }
@@ -166,7 +118,7 @@ public class JsonCompare {
 //                            System.out.println("Destination Json does not have key : " + level);
                             failureMsg = "Missing field \"" + level + "\" " + "from actual result.";
                             failure = new Failure(level, FailureType.MISSING_FIELD, jo1, null, failureMsg);
-                            result.addFieldComparisonFailure(failure);
+                            result.addFailure(failure);
                         } else {
                             //only store JsonElements that have same "key";
                             q1.offer(new JsonElementWithLevel(value, level));
@@ -183,7 +135,7 @@ public class JsonCompare {
 //                            System.out.println("Origin Json does not have key " + currentLevelOfDest + "." + key);
                             failureMsg = "Unexpected field \"" + currentLevelOfDest + "." + key + "\"" + " from actual result.";
                             failure = new Failure(currentLevelOfDest + "." + key, FailureType.UNEXPECTED_FIELD, null, jo2, failureMsg);
-                            result.addFieldComparisonFailure(failure);
+                            result.addFailure(failure);
                         }
                     }
                 }
@@ -203,7 +155,7 @@ public class JsonCompare {
         if (expected.size() != actual.size()) {
             String failureMsg = "Different JsonArray size: " + expected.size() + " VS " + actual.size() + "\n\r" + expected + ";\n\r" + actual;
             Failure failure = new Failure(parentLevel, FailureType.DIFFERENT_JSONARRY_SIZE, expected, actual, failureMsg);
-            result.addFieldComparisonFailure(failure);
+            result.addFailure(failure);
         } else if (expected.size() == 0) {
             return; // Nothing to compare
         }
@@ -228,7 +180,7 @@ public class JsonCompare {
 //            System.out.println("Two primitive elements are not equal : " + parentLevel + ", " + s1 + " , " + s2);
             String failureMsg = "Unequal Value : " + parentLevel + ", " + s1 + " , " + s2;
             Failure failure = new Failure(parentLevel, FailureType.UNEQUAL_VALUE, o1, o2, failureMsg);
-            result.addFieldComparisonFailure(failure);
+            result.addFailure(failure);
         }
     }
 

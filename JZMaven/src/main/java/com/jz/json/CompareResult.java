@@ -3,7 +3,7 @@ package com.jz.json;
 import java.util.*;
 
 public class CompareResult {
-    private CompareMode mode ;
+    private CompareMode mode;
     private List<Failure> failures = new ArrayList<Failure>();
 
     public boolean isPassed() {
@@ -35,7 +35,7 @@ public class CompareResult {
         this.failures.addAll(failures);
     }
 
-    public boolean addFieldComparisonFailure(Failure failure) {
+    public boolean addFailure(Failure failure) {
         return this.failures.add(failure);
     }
 
@@ -63,30 +63,30 @@ public class CompareResult {
 
         Map<FailureType, List<Failure>> map = getFieldFailureTypeListMap(failures);
 
-        if(mode != null && isValidFilter(filter)) {
+        if (mode != null && isValidFilter(filter)) {
 
             List<FailureType> typesToIgnore = filter.types;
             List<String> fieldsToIgnore = filter.fields;
 
             //apply types
-            for(FailureType type : typesToIgnore) {
-                if(map.containsKey(type)) {
+            for (FailureType type : typesToIgnore) {
+                if (map.containsKey(type)) {
                     map.remove(type);
                 }
             }
 
             //apply fields
-            for(Map.Entry<FailureType, List<Failure>> entry : map.entrySet()) {
+            for (Map.Entry<FailureType, List<Failure>> entry : map.entrySet()) {
                 result.addAll(entry.getValue());
             }
 
-            for(String field : fieldsToIgnore) {
+            for (String field : fieldsToIgnore) {
                 String regex = generateRegex(field);
 
                 Iterator<Failure> itr = result.iterator();
-                while(itr.hasNext()) {
+                while (itr.hasNext()) {
                     Failure failure = itr.next();
-                    if(failure.getField().matches(regex)) {
+                    if (failure.getField().matches(regex)) {
                         itr.remove();
                     }
                 }
@@ -95,22 +95,22 @@ public class CompareResult {
             System.out.println("Please correct your filter first.");
         }
 
-        return new CompareResult(mode, result );
+        return new CompareResult(mode, result);
     }
 
     private String generateRegex(String field) {
-        if(field.startsWith("$")) {
+        if (field.startsWith("$")) {
             field = "\\$" + field.substring(1);
         }
 
-        String regex = "(.*)(" + (field.replaceAll("(\\[)(\\d{0,})(\\])", "\\\\" + "$1" + "$2" + "\\\\" + "$3" )) + ")(.*)" ;
+        String regex = "(.*)(" + (field.replaceAll("(\\[)(\\d{0,})(\\])", "\\\\" + "$1" + "$2" + "\\\\" + "$3")) + ")(.*)";
 
         return regex;
     }
 
     private String getResultInfo(boolean withDetails) {
         StringBuilder sb = new StringBuilder();
-        if(failures.size() != 0) {
+        if (failures.size() != 0) {
             sb.append("Total " + failures.size() + " failures : ");
         }
 
@@ -153,7 +153,7 @@ public class CompareResult {
         //validate fields
         for (String field : filter.fields) {
             if (!isValidField(field, mode)) {
-                throw new WrongFilterException(field + " is not a valid field filter" );
+                throw new WrongFilterException(field + " is not a valid field filter");
             }
         }
 
@@ -161,9 +161,9 @@ public class CompareResult {
     }
 
 
-//    private boolean isValidField(String field, CompareMode mode) {
+    //    private boolean isValidField(String field, CompareMode mode) {
     private static boolean isValidField(String field, CompareMode mode) {
-        if(mode == CompareMode.LENIENT) {
+        if (mode == CompareMode.LENIENT) {
             int index = field.indexOf("[");
             while (index != -1) {
                 char c = field.charAt(index + 1);
@@ -189,7 +189,7 @@ public class CompareResult {
     }
 
 
-    private Map<FailureType, List<Failure>> getFieldFailureTypeListMap(List<Failure> failures ) {
+    private Map<FailureType, List<Failure>> getFieldFailureTypeListMap(List<Failure> failures) {
         Map<FailureType, List<Failure>> map = new HashMap<FailureType, List<Failure>>();
         for (Failure f : failures) {
             FailureType type = f.getFailureType();
