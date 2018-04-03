@@ -300,6 +300,13 @@ public class Utils {
      * @param i      index of a JsonArray
      * @return return true if  i in any of the range [(0, 0), (3,3)], otherwise return false;
      */
+
+    //to-do modify this function to support range
+    //last()
+    //first()
+    //position() <= 3
+    //-2
+
     private static boolean isCurrentFieldMatched(List<Range> rangeList, String prefix, int i) {
         if (rangeList != null && rangeList.size() > 0) {
             for (Range range : rangeList) {
@@ -412,7 +419,7 @@ public class Utils {
 
 
     public static void main(String[] args) throws IOException {
-        String path = "maxView.value[3].value[0].textSpans[0].action";
+        String path = "maxView.value[-2]";
         JsonParser parser = new JsonParser();
         String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/O.json"));
         JsonObject o1 = parser.parse(json).getAsJsonObject();
