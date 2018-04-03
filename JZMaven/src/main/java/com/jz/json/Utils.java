@@ -223,12 +223,11 @@ public class Utils {
                 JsonElementWithLevel org = queue.poll();
                 String currentLevel = org.getLevel();
                 JsonElement je1 = org.getJsonElement();
-                System.out.println(currentLevel);
+//                System.out.println(currentLevel);
 
-                if (currentLevel.matches(regex) ) {
-                    if(isMatched(currentLevel, ranges, matchedRanges)) {
-                        result.add(org);
-                    }
+
+                if (currentLevel.matches(regex) && isMatched(currentLevel, ranges, matchedRanges)) {
+                    result.add(org);
                 }
 
                 if (je1.isJsonPrimitive()) {
@@ -262,7 +261,8 @@ public class Utils {
      * @return true if i in matchedRange();
      */
 
-    private static boolean isMatched(String currentLevel, Map<String, List<Range>> ranges, Map<String, List<Range>> matchedRanges) {
+    private static boolean isMatched(
+            String currentLevel, Map<String, List<Range>> ranges, Map<String, List<Range>> matchedRanges) {
         StringBuilder prefix = new StringBuilder();
         int index = 0;
         while ((index = currentLevel.indexOf('[')) != -1) {
@@ -312,51 +312,21 @@ public class Utils {
         return false;
     }
 
-
-    //update matchedRanges per currentLevel
-    private static void updateRangesByCurrentLevel(
-            String currentLevel, Map<String, List<Range>> ranges, Map<String, List<Range>> matchedRanges) {
-        if (!matchedRanges.containsKey(currentLevel)) {
-            //minView.actions[]  -> [2,2],[3,3]
-            //minView.actions[].[] -> [2,4]
-            //$.modules.BINSUMMARY.minView.actions[]
-            for (Map.Entry<String, List<Range>> entry : ranges.entrySet()) {
-                String key = entry.getKey();
-                List<Range> value = entry.getValue();
-                int idx = currentLevel.indexOf(key);
-                if (idx != -1 && currentLevel.substring(idx).equals(key)) {
-                    matchedRanges.put(currentLevel, value);
-                }
-            }
-
-        }
-    }
-
-
     private static String generateRegex(String path) {
         if (path.startsWith("$")) {
             path = "\\$" + path.substring(1);
         }
 
-        String regex = "(.*)(" + (path.replaceAll("(\\[)(\\d{0,})(\\])", "\\\\" + "$1" + "\\\\d{1,}" + "\\\\" + "$3")) + ")";
+        StringBuilder prefix = new StringBuilder();
+        int index = 0;
+        while ((index = path.indexOf('[')) != -1) {
+            prefix.append(path.substring(0, index) + "[]");
+            path = path.substring(path.indexOf(']') + 1);
+        }
+        prefix.append(path);
+        String regex = "(.*)(" + prefix.toString().trim().replaceAll("\\[\\]", "\\\\[.*\\\\]") + ")";
 
         return regex;
-    }
-
-    //  x >= start && x <= end
-    public static class Range {
-        int start;
-        int end;
-
-        Range(int start, int end) {
-            this.start = start;
-            this.end = end;
-        }
-
-        @Override
-        public String toString() {
-            return "Start : " + start + " , end :" + end;
-        }
     }
 
     /**
@@ -381,12 +351,6 @@ public class Utils {
             }
             path = path.substring(path.indexOf(']') + 1);
         }
-
-        /*String regex = "\\[.*\\]";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(path);
-        while(matcher.find()) {
-        }*/
 
         return ranges;
     }
@@ -428,7 +392,7 @@ public class Utils {
                 if (r.startsWith(":")) { //[ : 2]
                     result.add(new Range(0, index - 1));
                 } else {
-                    if (index > 0) {
+                    if (index >= 0) {
                         result.add(new Range(index, Integer.MAX_VALUE));
                     } else {
                         result.add(new Range(index, -1)); // [-2],for negative range, i - array.length;
@@ -448,7 +412,7 @@ public class Utils {
 
 
     public static void main(String[] args) throws IOException {
-        String path = "$.modules.ITEMSPECIFICS.minView[1]";
+        String path = "maxView.value[3].value[0].textSpans[0].action";
         JsonParser parser = new JsonParser();
         String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/O.json"));
         JsonObject o1 = parser.parse(json).getAsJsonObject();
