@@ -195,7 +195,17 @@ public class Utils {
      * @return returns a a list of {@link JsonElementWithLevel}
      */
 
-    public static List<JsonElementWithLevel> getJsonElementByPath(JsonObject source, String path) {
+    public static List<JsonElement> getJsonElementByPath(JsonObject source, String path) {
+        List<JsonElement> result = new ArrayList<>();
+        List<JsonElementWithLevel> res = getJsonElementWithLevelByPath(source, path);
+        for(JsonElementWithLevel e : res) {
+            result.add(e.getJsonElement());
+        }
+
+        return result;
+    }
+
+    private static List<JsonElementWithLevel> getJsonElementWithLevelByPath(JsonObject source, String path) {
         List<JsonElementWithLevel> result = new ArrayList<>();
         if (path == null || path.length() == 0 || source == null || source.isJsonNull()) {
             return result;
@@ -213,7 +223,7 @@ public class Utils {
                 JsonElementWithLevel org = queue.poll();
                 String currentLevel = org.getLevel();
                 JsonElement je1 = org.getJsonElement();
-//                System.out.println(currentLevel);
+                System.out.println(currentLevel);
 
                 if (je1.isJsonPrimitive()) {
                     //do nothing
@@ -427,12 +437,12 @@ public class Utils {
 
 
     public static void main(String[] args) throws IOException {
-        String path = "$.modules.RETURNS.maxView.value[last()]";
+        String path = "$.modules.RETURNS.maxView.value[1,3]";
         JsonParser parser = new JsonParser();
         String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/O.json"));
         JsonObject o1 = parser.parse(json).getAsJsonObject();
 
-        List<JsonElementWithLevel> res = getJsonElementByPath(o1, path);
+        List<JsonElementWithLevel> res = getJsonElementWithLevelByPath(o1, path);
         System.out.println("*********");
         for (JsonElementWithLevel e : res) {
             System.out.println(e);
