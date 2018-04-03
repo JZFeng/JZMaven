@@ -223,7 +223,7 @@ public class Utils {
                 JsonElementWithLevel org = queue.poll();
                 String currentLevel = org.getLevel();
                 JsonElement je1 = org.getJsonElement();
-//                System.out.println(currentLevel);
+                System.out.println(currentLevel);
 
 
                 if (currentLevel.matches(regex) && isMatched(currentLevel, ranges, matchedRanges)) {
@@ -419,7 +419,7 @@ public class Utils {
 
 
     public static void main(String[] args) throws IOException {
-        String path = "maxView.value[-2]";
+        String path = "$.modules.RETURNS.maxView.value[0,3].value[*].textSpans[0:].text";
         JsonParser parser = new JsonParser();
         String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/O.json"));
         JsonObject o1 = parser.parse(json).getAsJsonObject();
