@@ -225,8 +225,10 @@ public class Utils {
                 JsonElement je1 = org.getJsonElement();
                 System.out.println(currentLevel);
 
-                if (currentLevel.matches(regex) && isMatched(currentLevel, ranges, matchedRanges)) {
-                    result.add(org);
+                if (currentLevel.matches(regex) ) {
+                    if(isMatched(currentLevel, ranges, matchedRanges)) {
+                        result.add(org);
+                    }
                 }
 
                 if (je1.isJsonPrimitive()) {
@@ -260,9 +262,7 @@ public class Utils {
      * @return true if i in matchedRange();
      */
 
-    private static boolean isMatched(
-            String currentLevel, Map<String, List<Range>> ranges, Map<String, List<Range>> matchedRanges) {
-
+    private static boolean isMatched(String currentLevel, Map<String, List<Range>> ranges, Map<String, List<Range>> matchedRanges) {
         StringBuilder prefix = new StringBuilder();
         int index = 0;
         while ((index = currentLevel.indexOf('[')) != -1) {
@@ -281,13 +281,7 @@ public class Utils {
                 }
             }
 
-            /*
-            ???????
-            modules.RETURNS.maxView.value[]
-            modules.RETURNS.maxView.value[].value[]
-            modules.RETURNS.maxView.value[].value[].textSpans[].text
-            */
-            boolean tmp = isMatching(matchedRanges, prefix.toString(), i);
+            boolean tmp = isCurrentFieldMatched(matchedRanges.get(prefix.toString().trim()), prefix.toString(), i);
             if (tmp) {
                 currentLevel = currentLevel.substring(currentLevel.indexOf(']') + 1);
             } else {
@@ -299,8 +293,14 @@ public class Utils {
     }
 
 
-    private static boolean isMatching(Map<String, List<Range>> matchedRanges, String prefix, int i) {
-        List<Range> rangeList = matchedRanges.get(prefix.toString().trim());
+    /**
+     * to check whether $.modules.RETURNS.maxView.value[4] is matching the range in matchedRanges;
+     *
+     * @param prefix the current field name like $.modules.RETURNS.maxView.value[]
+     * @param i      index of a JsonArray
+     * @return return true if  i in any of the range [(0, 0), (3,3)], otherwise return false;
+     */
+    private static boolean isCurrentFieldMatched(List<Range> rangeList, String prefix, int i) {
         if (rangeList != null && rangeList.size() > 0) {
             for (Range range : rangeList) {
                 if (i >= range.start && i <= range.end) {
@@ -448,7 +448,7 @@ public class Utils {
 
 
     public static void main(String[] args) throws IOException {
-        String path = "modules.RETURNS.maxView.value[3].value[0].textSpans[0]";
+        String path = "$.modules.ITEMSPECIFICS.minView[1]";
         JsonParser parser = new JsonParser();
         String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/O.json"));
         JsonObject o1 = parser.parse(json).getAsJsonObject();
