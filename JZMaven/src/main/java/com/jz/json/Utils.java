@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utils {
 
@@ -437,17 +439,82 @@ public class Utils {
 
 
     public static void main(String[] args) throws IOException {
-        String path = "$.modules.RETURNS.maxView.value[1,3]";
-        JsonParser parser = new JsonParser();
-        String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/O.json"));
-        JsonObject o1 = parser.parse(json).getAsJsonObject();
-
-        List<JsonElementWithLevel> res = getJsonElementWithLevelByPath(o1, path);
-        System.out.println("*********");
-        for (JsonElementWithLevel e : res) {
-            System.out.println(e);
+        //get filters
+        String filters = "@.category == 'fiction' && @.price < 10 || @.color == \"red\"";
+        String[] strs = filters.split("\\s{0,}&&\\s{0,}|\\s{0,}\\|\\|\\s{0,}");
+        List<String> operators = new ArrayList<>();
+        for(int i = 0 ; i < strs.length - 1; i++) {
+            String operator = filters.substring( filters.indexOf(strs[i]) + strs[i].length(), filters.indexOf(strs[i + 1])).trim();
+            operators.add(operator);
+            System.out.println(operator);
         }
 
+        if(strs.length != operators.size() + 1) {
+            new Exception("Field name has \"&&\" or \"||\".");
+        }
+
+
+        System.out.println("*******************");
+        for(String str : strs) {
+            String regExp = "(\\s{0,}[><=!]{1}[=~]{0,1}\\s{0,})";
+            Pattern pattern = Pattern.compile(regExp);
+            Matcher m = pattern.matcher(str);
+            while(m.find()) {
+                String[] items = str.split(regExp);
+                if(items.length > 0) {
+                    System.out.println(items[0]);
+                }
+                if(items.length > 1) {
+                    System.out.println(items[1]);
+                }
+
+                int count = m.groupCount();
+                for(int i = 1 ; i <= count; i++ ) {
+                    String s = m.group(i);
+                    System.out.println(s);
+                }
+            }
+
+        }
+
+        System.out.println("*******************");
+
+        //get elements of a filter
+        String filter  = "category     size 'fiction'";
+        String[] fields = filter.split(" {1,}");
+        for(String str : strs) {
+            System.out.println(str);
+        }
+
+
+
+    }
+
+    public class Condition {
+        private String left;
+        private String right;
+        private String operator;
+        private final Set<String> operators = new HashSet<>();//how to intianlize it? It should be a global variable.
+
+        public boolean isValid(){
+            if(left == null || left.length() == 0) {
+                return false;
+            } else if (right == null || right.length() == 0) {
+                return false;
+            } else if (operator == null || operator.length() == 0) {
+                return false;
+            } else if (!operators.contains(operator)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        Condition(String left, String operator, String right) {
+            this.left = left;
+            this.operator = operator;
+            this.right = right;
+        }
     }
 
 }
