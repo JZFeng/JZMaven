@@ -28,6 +28,8 @@ public class JsonPath {
      *               book[2:]	Book number two from tail
      *               book[first()]
      *               book[last()]
+     *
+     *
      * @return returns a a list of {@link JsonElementWithLevel}
      */
 
@@ -221,8 +223,8 @@ public class JsonPath {
      *          last()
      *          first()
      *          <p>
-     *          to-do : supporting filter; Owner: JZ
-     *          $..book[?(@.isbn)]	All books with an ISBN number
+     *          $..book[?(@.isbn)]	All books with an ISBN number (convert to notempty ), [?@.isbn notempty]
+     *
      *          $.store.book[?(@.price < 10)]	All books in store cheaper than 10
      *          $..book[?(@.price <= $['expensive'])]	All books in store that are not "expensive"
      *          $..book[?(@.author =~ /.*REES/i)]	All books matching regex (ignore case)
