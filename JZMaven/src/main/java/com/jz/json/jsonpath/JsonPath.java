@@ -1,14 +1,15 @@
 package com.jz.json.jsonpath;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import com.jz.json.jsoncompare.JsonElementWithLevel;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.jz.json.jsoncompare.Utils.convertFormattedJson2Raw;
 
 public class JsonPath {
 
@@ -29,19 +30,16 @@ public class JsonPath {
      *               book[last()]
      * @return returns a a list of {@link JsonElementWithLevel}
      */
-    public static List<JsonElement> getJsonElementByPath(JsonObject source, String path) {
-        List<JsonElement> result = new ArrayList<>();
-        List<JsonElementWithLevel> res = getJsonElementWithLevelByPath(source, path);
-        for (JsonElementWithLevel e : res) {
-            result.add(e.getJsonElement());
-        }
 
-        return result;
-    }
-
-    private static List<JsonElementWithLevel> getJsonElementWithLevelByPath(JsonObject source, String path) {
+    private static List<JsonElementWithLevel> getJsonElementWithLevelByPath(JsonObject source, String path) throws Exception {
         List<JsonElementWithLevel> result = new ArrayList<>();
         if (path == null || path.length() == 0 || source == null || source.isJsonNull()) {
+            return result;
+        }
+        if(path.matches("(.*)(\\.length\\(\\)$)")){ // case: [path == $.listing.termsAndPolicies.length()]
+            path = path.replaceAll("(.*)(\\.length\\(\\)$)","$1");
+            int length = length(source, path);
+            result.add(new JsonElementWithLevel(new JsonPrimitive(length), path));
             return result;
         }
 
@@ -93,6 +91,15 @@ public class JsonPath {
         return result;
     }
 
+/*   public static List<JsonElement> getJsonElementByPath(JsonObject source, String path) throws Exception {
+    List<JsonElement> result = new ArrayList<>();
+    List<JsonElementWithLevel> res = getJsonElementWithLevelByPath(source, path);
+    for (JsonElementWithLevel e : res) {
+    result.add(e.getJsonElement());
+    }
+
+    return result;
+    }*/
 
     /**
      * @param currentLevel  $.courses[i].grade
@@ -262,15 +269,51 @@ public class JsonPath {
             result.add(new Range(0, Integer.MAX_VALUE));
         } else if (Integer.parseInt(r) >= 0) {
             result.add(new Range(Integer.parseInt(r), Integer.parseInt(r)));
-        } else if (Integer.parseInt(r) < 0) { //[-2] ?????
+        } else if (Integer.parseInt(r) < 0) { //[-2]
             result.add(new Range(Integer.parseInt(r), Integer.parseInt(r)));
         }
 
         return result;
     }
 
+    public static int length(JsonObject jsonObject, String path) throws Exception {
+        if(path == null || path.length() == 0) {
+            return 0;
+        }
+        if(jsonObject == null || jsonObject.isJsonNull() || !jsonObject.isJsonObject()) {
+            return 0;
+        }
 
-    public static void main(String[] args) throws IOException {
+        int length = 0;
+        List<JsonElementWithLevel> result =  getJsonElementWithLevelByPath(jsonObject, path);
+        if(result.size() > 1) {
+            throw new Exception("Please correct your json path to match a single JsonElement.");
+        } else {
+            JsonElement jsonElement = result.get(0).getJsonElement();
+            if(jsonElement.isJsonObject()) {
+                length = jsonElement.getAsJsonObject().entrySet().size();
+            } else if(jsonElement.isJsonArray()) {
+                length = jsonElement.getAsJsonArray().size();
+            } else if (jsonElement.isJsonPrimitive()) {
+                length = jsonElement.getAsJsonPrimitive().getAsString().length();
+            }
+
+        }
+
+        return length;
+    }
+
+    public static void main(String[] args) throws Exception {
+        JsonParser parser = new JsonParser();
+        String json = convertFormattedJson2Raw(new File("./JZMaven/src/main/java/com/jz/json/testdata/O.json"));
+        JsonObject o1 = parser.parse(json).getAsJsonObject();
+        List<JsonElementWithLevel> res = getJsonElementWithLevelByPath(o1,"$.listing.listingClassification.leafCategories[0].categoryPathFromRoot.consolidatedCategoryProperties[1].length()");
+        System.out.println("*******************");
+        for(JsonElementWithLevel jsonElementWithLevel : res) {
+            System.out.println(jsonElementWithLevel);
+        }
+
+        /*
         //get filters
         String filters = "@.category == 'fiction' && @.price < 10 || @.color == \"red\"";
         String[] strs = filters.split("\\s{0,}&&\\s{0,}|\\s{0,}\\|\\|\\s{0,}");
@@ -318,34 +361,10 @@ public class JsonPath {
             System.out.println(str);
         }
 
+    */
 
     }
 
-    public class Condition {
-        private String left;
-        private String right;
-        private String operator;
-        private final Set<String> operators = new HashSet<>();//how to intianlize it? It should be a global variable.
 
-        public boolean isValid() {
-            if (left == null || left.length() == 0) {
-                return false;
-            } else if (right == null || right.length() == 0) {
-                return false;
-            } else if (operator == null || operator.length() == 0) {
-                return false;
-            } else if (!operators.contains(operator)) {
-                return false;
-            }
-
-            return true;
-        }
-
-        Condition(String left, String operator, String right) {
-            this.left = left;
-            this.operator = operator;
-            this.right = right;
-        }
-    }
 
 }
