@@ -1,4 +1,4 @@
-package com.jz.json;
+package com.jz.json.jsonpath;
 
 //  x >= start && x <= end
 public class Range {

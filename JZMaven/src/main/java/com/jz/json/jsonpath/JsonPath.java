@@ -1,183 +1,16 @@
-package com.jz.json;
+package com.jz.json.jsonpath;
 
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.jz.json.jsoncompare.JsonElementWithLevel;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Utils {
-
-    public static List<JsonElement> jsonArrayToList(JsonArray expected) {
-        List<JsonElement> jsonElements = new ArrayList<JsonElement>(expected.size());
-        for (int i = 0; i < expected.size(); ++i) {
-            jsonElements.add(expected.get(i));
-        }
-        return jsonElements;
-    }
-
-    /**
-     * Creates a cardinality map from {@code coll}.
-     *
-     * @param coll the collection of items to convert
-     * @param <T>  the type of elements in the input collection
-     * @return the cardinality map
-     */
-    public static <T> Map<T, Integer> getCardinalityMap(final Collection<T> coll) {
-        Map map = new HashMap<T, Integer>();
-        for (T item : coll) {
-            Integer c = (Integer) (map.get(item));
-            if (c == null) {
-                map.put(item, new Integer(1));
-            } else {
-                map.put(item, new Integer(c.intValue() + 1));
-            }
-        }
-        return map;
-    }
-
-    /**
-     * Searches for the unique key of the {@code expected} JSON array.
-     *
-     * @param array the array to find the unique key of
-     * @return the unique key if there's any, otherwise null
-     */
-    public static String findUniqueKey(JsonArray array) {
-        // Find a unique key for the object (id, name, whatever)
-        if (array.size() > 0 && (array.get(0) instanceof JsonObject)) {
-            JsonObject o = ((JsonObject) array.get(0)).getAsJsonObject();
-            Set<String> keys = getKeys(o);
-            for (String candidate : keys) {
-                if (isUsableAsUniqueKey(candidate, array)) {
-//                    System.out.println("The unique key of JsonArray is ["  + candidate +"]");
-                    return candidate;
-                }
-            }
-        }
-
-        return null;
-    }
-
-
-    /**
-     * @param candidate is usable as a unique key if every element in the
-     * @param array     is a JSONObject having that key, and no two values are the same.
-     * @return true if the candidate can work as a unique id across array
-     */
-
-    public static boolean isUsableAsUniqueKey(String candidate, JsonArray array) {
-        Set<JsonElement> seenValues = new HashSet<JsonElement>();
-        for (int i = 0; i < array.size(); i++) {
-            JsonElement item = array.get(i);
-            if (item instanceof JsonObject) {
-                JsonObject o = (JsonObject) item;
-                if (o.has(candidate)) {
-                    JsonElement value = o.get(candidate);
-                    if (isSimpleValue(value) && !seenValues.contains(value)) {
-                        seenValues.add(value);
-                    } else {
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    //get keys from a JsonObject
-    public static Set<String> getKeys(JsonObject o) {
-        Set<String> keys = new TreeSet<String>();
-        for (Map.Entry<String, JsonElement> entry : o.entrySet()) {
-            keys.add(entry.getKey().trim());
-        }
-
-        return keys;
-    }
-
-    //JsonPrimitive value as unique key
-    public static boolean isSimpleValue(Object o) {
-        return !(o instanceof JsonObject) && !(o instanceof JsonArray) && (o instanceof JsonPrimitive);
-    }
-
-    // build hashmap, KEY is UniqueKey's Value, VALUE is JsonObject;
-    public static Map<JsonPrimitive, JsonObject> arrayOfJsonObjectToMap(JsonArray array, String uniqueKey) {
-        Map<JsonPrimitive, JsonObject> valueMap = new HashMap<JsonPrimitive, JsonObject>();
-        if (uniqueKey != null) {
-            for (int i = 0; i < array.size(); ++i) {
-                JsonObject jsonObject = (JsonObject) array.get(i);
-                JsonPrimitive id = jsonObject.get(uniqueKey).getAsJsonPrimitive();
-                valueMap.put(id, jsonObject);
-            }
-        }
-
-        return valueMap;
-    }
-
-    //    refactor, using try with resource statement
-    public static String convertFormattedJson2Raw(File f) throws IOException {
-        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
-            String json = br.readLine();
-            StringBuilder sb = new StringBuilder();
-            while (json != null && json.length() > 0) {
-                json = json.trim();
-                while (json.startsWith("\t")) {
-                    json = json.replaceFirst("\t", "");
-                }
-                sb.append(json);
-                json = br.readLine();
-            }
-            br.close();
-
-            return sb.toString().trim();
-        }
-
-    }
-
-    public static CompareResult applyFilters(CompareResult result, Set<String> filters) {
-
-        if (filters == null || filters.size() == 0) {
-            return result;
-        }
-
-        List<Failure> failures = result.getFailures();
-        Iterator<Failure> itr = failures.iterator();
-        while (itr.hasNext()) {
-            Failure f = itr.next();
-            String field = f.getField();
-            if (filters.contains(field)) {
-                itr.remove();
-            }
-        }
-
-        return new CompareResult(failures);
-    }
-
-    public static boolean allSimpleValues(JsonArray array) {
-        for (int i = 0; i < array.size(); ++i) {
-            if (!isSimpleValue(array.get(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static boolean allJsonObjects(JsonArray array) {
-        for (int i = 0; i < array.size(); ++i) {
-            if (!(array.get(i) instanceof JsonObject)) {
-                return false;
-            }
-        }
-        return true;
-    }
+public class JsonPath {
 
     /**
      * @param source the source of JsonObject
@@ -196,11 +29,10 @@ public class Utils {
      *               book[last()]
      * @return returns a a list of {@link JsonElementWithLevel}
      */
-
     public static List<JsonElement> getJsonElementByPath(JsonObject source, String path) {
         List<JsonElement> result = new ArrayList<>();
         List<JsonElementWithLevel> res = getJsonElementWithLevelByPath(source, path);
-        for(JsonElementWithLevel e : res) {
+        for (JsonElementWithLevel e : res) {
             result.add(e.getJsonElement());
         }
 
@@ -443,33 +275,33 @@ public class Utils {
         String filters = "@.category == 'fiction' && @.price < 10 || @.color == \"red\"";
         String[] strs = filters.split("\\s{0,}&&\\s{0,}|\\s{0,}\\|\\|\\s{0,}");
         List<String> operators = new ArrayList<>();
-        for(int i = 0 ; i < strs.length - 1; i++) {
-            String operator = filters.substring( filters.indexOf(strs[i]) + strs[i].length(), filters.indexOf(strs[i + 1])).trim();
+        for (int i = 0; i < strs.length - 1; i++) {
+            String operator = filters.substring(filters.indexOf(strs[i]) + strs[i].length(), filters.indexOf(strs[i + 1])).trim();
             operators.add(operator);
             System.out.println(operator);
         }
 
-        if(strs.length != operators.size() + 1) {
+        if (strs.length != operators.size() + 1) {
             new Exception("Field name has \"&&\" or \"||\".");
         }
 
 
         System.out.println("*******************");
-        for(String str : strs) {
+        for (String str : strs) {
             String regExp = "(\\s{0,}[><=!]{1}[=~]{0,1}\\s{0,})";
             Pattern pattern = Pattern.compile(regExp);
             Matcher m = pattern.matcher(str);
-            while(m.find()) {
+            while (m.find()) {
                 String[] items = str.split(regExp);
-                if(items.length > 0) {
+                if (items.length > 0) {
                     System.out.println(items[0]);
                 }
-                if(items.length > 1) {
+                if (items.length > 1) {
                     System.out.println(items[1]);
                 }
 
                 int count = m.groupCount();
-                for(int i = 1 ; i <= count; i++ ) {
+                for (int i = 1; i <= count; i++) {
                     String s = m.group(i);
                     System.out.println(s);
                 }
@@ -480,12 +312,11 @@ public class Utils {
         System.out.println("*******************");
 
         //get elements of a filter
-        String filter  = "category     size 'fiction'";
+        String filter = "category     size 'fiction'";
         String[] fields = filter.split(" {1,}");
-        for(String str : strs) {
+        for (String str : strs) {
             System.out.println(str);
         }
-
 
 
     }
@@ -496,8 +327,8 @@ public class Utils {
         private String operator;
         private final Set<String> operators = new HashSet<>();//how to intianlize it? It should be a global variable.
 
-        public boolean isValid(){
-            if(left == null || left.length() == 0) {
+        public boolean isValid() {
+            if (left == null || left.length() == 0) {
                 return false;
             } else if (right == null || right.length() == 0) {
                 return false;
@@ -518,4 +349,3 @@ public class Utils {
     }
 
 }
-

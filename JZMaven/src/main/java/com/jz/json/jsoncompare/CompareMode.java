@@ -1,4 +1,4 @@
-package com.jz.json;
+package com.jz.json.jsoncompare;
 
 /**
  *In STRICT mode, when comparing JsonObjects, it stills ignore the KEY sequence in JsonObject.

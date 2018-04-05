@@ -1,4 +1,4 @@
-package com.jz.json;
+package com.jz.json.jsoncompare;
 
 import java.util.ArrayList;
 import java.util.HashSet;

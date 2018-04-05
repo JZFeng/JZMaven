@@ -1,12 +1,12 @@
-package com.jz.json;
+package com.jz.json.jsoncompare;
 
 import com.google.gson.*;
 
-class JsonElementWithLevel {
+public class JsonElementWithLevel {
     private JsonElement jsonElement;
     private String level;
 
-    JsonElementWithLevel(JsonElement jsonElement, String level) {
+    public JsonElementWithLevel(JsonElement jsonElement, String level) {
         this.jsonElement = jsonElement;
         this.level = level;
     }

@@ -1,4 +1,4 @@
-package com.jz.json;
+package com.jz.json.jsoncompare;
 
 //First Jason file as reference;
 public enum FailureType {

@@ -1,4 +1,4 @@
-package com.jz.json;
+package com.jz.json.jsoncompare;
 
 import com.google.gson.JsonElement;
 

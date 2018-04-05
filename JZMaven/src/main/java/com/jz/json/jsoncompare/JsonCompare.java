@@ -1,4 +1,4 @@
-package com.jz.json;
+package com.jz.json.jsoncompare;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonArray;
@@ -16,27 +16,27 @@ import java.util.Queue;
 import java.util.List;
 import java.util.HashSet;
 
-import static com.jz.json.Utils.*;
+import static com.jz.json.jsoncompare.Utils.*;
 
 public class JsonCompare {
 
     public static void main(String[] args) throws IOException, WrongFilterException {
 
         JsonParser parser = new JsonParser();
-        String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/JA1.json"));
+        String json = convertFormattedJson2Raw(new File("./JZMaven/src/main/java/com/jz/json/testdata/O.json"));
         JsonObject o1 = parser.parse(json).getAsJsonObject();
 
-        json = convertFormattedJson2Raw(new File("./JZMaven/src/main/java/com/jz/json/testdata/O.json"));
+        json = convertFormattedJson2Raw(new File("./JZMaven/src/main/java/com/jz/json/testdata/D.json"));
         JsonObject o2 = parser.parse(json).getAsJsonObject();
 
 
         Filter filter = new Filter(
                 new String[]{},
-                new String[]{"lastVisitDate", "$.listing.listingLifecycle.scheduledStartDate.value", "listingProperties[]"});
+                new String[]{});
 
         CompareResult result = compareJson(o1, o2, "LENIENT");
         result = result.applyFilter(filter);
-        System.out.println(result);
+        System.out.println(result.getResultDetails());
     }
 
     public static CompareResult compareJson(JsonObject o1, JsonObject o2) {
