@@ -276,7 +276,7 @@ public class JsonPath {
         return result;
     }
 
-    public static int length(JsonObject jsonObject, String path) throws Exception {
+    private static int length(JsonObject jsonObject, String path) throws Exception {
         if(path == null || path.length() == 0) {
             return 0;
         }
@@ -304,22 +304,22 @@ public class JsonPath {
     }
 
     public static void main(String[] args) throws Exception {
-        JsonParser parser = new JsonParser();
+   /*     JsonParser parser = new JsonParser();
         String json = convertFormattedJson2Raw(new File("./JZMaven/src/main/java/com/jz/json/testdata/O.json"));
         JsonObject o1 = parser.parse(json).getAsJsonObject();
         List<JsonElementWithLevel> res = getJsonElementWithLevelByPath(o1,"$.listing.listingClassification.leafCategories[0].categoryPathFromRoot.consolidatedCategoryProperties[1].length()");
         System.out.println("*******************");
         for(JsonElementWithLevel jsonElementWithLevel : res) {
             System.out.println(jsonElementWithLevel);
-        }
+        }*/
 
-        /*
-        //get filters
-        String filters = "@.category == 'fiction' && @.price < 10 || @.color == \"red\"";
-        String[] strs = filters.split("\\s{0,}&&\\s{0,}|\\s{0,}\\|\\|\\s{0,}");
+        //get conditions
+        String conditions = "@.category == 'fiction' && @.price < 10 || @.color == \"red\"";
+
+        String[] strs = conditions.split("\\s{0,}&&\\s{0,}|\\s{0,}\\|\\|\\s{0,}");
         List<String> operators = new ArrayList<>();
         for (int i = 0; i < strs.length - 1; i++) {
-            String operator = filters.substring(filters.indexOf(strs[i]) + strs[i].length(), filters.indexOf(strs[i + 1])).trim();
+            String operator = conditions.substring(conditions.indexOf(strs[i]) + strs[i].length(), conditions.indexOf(strs[i + 1])).trim();
             operators.add(operator);
             System.out.println(operator);
         }
@@ -330,24 +330,24 @@ public class JsonPath {
 
 
         System.out.println("*******************");
+
+        String regExpofSigns = "(\\s{0,}[><=!]{1}[=~]{0,1}\\s{0,})";
         for (String str : strs) {
-            String regExp = "(\\s{0,}[><=!]{1}[=~]{0,1}\\s{0,})";
-            Pattern pattern = Pattern.compile(regExp);
-            Matcher m = pattern.matcher(str);
-            while (m.find()) {
-                String[] items = str.split(regExp);
-                if (items.length > 0) {
-                    System.out.println(items[0]);
-                }
-                if (items.length > 1) {
-                    System.out.println(items[1]);
+            if(str.matches(".*" + regExpofSigns + ".*")) {
+                Pattern pattern = Pattern.compile(regExpofSigns);
+                Matcher m = pattern.matcher(str);
+                while (m.find()) {
+                    String[] items = str.split(regExpofSigns);
+
                 }
 
-                int count = m.groupCount();
-                for (int i = 1; i <= count; i++) {
-                    String s = m.group(i);
-                    System.out.println(s);
+            } else if(str.length() > 5 && (str.indexOf(" ") != str.lastIndexOf(" "))) {
+                // handle cases like "in", "nin" etc
+                String[] fields = str.split(" {1,}");
+                for (String field : fields) {
+                    System.out.println(field);
                 }
+
             }
 
         }
@@ -355,13 +355,7 @@ public class JsonPath {
         System.out.println("*******************");
 
         //get elements of a filter
-        String filter = "category     size 'fiction'";
-        String[] fields = filter.split(" {1,}");
-        for (String str : strs) {
-            System.out.println(str);
-        }
 
-    */
 
     }
 
