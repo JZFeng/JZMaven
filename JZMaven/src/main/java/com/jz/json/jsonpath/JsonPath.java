@@ -16,7 +16,9 @@ public class JsonPath {
     /**
      * @param source the source of JsonObject
      *               Sample JsonObject:{"store": {"book": [{"category": "reference","author": "Nigel Rees","title": "Sayings of the Century","price": 8.95},{"category": "fiction","author": "Evelyn Waugh","title": "Sword of Honour","price": 12.99},{"category": "fiction","author": "Herman Melville","title": "Moby Dick","isbn": "0-553-21311-3","price": 8.99},{"category": "fiction","author": "J. R. R. Tolkien","title": "The Lord of the Rings","isbn": "0-395-19395-8","price": 22.99}],"bicycle": {"color": "red","price": 19.95}},"expensive": 10}
-     * @param path   now supporting standard JsonPath. Partial JsonPath is also supported.
+     * @param path   Sample JsonPath
+     *               <p>
+     *               now supporting standard JsonPath. Partial JsonPath is also supported.
      *               $.store.book[*].author	The authors of all books
      *               $.store 	All things, both books and bicycles
      *               book[2]	    The third book
@@ -28,26 +30,28 @@ public class JsonPath {
      *               book[2:]	Book number two from tail
      *               book[first()]
      *               book[last()]
-     *
-     *
      * @return returns a a list of {@link JsonElementWithLevel}
      */
 
-    private static List<JsonElementWithLevel> getJsonElementWithLevelByPath(JsonObject source, String path) throws Exception {
+    private static List<JsonElementWithLevel> getJsonElementWithLevelByPath(
+            JsonObject source, String path) throws Exception {
         List<JsonElementWithLevel> result = new ArrayList<>();
         if (path == null || path.length() == 0 || source == null || source.isJsonNull()) {
-            return result;
-        }
-        if(path.matches("(.*)(\\.length\\(\\)$)")){ // case: [path == $.listing.termsAndPolicies.length()]
-            path = path.replaceAll("(.*)(\\.length\\(\\)$)","$1");
-            int length = length(source, path);
-            result.add(new JsonElementWithLevel(new JsonPrimitive(length), path));
             return result;
         }
 
         Map<String, List<Range>> ranges = generateRanges(path);
         Map<String, List<Range>> matchedRanges = new LinkedHashMap<>();
         String regex = generateRegex(path);
+
+        // to support length() function;
+        if (path.matches("(.*)(\\.length\\(\\)$)")) { // case: [path == $.listing.termsAndPolicies.length()]
+            path = path.replaceAll("(.*)(\\.length\\(\\)$)", "$1");
+            int length = length(source, path);
+            result.add(new JsonElementWithLevel(new JsonPrimitive(length), path));
+            return result;
+        }
+
 
         Queue<JsonElementWithLevel> queue = new LinkedList<JsonElementWithLevel>();
         queue.offer(new JsonElementWithLevel(source, "$"));
@@ -109,6 +113,7 @@ public class JsonPath {
      * @param matchedRanges
      * @return true if i in matchedRange();
      */
+
 
     private static boolean isMatched(
             String currentLevel, Map<String, List<Range>> ranges, Map<String, List<Range>> matchedRanges, int length) {
@@ -191,7 +196,7 @@ public class JsonPath {
      */
     private static Map<String, List<Range>> generateRanges(String path) {
         Map<String, List<Range>> ranges = new LinkedHashMap<>();
-        if (path == null || path.length() == 0) {
+        if (path == null || path.trim().length() == 0) {
             return ranges;
         }
 
@@ -199,11 +204,16 @@ public class JsonPath {
         int index = 0;
         while ((index = path.indexOf('[')) != -1) {
             prefix.append(path.substring(0, index) + "[]");
-            String r = path.substring(index + 1, path.indexOf(']'));
-            List<Range> range = generateRange(r);
-            if (range != null && range.size() > 0) {
-                ranges.put(prefix.toString().trim(), range);
+            String r = path.substring(index + 1, path.indexOf(']')).trim();
+            if(r.contains("@")) {
+
+            } else {
+                List<Range> range = generateRange(r);
+                if (range != null && range.size() > 0) {
+                    ranges.put(prefix.toString().trim(), range);
+                }
             }
+
             path = path.substring(path.indexOf(']') + 1);
         }
 
@@ -224,7 +234,7 @@ public class JsonPath {
      *          first()
      *          <p>
      *          $..book[?(@.isbn)]	All books with an ISBN number (convert to notempty ), [?@.isbn notempty]
-     *
+     *          <p>
      *          $.store.book[?(@.price < 10)]	All books in store cheaper than 10
      *          $..book[?(@.price <= $['expensive'])]	All books in store that are not "expensive"
      *          $..book[?(@.author =~ /.*REES/i)]	All books matching regex (ignore case)
@@ -279,22 +289,25 @@ public class JsonPath {
     }
 
     private static int length(JsonObject jsonObject, String path) throws Exception {
-        if(path == null || path.length() == 0) {
+        if (path == null || path.length() == 0) {
             return 0;
         }
-        if(jsonObject == null || jsonObject.isJsonNull() || !jsonObject.isJsonObject()) {
+        if (jsonObject == null || jsonObject.isJsonNull() || !jsonObject.isJsonObject()) {
             return 0;
         }
 
         int length = 0;
-        List<JsonElementWithLevel> result =  getJsonElementWithLevelByPath(jsonObject, path);
-        if(result.size() > 1) {
+        List<JsonElementWithLevel> result = getJsonElementWithLevelByPath(jsonObject, path);
+
+        if (result == null || result.size() == 0) {
+            length = 0;
+        } else if (result.size() > 1) {
             throw new Exception("Please correct your json path to match a single JsonElement.");
         } else {
             JsonElement jsonElement = result.get(0).getJsonElement();
-            if(jsonElement.isJsonObject()) {
+            if (jsonElement.isJsonObject()) {
                 length = jsonElement.getAsJsonObject().entrySet().size();
-            } else if(jsonElement.isJsonArray()) {
+            } else if (jsonElement.isJsonArray()) {
                 length = jsonElement.getAsJsonArray().size();
             } else if (jsonElement.isJsonPrimitive()) {
                 length = jsonElement.getAsJsonPrimitive().getAsString().length();
@@ -306,61 +319,25 @@ public class JsonPath {
     }
 
     public static void main(String[] args) throws Exception {
-   /*     JsonParser parser = new JsonParser();
-        String json = convertFormattedJson2Raw(new File("./JZMaven/src/main/java/com/jz/json/testdata/O.json"));
+        JsonParser parser = new JsonParser();
+        String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/O.json"));
         JsonObject o1 = parser.parse(json).getAsJsonObject();
-        List<JsonElementWithLevel> res = getJsonElementWithLevelByPath(o1,"$.listing.listingClassification.leafCategories[0].categoryPathFromRoot.consolidatedCategoryProperties[1].length()");
+        List<JsonElementWithLevel> res = getJsonElementWithLevelByPath(o1, "$.modules.RETURNS.maxView.value.length()");
         System.out.println("*******************");
-        for(JsonElementWithLevel jsonElementWithLevel : res) {
+        for (JsonElementWithLevel jsonElementWithLevel : res) {
             System.out.println(jsonElementWithLevel);
-        }*/
-
-        //get conditions
-        String conditions = "@.category == 'fiction' && @.price < 10 || @.color == \"red\"";
-
-        String[] strs = conditions.split("\\s{0,}&&\\s{0,}|\\s{0,}\\|\\|\\s{0,}");
-        List<String> operators = new ArrayList<>();
-        for (int i = 0; i < strs.length - 1; i++) {
-            String operator = conditions.substring(conditions.indexOf(strs[i]) + strs[i].length(), conditions.indexOf(strs[i + 1])).trim();
-            operators.add(operator);
-            System.out.println(operator);
         }
 
+
+
+/*
         if (strs.length != operators.size() + 1) {
             new Exception("Field name has \"&&\" or \"||\".");
         }
-
-
-        System.out.println("*******************");
-
-        String regExpofSigns = "(\\s{0,}[><=!]{1}[=~]{0,1}\\s{0,})";
-        for (String str : strs) {
-            if(str.matches(".*" + regExpofSigns + ".*")) {
-                Pattern pattern = Pattern.compile(regExpofSigns);
-                Matcher m = pattern.matcher(str);
-                while (m.find()) {
-                    String[] items = str.split(regExpofSigns);
-
-                }
-
-            } else if(str.length() > 5 && (str.indexOf(" ") != str.lastIndexOf(" "))) {
-                // handle cases like "in", "nin" etc
-                String[] fields = str.split(" {1,}");
-                for (String field : fields) {
-                    System.out.println(field);
-                }
-
-            }
-
-        }
-
-        System.out.println("*******************");
-
-        //get elements of a filter
+*/
 
 
     }
-
 
 
 }
