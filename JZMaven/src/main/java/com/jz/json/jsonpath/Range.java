@@ -27,42 +27,6 @@ public class Range implements Filter {
         return end;
     }
 
-
-    /**
-     * @param path minView.actions[  2 ,  3].action[2:5].URL
-     * @return minView.actions[] : [(2,2),(3,3)]
-     * minView.actions[].action[] : [(2,5)]
-     */
-    public static Map<String, List<Filter>> getRanges(String path) {
-        Map<String, List<Filter>> ranges = new LinkedHashMap<>();
-        if (path == null || path.trim().length() == 0) {
-            return ranges;
-        }
-
-        StringBuilder prefix = new StringBuilder();
-        int index = 0;
-        while ((index = path.indexOf('[')) != -1) {
-            prefix.append(path.substring(0, index) + "[]");
-            String r = path.substring(index + 1, path.indexOf(']')).trim();
-            if (r.contains("@")) {
-                List<Filter> conditions = Condition.getConditions(r);
-                if (conditions != null && conditions.size() > 0) {
-                    ranges.put(prefix.toString().trim(), conditions);
-                }
-            } else {
-                List<Filter> range = getRange(r);
-                if (range != null && range.size() > 0) {
-                    ranges.put(prefix.toString().trim(), range);
-                }
-            }
-
-            path = path.substring(path.indexOf(']') + 1);
-        }
-
-        return ranges;
-    }
-
-
     /**
      * @param r String in []
      *          [2]
@@ -81,8 +45,8 @@ public class Range implements Filter {
      *          $..book[?(@.price <= $['expensive'])]	All books in store that are not "expensive"
      *          $..book[?(@.author =~ /.*REES/i)]	All books matching regex (ignore case)
      */
-    public static List<Filter> getRange(String r) {
-        List<Filter> result = new ArrayList<>();
+    public static List<Range> getRange(String r) {
+        List<Range> result = new ArrayList<>();
         r = r.trim();
         if (r == null || r.length() == 0) {
             return result;

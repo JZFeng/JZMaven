@@ -76,8 +76,8 @@ public class Condition implements Filter {
      * @param r sample parameter:  r = "?(@.author=="Evelyn Waugh" && @.price > 12 || @.category == "reference")"
      * @return
      */
-    public static List<Filter> getConditions(String r) {
-        List<Filter> conditions = new ArrayList<>();
+    public static List<Condition> getConditions(String r) {
+        List<Condition> conditions = new ArrayList<>();
         if (r == null || r.trim().length() == 0 || !r.contains("@.")) {
             return conditions;
         }
@@ -141,19 +141,5 @@ public class Condition implements Filter {
         return left + " " + operator + " " + (right == null ? "" : right);
     }
 
-    public static void main(String[] args) {
-        //$.store.book[?(@.author=="Evelyn Waugh" && @.price > 12 || @.category == "reference")]
-        String r = "@.isbn notempty && @.author==\"Evelyn Waugh\" && @.price > 12 || @.category == \"reference\"";
-        System.out.println(r);
-        List<Filter> conditions = getConditions(r);
-        for (Filter c : conditions) {
-            System.out.println(c);
-        }
-
-        List<String> operatorsBWConditions = getOperatorsBWConditions(r);
-        for (String o : operatorsBWConditions) {
-            System.out.println(o);
-        }
-    }
 
 }
