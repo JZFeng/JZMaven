@@ -30,6 +30,7 @@ public class JsonPath {
      * @return returns a a list of {@link JsonElementWithLevel}
      */
 
+
     private static List<JsonElementWithLevel> getJsonElementWithLevelByPath(
             JsonObject source, String path) throws Exception {
         List<JsonElementWithLevel> result = new ArrayList<>();
