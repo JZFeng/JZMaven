@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 /**
  * String path = $.store.book[?(@.author=="Evelyn Waugh" && @.price > 12 || @.category == "reference")]
  */
-public class Condition implements Filter{
+public class Condition implements Filter {
     private String left;
     private String operator;
     private String right;
@@ -124,9 +124,9 @@ public class Condition implements Filter{
         } else if (str.length() > 5 && str.indexOf(" ") != -1) {
             // handle cases like "in", "nin" etc
             String[] items = str.split(" {1,}");
-            if(items.length == 2 ) {
+            if (items.length == 2) {
                 condition = new Condition(items[0].trim(), items[1].trim());
-            } else if(items.length == 3) {
+            } else if (items.length == 3) {
                 condition = new Condition(items[0].trim(), items[1].trim(), items[2].trim());
             }
 
