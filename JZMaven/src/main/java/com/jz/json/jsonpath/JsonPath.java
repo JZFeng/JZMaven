@@ -38,8 +38,8 @@ public class JsonPath {
             return result;
         }
 
-        Map<String, List<Range>> ranges = generateRanges(path);
-        Map<String, List<Range>> matchedRanges = new LinkedHashMap<>();
+        Map<String, List<Filter>> ranges = generateRanges(path);
+        Map<String, List<Filter>> matchedRanges = new LinkedHashMap<>();
         String regex = generateRegex(path);
 
         // to support length() function;
@@ -100,9 +100,9 @@ public class JsonPath {
 
             // current level is BFS done which means all possible candidates are already captured in the result,
             // end BFS by directly returning result;
-            if(isDone){
+         /*   if(isDone){
                 return result;
-            }
+            }*/
         }
 
 
@@ -128,7 +128,7 @@ public class JsonPath {
 
 
     private static boolean isMatched(
-            String currentLevel, Map<String, List<Range>> ranges, Map<String, List<Range>> matchedRanges, int length) {
+            String currentLevel, Map<String, List<Filter>> ranges, Map<String, List<Filter>> matchedRanges, int length) {
         StringBuilder prefix = new StringBuilder();
         int index = 0;
         while ((index = currentLevel.indexOf('[')) != -1) {
@@ -137,9 +137,9 @@ public class JsonPath {
             int i = Integer.parseInt(currentLevel.substring(index + 1, currentLevel.indexOf(']')));
 
             if (!matchedRanges.containsKey(prefix)) {
-                for (Map.Entry<String, List<Range>> entry : ranges.entrySet()) {
+                for (Map.Entry<String, List<Filter>> entry : ranges.entrySet()) {
                     String key = entry.getKey();
-                    List<Range> value = entry.getValue();
+                    List<Filter> value = entry.getValue();
                     int idx = prefix.indexOf(key);
                     if (idx != -1 && prefix.toString().substring(idx).equals(key)) {
                         matchedRanges.put(prefix.toString(), value);
@@ -166,18 +166,23 @@ public class JsonPath {
      * @param i      index of a JsonArray
      * @return return true if  i in any of the range [(0, 0), (3,3)], otherwise return false;
      */
-    private static boolean isCurrentFieldMatched(List<Range> rangeList, String prefix, int i, int length) {
+    private static boolean isCurrentFieldMatched(List<Filter> rangeList, String prefix, int i, int length) {
         if (rangeList != null && rangeList.size() > 0) {
-            for (Range range : rangeList) {
-                if (range.start < 0 && range.end < 0) {
-                    if ((i - length) >= range.start && (i - length) <= range.end) {
-                        return true;
+            for (Filter range : rangeList) {
+                if(range instanceof Range) {
+                    if (((Range) range).getStart() < 0 && ((Range) range).getEnd() < 0) {
+                        if ((i - length) >= ((Range) range).getStart() && (i - length) <= ((Range) range).getEnd()) {
+                            return true;
+                        }
+                    } else {
+                        if (i >= ((Range) range).getStart() && i <= ((Range) range).getEnd()) {
+                            return true;
+                        }
                     }
-                } else {
-                    if (i >= range.start && i <= range.end) {
-                        return true;
-                    }
+                } else if(range instanceof Condition) {
+                    //to-do ; deal with conditions
                 }
+
             }
         }
 
@@ -206,8 +211,8 @@ public class JsonPath {
      * @return minView.actions[] : [(2,2),(3,3)]
      * minView.actions[].action[] : [(2,5)]
      */
-    private static Map<String, List<Range>> generateRanges(String path) {
-        Map<String, List<Range>> ranges = new LinkedHashMap<>();
+    private static Map<String, List<Filter>> generateRanges(String path) {
+        Map<String, List<Filter>> ranges = new LinkedHashMap<>();
         if (path == null || path.trim().length() == 0) {
             return ranges;
         }
@@ -218,9 +223,12 @@ public class JsonPath {
             prefix.append(path.substring(0, index) + "[]");
             String r = path.substring(index + 1, path.indexOf(']')).trim();
             if(r.contains("@")) {
-
+                List<Filter> conditions = Condition.getConditions(r);
+                if(conditions != null && conditions.size() > 0) {
+                    ranges.put(prefix.toString().trim(), conditions);
+                }
             } else {
-                List<Range> range = generateRange(r);
+                List<Filter> range = generateRange(r);
                 if (range != null && range.size() > 0) {
                     ranges.put(prefix.toString().trim(), range);
                 }
@@ -251,8 +259,8 @@ public class JsonPath {
      *          $..book[?(@.price <= $['expensive'])]	All books in store that are not "expensive"
      *          $..book[?(@.author =~ /.*REES/i)]	All books matching regex (ignore case)
      */
-    private static List<Range> generateRange(String r) {
-        List<Range> result = new ArrayList<>();
+    private static List<Filter> generateRange(String r) {
+        List<Filter> result = new ArrayList<>();
         r = r.trim();
         if (r == null || r.length() == 0) {
             return result;
@@ -334,7 +342,7 @@ public class JsonPath {
         JsonParser parser = new JsonParser();
         String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/O.json"));
         JsonObject o1 = parser.parse(json).getAsJsonObject();
-        List<JsonElementWithLevel> res = getJsonElementWithLevelByPath(o1, "$.modules.RETURNS.maxView");
+        List<JsonElementWithLevel> res = getJsonElementWithLevelByPath(o1, "RETURNS.maxView.value[-2:]");
         System.out.println("*******************");
         for (JsonElementWithLevel jsonElementWithLevel : res) {
             System.out.println(jsonElementWithLevel);
