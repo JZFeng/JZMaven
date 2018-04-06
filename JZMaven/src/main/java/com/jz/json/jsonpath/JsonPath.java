@@ -4,10 +4,7 @@ import com.google.gson.*;
 import com.jz.json.jsoncompare.JsonElementWithLevel;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.jz.json.jsoncompare.Utils.convertFormattedJson2Raw;
 
@@ -55,8 +52,10 @@ public class JsonPath {
 
         Queue<JsonElementWithLevel> queue = new LinkedList<JsonElementWithLevel>();
         queue.offer(new JsonElementWithLevel(source, "$"));
+        boolean isDone = false;
         while (!queue.isEmpty()) {
             int size = queue.size();
+            //Traverse by level
             for (int i = 0; i < size; i++) {
                 JsonElementWithLevel org = queue.poll();
                 String currentLevel = org.getLevel();
@@ -72,8 +71,11 @@ public class JsonPath {
                         String level = currentLevel + "[" + j + "]";
                         JsonElementWithLevel tmp = new JsonElementWithLevel(ja1.get(j), level);
                         queue.offer(tmp);
-                        if (level.matches(regex) && isMatched(level, ranges, matchedRanges, length)) {
-                            result.add(tmp);
+                        if (level.matches(regex)) {
+                            isDone = true;
+                            if(isMatched(level, ranges, matchedRanges, length)) {
+                                result.add(tmp);
+                            }
                         }
                     }
                 } else if (je1.isJsonObject()) {
@@ -85,11 +87,20 @@ public class JsonPath {
                         String level = currentLevel + "." + key;
                         JsonElementWithLevel tmp = new JsonElementWithLevel(value, level);
                         queue.offer(tmp);
-                        if (level.matches(regex) && isMatched(level, ranges, matchedRanges, length)) {
-                            result.add(tmp);
+                        if (level.matches(regex))  {
+                            isDone = true;
+                            if(isMatched(level, ranges, matchedRanges, length)) {
+                                result.add(tmp);
+                            }
                         }
                     }
                 }
+            }
+
+            // current level is BFS done which means all possible candidates are already captured in the result,
+            // end BFS by directly returning result;
+            if(isDone){
+                return result;
             }
         }
 
@@ -322,12 +333,13 @@ public class JsonPath {
         JsonParser parser = new JsonParser();
         String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/O.json"));
         JsonObject o1 = parser.parse(json).getAsJsonObject();
-        List<JsonElementWithLevel> res = getJsonElementWithLevelByPath(o1, "$.modules.RETURNS.maxView.value.length()");
+        List<JsonElementWithLevel> res = getJsonElementWithLevelByPath(o1, "$.modules.RETURNS.maxView");
         System.out.println("*******************");
         for (JsonElementWithLevel jsonElementWithLevel : res) {
             System.out.println(jsonElementWithLevel);
         }
 
+//        String path = "$.modules.RETURNS.maxView.store[1,3].book[@.category > 'fiction' and @.price < 10 or @.color == \\\"red\\\"].textSpans[0].text";
 
 
 /*
