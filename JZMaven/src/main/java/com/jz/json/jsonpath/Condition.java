@@ -1,11 +1,8 @@
 package com.jz.json.jsonpath;
 
 import com.google.common.collect.Sets;
-import edu.emory.mathcs.backport.java.util.Arrays;
-import org.testng.collections.Lists;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -18,15 +15,15 @@ public class Condition implements Filter {
     private String left;
     private String operator;
     private String right;
-    private static final Set<String> operators = Sets.newHashSet("<", ">", "<=", ">=", "==", "!=", "=~", "in", "nin", "subsetof", "size", "empty", "notempty");
-    private static final Set<String> OperatorsBWConditions = Sets.newHashSet("&&", "||");
+    private static final Set<String> RELATIONAL_OPERATORS = Sets.newHashSet("<", ">", "<=", ">=", "==", "!=", "=~", "in", "nin", "subsetof", "size", "empty", "notempty");
+    private static final Set<String> LOGICAL_OPERATORS = Sets.newHashSet("&&", "||");
 
     public boolean isValid() {
         if (left == null || left.length() == 0) {
             return false;
         } else if (operator == null || operator.length() == 0) {
             return false;
-        } else if (!operators.contains(operator)) {
+        } else if (!RELATIONAL_OPERATORS.contains(operator)) {
             return false;
         }
 
@@ -46,6 +43,17 @@ public class Condition implements Filter {
         this.operator = operator;
     }
 
+    public String getLeft() {
+        return left;
+    }
+
+    public String getOperator(){
+        return operator;
+    }
+
+    public String getRight(){
+        return right;
+    }
 
     /**
      * Now only support "&&", "||" between conditions
@@ -64,7 +72,7 @@ public class Condition implements Filter {
         List<String> operators = new ArrayList<>();
         for (int i = 0; i < strs.length - 1; i++) {
             String operator = r.substring(r.indexOf(strs[i]) + strs[i].length(), r.indexOf(strs[i + 1])).trim();
-            if (OperatorsBWConditions.contains(operator)) {
+            if (LOGICAL_OPERATORS.contains(operator)) {
                 operatorsBWConditions.add(operator.trim());
             }
         }
