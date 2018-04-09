@@ -47,11 +47,10 @@ public class Range implements Filter {
      */
 
     //to-do: need identify it's a Range style, otherwise throw Exception(Wrong format of condition / range)
-
     public static List<Range> getRange(String r) {
         List<Range> result = new ArrayList<>();
         r = r.trim();
-        if (r == null || r.length() == 0) {
+        if (r == null || r.length() == 0 || r.matches("(\\s{0,}[><=!]{1}[=~]{0,1}\\s{0,})")) {
             return result;
         }
 

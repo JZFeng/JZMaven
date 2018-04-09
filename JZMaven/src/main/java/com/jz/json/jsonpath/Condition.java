@@ -28,8 +28,8 @@ public class Condition implements Filter {
             return false;
         }
 
-        if(logical_operator != null && logical_operator.trim().length() != 0) {
-            if(!LOGICAL_OPERATORS.contains(logical_operator.trim())) {
+        if (logical_operator != null && logical_operator.trim().length() != 0) {
+            if (!LOGICAL_OPERATORS.contains(logical_operator.trim())) {
                 return false;
             }
         }
@@ -56,13 +56,17 @@ public class Condition implements Filter {
         return left.trim();
     }
 
-    public String getOperator(){ return operator.trim(); }
+    public String getOperator() {
+        return operator.trim();
+    }
 
-    public String getRight(){
+    public String getRight() {
         return right;
     }
 
-    public String getLogicalOperator() { return logical_operator.trim(); }
+    public String getLogicalOperator() {
+        return logical_operator.trim();
+    }
 
     public void setLogicalOperator(String logical_operator) {
         this.logical_operator = logical_operator.trim();
@@ -116,7 +120,7 @@ public class Condition implements Filter {
             conditions.add(getCondition(str));
         }
 
-        if(conditions.size() == logicalOperators.size() + 1 ) {
+        if (conditions.size() == logicalOperators.size() + 1) {
             for (int i = 0; i < conditions.size() - 1; i++) {
                 conditions.get(i).setLogicalOperator(logicalOperators.get(i).trim());
             }
