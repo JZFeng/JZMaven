@@ -72,24 +72,12 @@ public class JsonPath {
                     for (int j = 0; j < ja.size(); j++) {
                         String level = currentLevel + "[" + j + "]";
                         JsonElementWithLevel tmp = new JsonElementWithLevel(ja.get(j), level);
+                        queue.offer(tmp);
                         updateMatchedFilters(level, filters, matchedFilters);
-
-                        List<Filter> list  = matchedFilters.get(currentLevel + "[]");
-
-                        if(list.size() > 0 && (list.get(0) instanceof Condition) ) {
-                            List<Condition> c = new ArrayList<>();
-                            for (Filter f : list) {
-                                c.add((Condition) f);
-                            }
-
-                            if (isMatchingConditions(ja.get(j).getAsJsonObject(), c)) {
-                                queue.offer(tmp);
-                            }
-                        }
 
                         if (level.matches(regex)) {
                             isDone = true;
-                            if (isMatchingRange(source, level, matchedFilters, length)) {
+                            if (isMatchingFilters(tmp.getJsonElement(), level, matchedFilters, length)) {
                                 result.add(tmp);
                             }
                         }
@@ -103,10 +91,10 @@ public class JsonPath {
                         String level = currentLevel + "." + key;
                         JsonElementWithLevel tmp = new JsonElementWithLevel(value, level);
                         queue.offer(tmp);
+                        updateMatchedFilters(level, filters, matchedFilters);
                         if (level.matches(regex)) {
-                            updateMatchedFilters(level, filters, matchedFilters);
                             isDone = true;
-                            if (isMatchingRange(source, level, matchedFilters, length)) {
+                            if (isMatchingFilters(tmp.getJsonElement(), level, matchedFilters, length)) {
                                 result.add(tmp);
                             }
                         }
@@ -142,16 +130,32 @@ public class JsonPath {
      */
 
 
-    private static boolean isMatchingRange(
-            JsonObject source, String currentLevel,
-            Map<String, List<Filter>> matchedFilters, int length) throws Exception {
+    private static boolean isMatchingFilters(
+            JsonElement je,
+            String currentLevel,
+            Map<String, List<Filter>> matchedFilters,
+            int length) throws Exception {
         StringBuilder prefix = new StringBuilder();
         int index = 0;
         while ((index = currentLevel.indexOf('[')) != -1) {
             prefix.append(currentLevel.substring(0, index) + "[]");
-            int i = Integer.parseInt(currentLevel.substring(index + 1, currentLevel.indexOf(']')));
-            boolean tmp = isCurrentFieldMatchingRange(source, matchedFilters.get(prefix.toString().trim()), prefix.toString(), i, length);
-            if (tmp) {
+            boolean isMatched = false;
+            List<Filter> filters = matchedFilters.get(prefix.toString().trim());
+
+            if (filters.size() > 0 && filters.get(0) instanceof Range) {
+                int i = Integer.parseInt(currentLevel.substring(index + 1, currentLevel.indexOf(']')));
+                isMatched = isMatchingRange(filters, prefix.toString(), i, length);
+            } else if (filters.size() > 0 && (filters.get(0) instanceof Condition)) {
+                List<Condition> c = new ArrayList<>();
+                for (Filter f : filters) {
+                    c.add((Condition) f);
+                }
+                if(je.isJsonObject()) {
+                     isMatched = isMatchingConditions(je.getAsJsonObject(), c);
+                }
+            }
+
+            if (isMatched) {
                 currentLevel = currentLevel.substring(currentLevel.indexOf(']') + 1);
             } else {
                 return false;
@@ -201,8 +205,8 @@ public class JsonPath {
      * @param i      index of a JsonArray
      * @return return true if  i in any of the range [(0, 0), (3,3)], otherwise return false;
      */
-    private static boolean isCurrentFieldMatchingRange(
-            JsonObject source, List<Filter> filterList, String prefix, int i, int length) throws Exception {
+    private static boolean isMatchingRange(
+            List<Filter> filterList, String prefix, int i, int length) throws Exception {
         System.out.println("prefix is " + prefix);
         if (filterList != null && filterList.size() > 0) {
             for (Filter filter : filterList) {
@@ -434,7 +438,7 @@ public class JsonPath {
                 if (conditions != null && conditions.size() > 0) {
                     res.put(prefix.toString().trim(), filters);
                 }
-            } else if (r.matches("(.*)([,:])(.*)") || r.contains("last()") || r.contains("first()") || r.matches("\\s{0,}(-{0,}\\d+)\\s{0,}")) {
+            } else if (r.matches("(.*)([,:])(.*)") || r.contains("last()") || r.contains("first()") || r.contains("*") || r.matches("\\s{0,}(-{0,}\\d+)\\s{0,}")) {
                 //ranges, [2:],[-2],[1,3,5] etc
                 List<Range> ranges = getRange(r);
                 List<Filter> filters = new ArrayList<>();
@@ -479,8 +483,8 @@ public class JsonPath {
         JsonParser parser = new JsonParser();
         String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/book.json"));
         JsonObject o1 = parser.parse(json).getAsJsonObject();
-        String path = "store.book[?(@.category == \"fiction\" && @.price > 10 || @.category == \"document\"  )]";
-//        String path = "store.book[2:]";
+//        String path = "store.book[?(@.category == \"fiction\" && @.price < 10 || @.category == \"document\")]";
+        String path = "store.book[-2].author";
         List<JsonElementWithLevel> res = getJsonElementWithLevelByPath(o1, path);
         System.out.println("****************");
         for (JsonElementWithLevel je : res) {
@@ -489,5 +493,16 @@ public class JsonPath {
 
     }
 
+                        /*only add JsonArray Element which matchings the filters.
+                        if(list.size() > 0 && (list.get(0) instanceof Condition) ) {
+                            List<Condition> c = new ArrayList<>();
+                            for (Filter f : list) {
+                                c.add((Condition) f);
+                            }
 
+                            if (isMatchingConditions(ja.get(j).getAsJsonObject(), c)) {
+                                queue.offer(tmp);
+                            }
+                        }
+                        */
 }
