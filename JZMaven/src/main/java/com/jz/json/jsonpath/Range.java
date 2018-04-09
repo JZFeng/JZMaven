@@ -45,6 +45,9 @@ public class Range implements Filter {
      *          $..book[?(@.price <= $['expensive'])]	All books in store that are not "expensive"
      *          $..book[?(@.author =~ /.*REES/i)]	All books matching regex (ignore case)
      */
+
+    //to-do: need identify it's a Range style, otherwise throw Exception(Wrong format of condition / range)
+
     public static List<Range> getRange(String r) {
         List<Range> result = new ArrayList<>();
         r = r.trim();

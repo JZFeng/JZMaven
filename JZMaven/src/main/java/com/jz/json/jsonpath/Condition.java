@@ -15,7 +15,8 @@ public class Condition implements Filter {
     private String left;
     private String operator;
     private String right;
-    private static final Set<String> RELATIONAL_OPERATORS = Sets.newHashSet("<", ">", "<=", ">=", "==", "!=", "=~", "in", "nin", "subsetof", "size", "empty", "notempty");
+    private String logical_operator;
+    private static final Set<String> OPERATORS = Sets.newHashSet("<", ">", "<=", ">=", "==", "!=", "=~", "in", "nin", "subsetof", "size", "empty", "notempty");
     private static final Set<String> LOGICAL_OPERATORS = Sets.newHashSet("&&", "||");
 
     public boolean isValid() {
@@ -23,8 +24,14 @@ public class Condition implements Filter {
             return false;
         } else if (operator == null || operator.length() == 0) {
             return false;
-        } else if (!RELATIONAL_OPERATORS.contains(operator)) {
+        } else if (!OPERATORS.contains(operator)) {
             return false;
+        }
+
+        if(logical_operator != null && logical_operator.trim().length() != 0) {
+            if(!LOGICAL_OPERATORS.contains(logical_operator.trim())) {
+                return false;
+            }
         }
 
         return true;
@@ -32,27 +39,33 @@ public class Condition implements Filter {
 
     //    Binary operator
     Condition(String left, String operator, String right) {
-        this.left = left;
-        this.operator = operator;
+        this.left = left.trim();
+        this.operator = operator.trim();
         this.right = right;
+        this.logical_operator = "";
     }
 
     //Unary operator
     Condition(String left, String operator) {
-        this.left = left;
-        this.operator = operator;
+        this.left = left.trim();
+        this.operator = operator.trim();
+        this.logical_operator = "";
     }
 
     public String getLeft() {
-        return left;
+        return left.trim();
     }
 
-    public String getOperator(){
-        return operator;
-    }
+    public String getOperator(){ return operator.trim(); }
 
     public String getRight(){
         return right;
+    }
+
+    public String getLogicalOperator() { return logical_operator.trim(); }
+
+    public void setLogicalOperator(String logical_operator) {
+        this.logical_operator = logical_operator.trim();
     }
 
     /**
@@ -61,7 +74,7 @@ public class Condition implements Filter {
      * @param r sample parameter: "@.category == 'fiction' && @.price < 10 || @.color == \"red\" || @.name size 10";
      * @return sample return: [&&, ||, ||]
      */
-    public static List<String> getOperatorsBWConditions(String r) {
+    private static List<String> getLogicalOperators(String r) {
         r = r.trim();
         List<String> operatorsBWConditions = new ArrayList<>();
         if (r == null || r.length() == 0 || !r.contains("@.")) {
@@ -80,11 +93,16 @@ public class Condition implements Filter {
         return operatorsBWConditions;
     }
 
+
+    // to-do: refactoring : merge getConditions and getLogicalOperators
+
     /**
      * @param r sample parameter:  r = "?(@.author=="Evelyn Waugh" && @.price > 12 || @.category == "reference")"
      * @return
      */
-    public static List<Condition> getConditions(String r) {
+    public static List<Condition> getConditions(String r) throws Exception {
+        List<String> logicalOperators = getLogicalOperators(r);
+
         List<Condition> conditions = new ArrayList<>();
         if (r == null || r.trim().length() == 0 || !r.contains("@.")) {
             return conditions;
@@ -96,6 +114,14 @@ public class Condition implements Filter {
         String[] strs = r.split("\\s{0,}&&\\s{0,}|\\s{0,}\\|\\|\\s{0,}");
         for (String str : strs) {
             conditions.add(getCondition(str));
+        }
+
+        if(conditions.size() == logicalOperators.size() + 1 ) {
+            for (int i = 0; i < conditions.size() - 1; i++) {
+                conditions.get(i).setLogicalOperator(logicalOperators.get(i).trim());
+            }
+        } else {
+            throw new Exception("conditions.size() should equal operators.size() + 1");
         }
 
         return conditions;

@@ -1,10 +1,11 @@
 package com.jz.json.jsonpath;
 
+import com.ebay.testinfrastructure.serviceautil.rest.Conditions;
 import com.google.gson.*;
 import com.jz.json.jsoncompare.JsonElementWithLevel;
+import org.testng.collections.Lists;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 import static com.jz.json.jsoncompare.Utils.convertFormattedJson2Raw;
@@ -41,7 +42,7 @@ public class JsonPath {
         }
 
         Map<String, List<Filter>> filters = getFilters(path);
-        Map<String, List<Filter>> matchedRanges = new LinkedHashMap<>();
+        Map<String, List<Filter>> matchedFilters = new LinkedHashMap<>();
         String regex = generateRegex(path);
 
         // to support length() function;
@@ -73,15 +74,21 @@ public class JsonPath {
                     for (int j = 0; j < ja.size(); j++) {
                         String level = currentLevel + "[" + j + "]";
                         JsonElementWithLevel tmp = new JsonElementWithLevel(ja.get(j), level);
+                        updateMatchedFilters(level, filters, matchedFilters);
 
                         // level = $.modules.RETURNS.maxView.value[3];
 
-//                        if(isMatchingConditions(ja, matchedRanges.get(currentLevel),  )) {
-//                            queue.offer(tmp);
-//                        }
+                        List<Condition> c = new ArrayList<>();
+                        for(Filter f : matchedFilters.get(currentLevel + "[]")) {
+                            c.add((Condition)f);
+                        }
+
+                        if(isMatchingConditions( ja.get(i).getAsJsonObject(), c )) {
+                            queue.offer(tmp);
+                        }
                         if (level.matches(regex)) {
                             isDone = true;
-                            if (isMatched(source, level, filters, matchedRanges, length)) {
+                            if (isMatched(source, level, matchedFilters, length)) {
                                 result.add(tmp);
                             }
                         }
@@ -95,9 +102,10 @@ public class JsonPath {
                         String level = currentLevel + "." + key;
                         JsonElementWithLevel tmp = new JsonElementWithLevel(value, level);
                         queue.offer(tmp);
+                        updateMatchedFilters(level, filters, matchedFilters);
                         if (level.matches(regex)) {
                             isDone = true;
-                            if (isMatched(source,level, filters, matchedRanges, length)) {
+                            if (isMatched(source, level, matchedFilters, length)) {
                                 result.add(tmp);
                             }
                         }
@@ -107,9 +115,9 @@ public class JsonPath {
 
             // current level is BFS done which means all possible candidates are already captured in the result,
             // end BFS by directly returning result;
-//            if(isDone){
-//                return result;
-//            }
+            if(isDone){
+                return result;
+            }
         }
 
 
@@ -127,34 +135,21 @@ public class JsonPath {
     }*/
 
     /**
-     * @param currentLevel  $.courses[i].grade
-     * @param ranges
-     * @param matchedRanges
+     * @param currentLevel   $.courses[i].grade
+     * @param matchedFilters
      * @return true if i in matchedRange();
      */
 
 
     private static boolean isMatched(
-            JsonObject source, String currentLevel, Map<String, List<Filter>> ranges,
-            Map<String, List<Filter>> matchedRanges, int length) throws Exception {
+            JsonObject source, String currentLevel,
+            Map<String, List<Filter>> matchedFilters, int length) throws Exception {
         StringBuilder prefix = new StringBuilder();
         int index = 0;
         while ((index = currentLevel.indexOf('[')) != -1) {
-            //update matchedRanges
             prefix.append(currentLevel.substring(0, index) + "[]");
-            if (!matchedRanges.containsKey(prefix)) {
-                for (Map.Entry<String, List<Filter>> entry : ranges.entrySet()) {
-                    String key = entry.getKey();
-                    List<Filter> value = entry.getValue();
-                    int idx = prefix.indexOf(key);
-                    if (idx != -1 && prefix.toString().substring(idx).equals(key)) {
-                        matchedRanges.put(prefix.toString(), value);
-                    }
-                }
-            }
-
             int i = Integer.parseInt(currentLevel.substring(index + 1, currentLevel.indexOf(']')));
-            boolean tmp = isCurrentFieldMatched(source, matchedRanges.get(prefix.toString().trim()), prefix.toString(), i, length);
+            boolean tmp = isCurrentFieldMatched(source, matchedFilters.get(prefix.toString().trim()), prefix.toString(), i, length);
             if (tmp) {
                 currentLevel = currentLevel.substring(currentLevel.indexOf(']') + 1);
             } else {
@@ -166,10 +161,26 @@ public class JsonPath {
         return true;
     }
 
-//    private static void updateMatchedRangesByCurrentLevel(String currentLevel,  ) {
-//        int index =  currentLevel.indexOf('[');
-//        String prefix = currentLevel.substring(0, index) + "[]";
-//    }
+
+    private static void updateMatchedFilters(
+            String currentLevel, Map<String, List<Filter>> filters, Map<String, List<Filter>> matchedFilters) {
+
+        int index = currentLevel.indexOf('[');
+        if(index != - 1) {
+            String prefix = currentLevel.substring(0, index) + "[]";
+            if (!matchedFilters.containsKey(prefix)) {
+                for (Map.Entry<String, List<Filter>> entry : filters.entrySet()) {
+                    String key = entry.getKey();
+                    List<Filter> value = entry.getValue();
+                    int idx = prefix.indexOf(key);
+                    if (idx != -1 && prefix.substring(idx).equals(key)) {
+                        matchedFilters.put(prefix.toString(), value);
+                    }
+                }
+            }
+        }
+
+    }
 
 
     /**
@@ -179,7 +190,8 @@ public class JsonPath {
      * @param i      index of a JsonArray
      * @return return true if  i in any of the range [(0, 0), (3,3)], otherwise return false;
      */
-    private static boolean isCurrentFieldMatched(JsonObject source, List<Filter> filterList, String prefix, int i, int length) throws Exception {
+    private static boolean isCurrentFieldMatched(
+            JsonObject source, List<Filter> filterList, String prefix, int i, int length) throws Exception {
         System.out.println("prefix is " + prefix);
         if (filterList != null && filterList.size() > 0) {
             for (Filter filter : filterList) {
@@ -197,17 +209,17 @@ public class JsonPath {
                     //to-do ; deal with conditions like [@.category > 'fiction' and @.price < 10 or @.color == \"red\"]
                     //prefix =  $.modules.RETURNS.maxView.store[1,3].book[]
                     List<JsonElementWithLevel> tmp = getJsonElementWithLevelByPath(source, prefix.substring(0, prefix.lastIndexOf("[")));
-                    if(tmp == null || tmp.size() == 0 || tmp.size() > 1) {
+                    if (tmp == null || tmp.size() == 0 || tmp.size() > 1) {
                         return false;
                     } else {
                         JsonElementWithLevel je = tmp.get(tmp.size() - 1);
-                        if(!je.getJsonElement().isJsonArray()) {
+                        if (!je.getJsonElement().isJsonArray()) {
                             return false;
                         } else {
                             //apply the conditions;
-                            for(JsonElement jae : je.getJsonElement().getAsJsonArray()) {
-                                 //jae has to be a JsonObject;
-                                 //get JsonArray Elements by applying the filter;
+                            for (JsonElement jae : je.getJsonElement().getAsJsonArray()) {
+                                //jae has to be a JsonObject;
+                                //get JsonArray Elements by applying the filter;
                             }
 
                         }
@@ -222,29 +234,29 @@ public class JsonPath {
 
     //to-do ; deal with conditions like [@.category > 'fiction' and @.price < 10 or @.color == \"red\"]
     //prefix =  $.modules.RETURNS.maxView.store[1,3].book[]
-    private static List<JsonElementWithLevel> getJsonElementsByFilters(JsonObject source, List<Filter> filterList, String prefix) throws Exception {
+    private static List<JsonElementWithLevel> getJsonElementsByFilters(
+            JsonObject source, List<Filter> filterList, String prefix) throws Exception {
         List<JsonElementWithLevel> res = new ArrayList<>();
 
         List<JsonElementWithLevel> tmp = getJsonElementWithLevelByPath(source, prefix.substring(0, prefix.lastIndexOf("[")));
-        if(tmp == null || tmp.size() == 0 || tmp.size() > 1) {
+        if (tmp == null || tmp.size() == 0 || tmp.size() > 1) {
             return res;
         } else {
             JsonElementWithLevel je = tmp.get(tmp.size() - 1);
-            if(!je.getJsonElement().isJsonArray()) {
+            if (!je.getJsonElement().isJsonArray()) {
                 return res;
             } else {
                 //apply the conditions;
-                for(JsonElement jae : je.getJsonElement().getAsJsonArray()) {
+                for (JsonElement jae : je.getJsonElement().getAsJsonArray()) {
                     //jae has to be a JsonObject;
                     //get JsonArray Elements by applying the filter;
-                    if(jae.isJsonObject()) {
+                    if (jae.isJsonObject()) {
 
                     }
                 }
 
             }
         }
-
 
 
         return res;
@@ -254,27 +266,22 @@ public class JsonPath {
     /**
      * Identify whether a JsonObject matches the conditions
      *
-     * @param jo  an JsonArray element as a JsonObject,
+     * @param jo         an JsonArray element as a JsonObject,
      * @param conditions conditions;
-     * @param operators the operators between conditions. Make sure, conditions.size() = operators.size() + 1;
      * @return
      */
-    public static boolean isMatchingConditions(JsonObject jo , List<Condition> conditions, List<String> operators) throws Exception {
-        if (conditions.size() - 1 != operators.size()) {
-            throw new Exception("conditions.size() should equal operators.size() + 1");
-        }
+    public static boolean isMatchingConditions(JsonObject jo, List<Condition> conditions) throws Exception {
 
         boolean result = isMatchingCondition(jo, conditions.get(0));
 
         for (int i = 1; i < conditions.size(); i++) {
-            String operator = operators.get(i - 1);
-            if (operator.equals("&&")) {
+            String logicalOperator = conditions.get(i - 1).getLogicalOperator();
+            if (logicalOperator.equals("&&")) {
                 result = result && (isMatchingCondition(jo, conditions.get(i)));
-            } else if (operator.equals("||")) {
+            } else if (logicalOperator.equals("||")) {
                 result = result || (isMatchingCondition(jo, conditions.get(i)));
             }
         }
-
 
         return result;
     }
@@ -282,7 +289,7 @@ public class JsonPath {
 
     //"<", ">", "<=", ">=", "==", "!=", "=~", "in", "nin", "subsetof", "size", "empty", "notempty"
     public static boolean isMatchingCondition(JsonObject jo, Condition condition) {
-        if(!condition.isValid()) {
+        if (!condition.isValid()) {
             return false;
         }
 
@@ -290,48 +297,45 @@ public class JsonPath {
         String left = condition.getLeft().trim();
         String operator = condition.getOperator().trim();
         String right = condition.getRight();
-        if(!keys.contains(left)) {
+        if (!keys.contains(left)) {
             return false;
         }
-
-
 
         boolean result = false;
         String valueAsString = jo.get(left).getAsString();
         String valueAsJE = jo.get(left).toString();
 
         //to-do, refactoring, using enum;
-        if(operator.equals("<")) {
-            result = ( (valueAsString.matches("(\\d+)\\.(\\d+)")) ? (Double.parseDouble(valueAsString) < Double.parseDouble(right))   : (Integer.parseInt(valueAsString) < Integer.parseInt(right)) ) ;
+        if (operator.equals("<")) {
+            result = ((valueAsString.matches("(\\d+)\\.(\\d+)")) ? (Double.parseDouble(valueAsString) < Double.parseDouble(right)) : (Integer.parseInt(valueAsString) < Integer.parseInt(right)));
         } else if (operator.equals(">")) {
-            result = ( (valueAsString.matches("(\\d+)\\.(\\d+)")) ? (Double.parseDouble(valueAsString) > Double.parseDouble(right))   : (Integer.parseInt(valueAsString) > Integer.parseInt(right)) ) ;
-        } else if(operator.equals(">=")) {
-            result = ( (valueAsString.matches("(\\d+)\\.(\\d+)")) ? (Double.parseDouble(valueAsString) >= Double.parseDouble(right))   : (Integer.parseInt(valueAsString) >= Integer.parseInt(right)) ) ;
-        } else if(operator.equals("<=")) {
-            result = ( (valueAsString.matches("(\\d+)\\.(\\d+)")) ? (Double.parseDouble(valueAsString) <= Double.parseDouble(right))   : (Integer.parseInt(valueAsString) <= Integer.parseInt(right)) ) ;
-        } else if(operator.equals("==")) {
+            result = ((valueAsString.matches("(\\d+)\\.(\\d+)")) ? (Double.parseDouble(valueAsString) > Double.parseDouble(right)) : (Integer.parseInt(valueAsString) > Integer.parseInt(right)));
+        } else if (operator.equals(">=")) {
+            result = ((valueAsString.matches("(\\d+)\\.(\\d+)")) ? (Double.parseDouble(valueAsString) >= Double.parseDouble(right)) : (Integer.parseInt(valueAsString) >= Integer.parseInt(right)));
+        } else if (operator.equals("<=")) {
+            result = ((valueAsString.matches("(\\d+)\\.(\\d+)")) ? (Double.parseDouble(valueAsString) <= Double.parseDouble(right)) : (Integer.parseInt(valueAsString) <= Integer.parseInt(right)));
+        } else if (operator.equals("==")) {
             result = valueAsJE.equals(right);
-        } else if(operator.equals("!=")) {
+        } else if (operator.equals("!=")) {
             result = !valueAsJE.equals(right);
-        } else if(operator.equals("=~")) {
+        } else if (operator.equals("=~")) {
 //            to-do
-        } else if(operator.equals("in")) {
+        } else if (operator.equals("in")) {
 
-        } else if(operator.equals("nin")) {
+        } else if (operator.equals("nin")) {
 
-        } else if(operator.equals("subsetof")) {
+        } else if (operator.equals("subsetof")) {
 
-        } else if(operator.equals("size")) {
+        } else if (operator.equals("size")) {
 
-        } else if(operator.equals("empty")) {
+        } else if (operator.equals("empty")) {
 
-        } else if(operator.equals("notempty")) {
+        } else if (operator.equals("notempty")) {
 
         }
 
         return result;
     }
-
 
 
     private static String generateRegex(String path) {
@@ -387,7 +391,7 @@ public class JsonPath {
      * @return minView.actions[] : [(2,2),(3,3)]
      * minView.actions[].action[] : [(2,5)]
      */
-    public static Map<String, List<Filter>> getFilters(String path) {
+    public static Map<String, List<Filter>> getFilters(String path) throws Exception {
         Map<String, List<Filter>> res = new LinkedHashMap<>();
 
         if (path == null || path.trim().length() == 0) {
@@ -402,7 +406,7 @@ public class JsonPath {
             if (r.contains("@")) {
                 //conditions
                 List<Condition> conditions = Condition.getConditions(r);
-                List<String> operators = Condition.getOperatorsBWConditions(r);
+
                 List<Filter> filters = new ArrayList<>();
                 for (Condition condition : conditions) {
                     filters.add(condition);
@@ -438,24 +442,27 @@ public class JsonPath {
     }
 
     public static void main(String[] args) throws Exception {
-        JsonParser parser = new JsonParser();
+        /*JsonParser parser = new JsonParser();
         String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/O.json"));
         JsonObject o1 = parser.parse(json).getAsJsonObject();
         String path = "store[1:].book[@.category == 'fiction' && @.price < 10 || @.color == \\\"red\\\" || @.name size 10]";
         List<JsonElementWithLevel> res = getJsonElementWithLevelByPath(o1, path);
 
 
-
         String r = "?(@.author==\"Evelyn Waugh\" && @.price > 12 || @.category == \"reference\")";
         List<Condition> conditions = Condition.getConditions(r);
-        List<String> operators = Condition.getOperatorsBWConditions(r);
+*/
 
-
+        JsonParser parser = new JsonParser();
+        String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/book.json"));
+        JsonObject o1 = parser.parse(json).getAsJsonObject();
+        String path = "book[@.price > 12]";
+        List<JsonElementWithLevel> res = getJsonElementWithLevelByPath(o1, path);
+        for(JsonElementWithLevel je : res) {
+            System.out.println(je);
+        }
 
     }
-
-
-
 
 
 }
