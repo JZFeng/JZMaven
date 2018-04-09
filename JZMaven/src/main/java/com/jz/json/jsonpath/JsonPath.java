@@ -39,8 +39,9 @@ public class JsonPath {
             return result;
         }
 
-        Map<String, List<Filter>> filters = getFilters(path);
-        Map<String, List<Filter>> matchedFilters = new LinkedHashMap<>();
+        Map<String, List<Filter>> filters = getFilters(path); // generate filters from path;
+        Map<String, List<Filter>> matchedFilters = new LinkedHashMap<>(); //filters with absolute path;
+        Map<String, JsonArray> cachedJsonArrays = new LinkedHashMap<>(); // save JsonArray to map, in order to reduce time complexibility
         String regex = generateRegex(path);
 
         // to support length() function;
@@ -62,12 +63,14 @@ public class JsonPath {
                 JsonElementWithLevel org = queue.poll();
                 String currentLevel = org.getLevel();
                 JsonElement je = org.getJsonElement();
-                System.out.println(currentLevel);
+//                System.out.println(currentLevel);
 
                 if (je.isJsonPrimitive()) {
                     //do nothing
                 } else if (je.isJsonArray()) {
                     JsonArray ja = je.getAsJsonArray();
+                    System.out.println(currentLevel);
+                    cachedJsonArrays.put(currentLevel, ja);
                     int length = ja.size();
                     for (int j = 0; j < ja.size(); j++) {
                         String level = currentLevel + "[" + j + "]";
@@ -77,7 +80,7 @@ public class JsonPath {
 
                         if (level.matches(regex)) {
                             isDone = true;
-                            if (isMatchingFilters(tmp.getJsonElement(), level, matchedFilters, length)) {
+                            if (isMatchingFilters(cachedJsonArrays,  level, matchedFilters, length)) {
                                 result.add(tmp);
                             }
                         }
@@ -94,7 +97,7 @@ public class JsonPath {
                         updateMatchedFilters(level, filters, matchedFilters);
                         if (level.matches(regex)) {
                             isDone = true;
-                            if (isMatchingFilters(tmp.getJsonElement(), level, matchedFilters, length)) {
+                            if (isMatchingFilters(cachedJsonArrays, level, matchedFilters, length)) {
                                 result.add(tmp);
                             }
                         }
@@ -131,28 +134,33 @@ public class JsonPath {
 
 
     private static boolean isMatchingFilters(
-            JsonElement je,
+            Map<String, JsonArray> cachedJsonArrays,
             String currentLevel,
             Map<String, List<Filter>> matchedFilters,
             int length) throws Exception {
         StringBuilder prefix = new StringBuilder();
+        StringBuilder prepath = new StringBuilder();
         int index = 0;
         while ((index = currentLevel.indexOf('[')) != -1) {
+            prepath.append(currentLevel.substring(0, currentLevel.indexOf(']') + 1));
             prefix.append(currentLevel.substring(0, index) + "[]");
-            boolean isMatched = false;
+            System.out.println("prepath : " + prepath.toString());
+            System.out.println("prefix : " + prefix.toString());
+            int i = Integer.parseInt(currentLevel.substring(index + 1, currentLevel.indexOf(']')));
             List<Filter> filters = matchedFilters.get(prefix.toString().trim());
 
+            boolean isMatched = false;
+
             if (filters.size() > 0 && filters.get(0) instanceof Range) {
-                int i = Integer.parseInt(currentLevel.substring(index + 1, currentLevel.indexOf(']')));
                 isMatched = isMatchingRange(filters, prefix.toString(), i, length);
             } else if (filters.size() > 0 && (filters.get(0) instanceof Condition)) {
                 List<Condition> c = new ArrayList<>();
                 for (Filter f : filters) {
                     c.add((Condition) f);
                 }
-                if(je.isJsonObject()) {
-                     isMatched = isMatchingConditions(je.getAsJsonObject(), c);
-                }
+
+                JsonObject je = cachedJsonArrays.get(prepath.substring(0, prepath.lastIndexOf("["))).getAsJsonObject();
+                isMatched = isMatchingConditions(je, c);
             }
 
             if (isMatched) {
@@ -207,7 +215,6 @@ public class JsonPath {
      */
     private static boolean isMatchingRange(
             List<Filter> filterList, String prefix, int i, int length) throws Exception {
-        System.out.println("prefix is " + prefix);
         if (filterList != null && filterList.size() > 0) {
             for (Filter filter : filterList) {
                 if (filter instanceof Range) {
@@ -483,8 +490,8 @@ public class JsonPath {
         JsonParser parser = new JsonParser();
         String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/book.json"));
         JsonObject o1 = parser.parse(json).getAsJsonObject();
-//        String path = "store.book[?(@.category == \"fiction\" && @.price < 10 || @.category == \"document\")]";
-        String path = "store.book[-2].author";
+//        String path = "store.book[?(@.category == \"fiction\" && @.price < 10 || @.category == \"document\")].author";
+        String path = "store.book[*].author";
         List<JsonElementWithLevel> res = getJsonElementWithLevelByPath(o1, path);
         System.out.println("****************");
         for (JsonElementWithLevel je : res) {
@@ -492,17 +499,4 @@ public class JsonPath {
         }
 
     }
-
-                        /*only add JsonArray Element which matchings the filters.
-                        if(list.size() > 0 && (list.get(0) instanceof Condition) ) {
-                            List<Condition> c = new ArrayList<>();
-                            for (Filter f : list) {
-                                c.add((Condition) f);
-                            }
-
-                            if (isMatchingConditions(ja.get(j).getAsJsonObject(), c)) {
-                                queue.offer(tmp);
-                            }
-                        }
-                        */
 }
