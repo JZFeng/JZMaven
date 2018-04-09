@@ -117,7 +117,10 @@ public class Condition implements Filter {
 
         String[] strs = r.split("\\s{0,}&&\\s{0,}|\\s{0,}\\|\\|\\s{0,}");
         for (String str : strs) {
-            conditions.add(getCondition(str));
+            Condition condition = getCondition(str);
+            if(condition != null) {
+                conditions.add(condition);
+            }
         }
 
         if (conditions.size() == logicalOperators.size() + 1) {
@@ -125,7 +128,8 @@ public class Condition implements Filter {
                 conditions.get(i).setLogicalOperator(logicalOperators.get(i).trim());
             }
         } else {
-            throw new Exception("conditions.size() should equal operators.size() + 1");
+            System.out.println("conditions.size() : " + conditions.size() + " ; logicalOperators.size()" + logicalOperators.size() + " .Please check the JsonPath." );
+            throw new Exception(" CONDITION_STRING : " + r + " ; CONDITIONS_GENERATED : " + conditions + ";" );
         }
 
         return conditions;
@@ -135,7 +139,7 @@ public class Condition implements Filter {
      * @param str sample str like "price < 10" "name size 10"
      * @return instance of Condition
      */
-    private static Condition getCondition(String str) {
+    private static Condition getCondition(String str) throws Exception {
         str = str.trim();
         Condition condition = null;
         if (str == null || str.length() == 0) {
@@ -152,6 +156,11 @@ public class Condition implements Filter {
         List<String> fields = new ArrayList<>();
         String regExp = "(\\s{0,}[><=!]{1}[=~]{0,1}\\s{0,})";
 
+
+        if (str.indexOf("=") == str.lastIndexOf("=")) {
+            throw new Exception("\"=\" is not a valid Operator, please use \"==\" instead.");
+        }
+
         if (str.matches(".*" + regExp + ".*")) {
             Pattern pattern = Pattern.compile(regExp);
             Matcher m = pattern.matcher(str);
@@ -167,7 +176,6 @@ public class Condition implements Filter {
             } else if (items.length == 3) {
                 condition = new Condition(items[0].trim(), items[1].trim(), items[2].trim());
             }
-
         }
 
         return (condition.isValid()) ? condition : null;

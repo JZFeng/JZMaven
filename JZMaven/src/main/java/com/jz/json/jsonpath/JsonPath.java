@@ -11,6 +11,41 @@ import static com.jz.json.jsonpath.Range.getRange;
 
 public class JsonPath {
 
+
+    public static void main(String[] args) throws Exception {
+        JsonParser parser = new JsonParser();
+        String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/O.json"));
+        JsonObject o1 = parser.parse(json).getAsJsonObject();
+
+        String[] paths = new String[]
+                {       "RETURNS.maxView.value[0:].label",
+                        "RETURNS.maxView.value[0:].label.textSpans[0]",
+                        "RETURNS.maxView.value[1,3,4].label.textSpans[0].text",
+                        "RETURNS.maxView.value[1,3,4].label.textSpans[?(@.text == \"Refund\" || @.text == \"Return policy\")].text" };
+
+        for(String path : paths) {
+            List<JsonElementWithLevel> res = getJsonElementWithLevelByPath(o1, path);
+            System.out.println("****************" + path + "****************" + "\n\r");
+            for (JsonElementWithLevel je : res) {
+                System.out.println(je);
+            }
+        }
+
+
+/*
+//        String path = "$.modules.RETURNS.maxView.value[2].value[0].textSpans[0].text";
+//        String path = "RETURNS.maxView.value[1,3,4].label.textSpans[?(@.text == \"Returns\" || @.text == \"Return policy\")].text";
+        String path = "RETURNS.maxView.value[1,3,4].label.textSpans[?(@.text == \"Refund\" || @.text == \"Return policy\")].text";
+        List<JsonElementWithLevel> res = getJsonElementWithLevelByPath(o1, path);
+        System.out.println("****************");
+        for (JsonElementWithLevel je : res) {
+            System.out.println(je);
+        }
+*/
+
+    }
+
+
     /**
      * @param source the source of JsonObject
      *               Sample JsonObject:{"store": {"book": [{"category": "reference","author": "Nigel Rees","title": "Sayings of the Century","price": 8.95},{"category": "fiction","author": "Evelyn Waugh","title": "Sword of Honour","price": 12.99},{"category": "fiction","author": "Herman Melville","title": "Moby Dick","isbn": "0-553-21311-3","price": 8.99},{"category": "fiction","author": "J. R. R. Tolkien","title": "The Lord of the Rings","isbn": "0-395-19395-8","price": 22.99}],"bicycle": {"color": "red","price": 19.95}},"expensive": 10}
@@ -69,7 +104,6 @@ public class JsonPath {
                     //do nothing
                 } else if (je.isJsonArray()) {
                     JsonArray ja = je.getAsJsonArray();
-                    System.out.println(currentLevel);
                     cachedJsonArrays.put(currentLevel, ja);
                     int length = ja.size();
                     for (int j = 0; j < ja.size(); j++) {
@@ -80,7 +114,7 @@ public class JsonPath {
 
                         if (level.matches(regex)) {
                             isDone = true;
-                            if (isMatchingFilters(cachedJsonArrays,  level, matchedFilters, length)) {
+                            if (isMatchingFilters(cachedJsonArrays, level, matchedFilters, length)) {
                                 result.add(tmp);
                             }
                         }
@@ -144,8 +178,8 @@ public class JsonPath {
         while ((index = currentLevel.indexOf('[')) != -1) {
             prepath.append(currentLevel.substring(0, currentLevel.indexOf(']') + 1));
             prefix.append(currentLevel.substring(0, index) + "[]");
-            System.out.println("prepath : " + prepath.toString());
-            System.out.println("prefix : " + prefix.toString());
+//            System.out.println("prepath : " + prepath.toString());
+//            System.out.println("prefix : " + prefix.toString());
             int i = Integer.parseInt(currentLevel.substring(index + 1, currentLevel.indexOf(']')));
             List<Filter> filters = matchedFilters.get(prefix.toString().trim());
 
@@ -159,8 +193,8 @@ public class JsonPath {
                     c.add((Condition) f);
                 }
 
-                JsonObject je = cachedJsonArrays.get(prepath.substring(0, prepath.lastIndexOf("["))).getAsJsonObject();
-                isMatched = isMatchingConditions(je, c);
+                JsonArray jsonArray = cachedJsonArrays.get(prepath.substring(0, prepath.lastIndexOf("[")));
+                isMatched = isMatchingConditions(jsonArray.get(i).getAsJsonObject(), c);
             }
 
             if (isMatched) {
@@ -175,7 +209,6 @@ public class JsonPath {
     }
 
     /**
-     *
      * @param currentLevel
      * @param filters
      * @param matchedFilters
@@ -256,9 +289,9 @@ public class JsonPath {
                         }
                     }
                     */
-                }
-
             }
+
+        }
         return false;
     }
 
@@ -319,7 +352,7 @@ public class JsonPath {
 
 
     //"<", ">", "<=", ">=", "==", "!=", "=~", "in", "nin", "subsetof", "size", "empty", "notempty"
-    public static boolean isMatchingCondition(JsonObject jo, Condition condition) {
+    public static boolean isMatchingCondition(JsonObject jo, Condition condition) throws Exception {
         if (!condition.isValid()) {
             return false;
         }
@@ -363,6 +396,8 @@ public class JsonPath {
 
         } else if (operator.equals("notempty")) {
 
+        } else {
+            throw new Exception("Unsupported Operator : " + operator);
         }
 
         return result;
@@ -474,29 +509,5 @@ public class JsonPath {
         return keys;
     }
 
-    public static void main(String[] args) throws Exception {
-        /*
-        JsonParser parser = new JsonParser();
-        String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/O.json"));
-        JsonObject o1 = parser.parse(json).getAsJsonObject();
-        String path = "store[1:].book[@.category == 'fiction' && @.price < 10 || @.color == \\\"red\\\" || @.name size 10]";
-        List<JsonElementWithLevel> res = getJsonElementWithLevelByPath(o1, path);
 
-
-        String r = "?(@.author==\"Evelyn Waugh\" && @.price > 12 || @.category == \"reference\")";
-        List<Condition> conditions = Condition.getConditions(r);
-
-*/
-        JsonParser parser = new JsonParser();
-        String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/book.json"));
-        JsonObject o1 = parser.parse(json).getAsJsonObject();
-//        String path = "store.book[?(@.category == \"fiction\" && @.price < 10 || @.category == \"document\")].author";
-        String path = "store.book[*].author";
-        List<JsonElementWithLevel> res = getJsonElementWithLevelByPath(o1, path);
-        System.out.println("****************");
-        for (JsonElementWithLevel je : res) {
-            System.out.println(je);
-        }
-
-    }
 }
