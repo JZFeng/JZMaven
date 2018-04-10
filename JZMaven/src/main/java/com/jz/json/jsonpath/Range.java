@@ -3,7 +3,6 @@ package com.jz.json.jsonpath;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * @author jzfeng
  */

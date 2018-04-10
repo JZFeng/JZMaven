@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 /**
  * @author jzfeng
  */
+
 public class Condition implements Filter {
     private String left;
     private String operator;

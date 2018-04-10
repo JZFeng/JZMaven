@@ -1,18 +1,15 @@
 package com.jz.json.jsonpath;
 
 import com.google.gson.*;
-import com.jz.json.jsoncompare.JsonElementWithLevel;
-
 import java.io.File;
 import java.util.*;
-
 import static com.jz.json.jsoncompare.Utils.convertFormattedJson2Raw;
 import static com.jz.json.jsonpath.Range.getRange;
 
 /**
  * @author jzfeng
  * <p>
- * getJsonElementWithLevelByPath(JsonObject source, String path), support standard JsonPath;
+ * get(JsonObject source, String path), support standard JsonPath;
  * Here are some sample JsonPaths
  * "RETURNS.maxView.value[0:].label",
  * "RETURNS.maxView.value[*].label.textSpans[0]",
@@ -35,7 +32,7 @@ public class JsonPath {
                         "RETURNS.maxView.value[*].label.textSpans[?(@.text =~ \"(.*)\\d{3,}(.*)\" || @.text in {\"Have a nice day\", \"Return policy\"})]"};
 
         for (String path : paths) {
-            List<JsonElementWithLevel> res = getJsonElementWithLevelByPath(o1, path);
+            List<JsonElementWithLevel> res = get(o1, path);
             System.out.println("****************" + path + "****************");
             for (JsonElementWithLevel je : res) {
                 System.out.println(je);
@@ -63,7 +60,7 @@ public class JsonPath {
      *               book[last()]
      * @return returns a a list of {@link JsonElementWithLevel}
      */
-    private static List<JsonElementWithLevel> getJsonElementWithLevelByPath(
+    public static List<JsonElementWithLevel> get(
             JsonObject source, String path) throws Exception {
         List<JsonElementWithLevel> result = new ArrayList<>();
         if (path == null || path.length() == 0 || source == null || source.isJsonNull()) {
@@ -148,7 +145,7 @@ public class JsonPath {
 
 /*   public static List<JsonElement> getJsonElementByPath(JsonObject source, String path) throws Exception {
     List<JsonElement> result = new ArrayList<>();
-    List<JsonElementWithLevel> res = getJsonElementWithLevelByPath(source, path);
+    List<JsonElementWithLevel> res = get(source, path);
     for (JsonElementWithLevel e : res) {
     result.add(e.getJsonElement());
     }
@@ -397,7 +394,7 @@ public class JsonPath {
         }
 
         int length = 0;
-        List<JsonElementWithLevel> result = getJsonElementWithLevelByPath(jsonObject, path);
+        List<JsonElementWithLevel> result = get(jsonObject, path);
 
         if (result == null || result.size() == 0) {
             length = 0;
@@ -466,7 +463,7 @@ public class JsonPath {
         return res;
     }
 
-    public static Set<String> getKeys(JsonObject o) {
+    private static Set<String> getKeys(JsonObject o) {
         Set<String> keys = new TreeSet<String>();
         for (Map.Entry<String, JsonElement> entry : o.entrySet()) {
             keys.add(entry.getKey().trim());
