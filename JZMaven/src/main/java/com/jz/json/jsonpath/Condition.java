@@ -1,7 +1,6 @@
 package com.jz.json.jsonpath;
 
 import com.google.common.collect.Sets;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -9,15 +8,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * String path = $.store.book[?(@.author=="Evelyn Waugh" && @.price > 12 || @.category == "reference")]
+ * @author jzfeng
  */
 public class Condition implements Filter {
     private String left;
     private String operator;
     private String right;
     private String logical_operator;
-    private static final Set<String> OPERATORS = Sets.newHashSet("<", ">", "<=", ">=", "==", "!=", "=~", "in", "nin", "subsetof", "size", "empty", "notempty");
-    private static final Set<String> LOGICAL_OPERATORS = Sets.newHashSet("&&", "||");
+    public static final Set<String> OPERATORS = Sets.newHashSet("<", ">", "<=", ">=", "==", "!=", "=~", "in", "nin", "subsetof", "size", "empty", "notempty");
+    public static final Set<String> LOGICAL_OPERATORS = Sets.newHashSet("&&", "||");
 
     public boolean isValid() {
         if (left == null || left.length() == 0) {
@@ -86,7 +85,6 @@ public class Condition implements Filter {
         }
 
         String[] strs = r.split("\\s{0,}&&\\s{0,}|\\s{0,}\\|\\|\\s{0,}");
-        List<String> operators = new ArrayList<>();
         for (int i = 0; i < strs.length - 1; i++) {
             String operator = r.substring(r.indexOf(strs[i]) + strs[i].length(), r.indexOf(strs[i + 1])).trim();
             if (LOGICAL_OPERATORS.contains(operator)) {
@@ -105,20 +103,21 @@ public class Condition implements Filter {
      * @return
      */
     public static List<Condition> getConditions(String r) throws Exception {
+        r = r.trim();
         List<String> logicalOperators = getLogicalOperators(r);
-
         List<Condition> conditions = new ArrayList<>();
-        if (r == null || r.trim().length() == 0 || !r.contains("@.")) {
+        if (r == null || r.length() == 0 || !r.contains("@.")) {
             return conditions;
         }
         if (r.trim().startsWith("?")) {
-            r = r.trim().replaceFirst("(.*\\()((.*))(\\).*)", "$2").trim();
+//            r = r.trim().replaceFirst("(.*\\()((.*))(\\).*)", "$2").trim();
+            r = r.substring(r.indexOf('(') + 1, r.lastIndexOf(')'));
         }
 
         String[] strs = r.split("\\s{0,}&&\\s{0,}|\\s{0,}\\|\\|\\s{0,}");
         for (String str : strs) {
             Condition condition = getCondition(str);
-            if(condition != null) {
+            if (condition != null) {
                 conditions.add(condition);
             }
         }
@@ -128,8 +127,8 @@ public class Condition implements Filter {
                 conditions.get(i).setLogicalOperator(logicalOperators.get(i).trim());
             }
         } else {
-            System.out.println("conditions.size() : " + conditions.size() + " ; logicalOperators.size()" + logicalOperators.size() + " .Please check the JsonPath." );
-            throw new Exception(" CONDITION_STRING : " + r + " ; CONDITIONS_GENERATED : " + conditions + ";" );
+            System.out.println("conditions.size() : " + conditions.size() + " ; logicalOperators.size()" + logicalOperators.size() + " .Please check the JsonPath.");
+            throw new Exception(" CONDITION_STRING : " + r + " ; CONDITIONS_GENERATED : " + conditions + ";");
         }
 
         return conditions;
@@ -157,10 +156,10 @@ public class Condition implements Filter {
         String regExp = "(\\s{0,}[><=!]{1}[=~]{0,1}\\s{0,})";
 
 
-        if (str.indexOf("=") == str.lastIndexOf("=")) {
+       /* if (str.indexOf("=") != -1 && (str.indexOf("=") == str.lastIndexOf("="))) {
             throw new Exception("\"=\" is not a valid Operator, please use \"==\" instead.");
         }
-
+*/
         if (str.matches(".*" + regExp + ".*")) {
             Pattern pattern = Pattern.compile(regExp);
             Matcher m = pattern.matcher(str);
@@ -170,12 +169,20 @@ public class Condition implements Filter {
             }
         } else if (str.length() > 5 && str.indexOf(" ") != -1) {
             // handle cases like "in", "nin" etc
-            String[] items = str.split(" {1,}");
-            if (items.length == 2) {
-                condition = new Condition(items[0].trim(), items[1].trim());
-            } else if (items.length == 3) {
-                condition = new Condition(items[0].trim(), items[1].trim(), items[2].trim());
+            String regex = "(.*)(\\s+in\\s+|\\s+nin\\s+|\\s+subsetof\\s+|\\s+empty\\s{0,}|\\s+notempty\\s{0,}|\\s+size\\s+)(.*)";
+            Pattern p = Pattern.compile(regex);
+            Matcher m = p.matcher(str);
+            while (m.find()) {
+                int count = m.groupCount();
+                if (count == 3) {
+                    condition = new Condition(m.group(1).trim(), m.group(2).trim(), m.group(3).trim());
+                } else if (count == 2) {
+                    condition = new Condition(m.group(1).trim(), m.group(2).trim());
+                } else {
+                    throw new Exception("Wrong condition");
+                }
             }
+
         }
 
         return (condition.isValid()) ? condition : null;

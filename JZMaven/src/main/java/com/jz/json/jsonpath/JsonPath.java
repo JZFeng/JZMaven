@@ -9,40 +9,38 @@ import java.util.*;
 import static com.jz.json.jsoncompare.Utils.convertFormattedJson2Raw;
 import static com.jz.json.jsonpath.Range.getRange;
 
-public class JsonPath {
+/**
+ * @author jzfeng
+ * <p>
+ * getJsonElementWithLevelByPath(JsonObject source, String path), support standard JsonPath;
+ * Here are some sample JsonPaths
+ * "RETURNS.maxView.value[0:].label",
+ * "RETURNS.maxView.value[*].label.textSpans[0]",
+ * "RETURNS.maxView.value[1,3,4].label.textSpans[0].text",
+ * "RETURNS.maxView.value[1,3,4].label.textSpans[?(@.text == \"Refund\" || @.text == \"Return policy\")].text",
+ * "RETURNS.maxView.value[*].label.textSpans[?(@.text =~ \"(.*)\\d{3,}(.*)\" || @.text in {\"Have a nice day\", \"Return policy\"})]"};
+ */
 
+public class JsonPath {
 
     public static void main(String[] args) throws Exception {
         JsonParser parser = new JsonParser();
         String json = convertFormattedJson2Raw(new File("/Users/jzfeng/Desktop/O.json"));
         JsonObject o1 = parser.parse(json).getAsJsonObject();
-
         String[] paths = new String[]
-                {       "RETURNS.maxView.value[0:].label",
-                        "RETURNS.maxView.value[0:].label.textSpans[0]",
+                {"RETURNS.maxView.value[0:].label",
+                        "RETURNS.maxView.value[*].label.textSpans[0]",
                         "RETURNS.maxView.value[1,3,4].label.textSpans[0].text",
-                        "RETURNS.maxView.value[1,3,4].label.textSpans[?(@.text == \"Refund\" || @.text == \"Return policy\")].text" };
+                        "RETURNS.maxView.value[1,3,4].label.textSpans[?(@.text == \"Refund\" || @.text == \"Return policy\")].text",
+                        "RETURNS.maxView.value[*].label.textSpans[?(@.text =~ \"(.*)\\d{3,}(.*)\" || @.text in {\"Have a nice day\", \"Return policy\"})]"};
 
-        for(String path : paths) {
+        for (String path : paths) {
             List<JsonElementWithLevel> res = getJsonElementWithLevelByPath(o1, path);
-            System.out.println("****************" + path + "****************" + "\n\r");
+            System.out.println("****************" + path + "****************");
             for (JsonElementWithLevel je : res) {
                 System.out.println(je);
             }
         }
-
-
-/*
-//        String path = "$.modules.RETURNS.maxView.value[2].value[0].textSpans[0].text";
-//        String path = "RETURNS.maxView.value[1,3,4].label.textSpans[?(@.text == \"Returns\" || @.text == \"Return policy\")].text";
-        String path = "RETURNS.maxView.value[1,3,4].label.textSpans[?(@.text == \"Refund\" || @.text == \"Return policy\")].text";
-        List<JsonElementWithLevel> res = getJsonElementWithLevelByPath(o1, path);
-        System.out.println("****************");
-        for (JsonElementWithLevel je : res) {
-            System.out.println(je);
-        }
-*/
-
     }
 
 
@@ -65,8 +63,6 @@ public class JsonPath {
      *               book[last()]
      * @return returns a a list of {@link JsonElementWithLevel}
      */
-
-
     private static List<JsonElementWithLevel> getJsonElementWithLevelByPath(
             JsonObject source, String path) throws Exception {
         List<JsonElementWithLevel> result = new ArrayList<>();
@@ -165,8 +161,6 @@ public class JsonPath {
      * @param matchedFilters
      * @return true if i in matchedRange();
      */
-
-
     private static boolean isMatchingFilters(
             Map<String, JsonArray> cachedJsonArrays,
             String currentLevel,
@@ -235,7 +229,6 @@ public class JsonPath {
             currentLevel = currentLevel.substring(currentLevel.indexOf(']') + 1);
 
         }
-
     }
 
 
@@ -261,71 +254,10 @@ public class JsonPath {
                         }
                     }
                 }
-                /*
-                else if (filter instanceof Condition) {
-                    return true;
-
-                    //to-do ; deal with conditions like [@.category > 'fiction' and @.price < 10 or @.color == \"red\"]
-                    //prefix =  $.modules.RETURNS.maxView.store[1,3].book[]
-                    List<JsonElementWithLevel> tmp = getJsonElementWithLevelByPath(source, prefix.substring(0, prefix.lastIndexOf("[")));
-                    if (tmp == null || tmp.size() == 0 || tmp.size() > 1) {
-                        return false;
-                    } else {
-                        JsonElementWithLevel je = tmp.get(tmp.size() - 1);
-                        if (!je.getJsonElement().isJsonArray()) {
-                            return false;
-                        } else {
-                            //apply the conditions;
-                            for (JsonElement jae : je.getJsonElement().getAsJsonArray()) {
-                                //jae has to be a JsonObject;
-                                //get JsonArray Elements by applying the filter;
-                                if(!jae.isJsonObject()) {
-                                    return false;
-                                } else {
-
-                                }
-                            }
-
-                        }
-                    }
-                    */
             }
-
         }
         return false;
     }
-
-
-    //to-do ; deal with conditions like [@.category > 'fiction' and @.price < 10 or @.color == \"red\"]
-    //prefix =  $.modules.RETURNS.maxView.store[1,3].book[]
-    private static List<JsonElementWithLevel> getJsonElementsByFilters(
-            JsonObject source, List<Filter> filterList, String prefix) throws Exception {
-        List<JsonElementWithLevel> res = new ArrayList<>();
-
-        List<JsonElementWithLevel> tmp = getJsonElementWithLevelByPath(source, prefix.substring(0, prefix.lastIndexOf("[")));
-        if (tmp == null || tmp.size() == 0 || tmp.size() > 1) {
-            return res;
-        } else {
-            JsonElementWithLevel je = tmp.get(tmp.size() - 1);
-            if (!je.getJsonElement().isJsonArray()) {
-                return res;
-            } else {
-                //apply the conditions;
-                for (JsonElement jae : je.getJsonElement().getAsJsonArray()) {
-                    //jae has to be a JsonObject;
-                    //get JsonArray Elements by applying the filter;
-                    if (jae.isJsonObject()) {
-
-                    }
-                }
-
-            }
-        }
-
-
-        return res;
-    }
-
 
     /**
      * Identify whether a JsonObject matches the conditions
@@ -334,7 +266,7 @@ public class JsonPath {
      * @param conditions conditions;
      * @return
      */
-    public static boolean isMatchingConditions(JsonObject jo, List<Condition> conditions) throws Exception {
+    private static boolean isMatchingConditions(JsonObject jo, List<Condition> conditions) throws Exception {
 
         boolean result = isMatchingCondition(jo, conditions.get(0));
 
@@ -352,7 +284,7 @@ public class JsonPath {
 
 
     //"<", ">", "<=", ">=", "==", "!=", "=~", "in", "nin", "subsetof", "size", "empty", "notempty"
-    public static boolean isMatchingCondition(JsonObject jo, Condition condition) throws Exception {
+    private static boolean isMatchingCondition(JsonObject jo, Condition condition) throws Exception {
         if (!condition.isValid()) {
             return false;
         }
@@ -366,10 +298,15 @@ public class JsonPath {
         }
 
         boolean result = false;
-        String valueAsString = jo.get(left).getAsString();
-        String valueAsJE = jo.get(left).toString();
+        JsonElement je = jo.get(left);
+        String valueAsString = je.getAsString();
+        String valueAsJE = je.toString();
 
-        //to-do, refactoring, using enum;
+        if (!Condition.OPERATORS.contains(operator)) {
+            throw new Exception("Unsupported Operator : " + operator);
+        }
+
+        //to-do, refactoring, using enum??
         if (operator.equals("<")) {
             result = ((valueAsString.matches("(\\d+)\\.(\\d+)")) ? (Double.parseDouble(valueAsString) < Double.parseDouble(right)) : (Integer.parseInt(valueAsString) < Integer.parseInt(right)));
         } else if (operator.equals(">")) {
@@ -383,21 +320,50 @@ public class JsonPath {
         } else if (operator.equals("!=")) {
             result = !valueAsJE.equals(right);
         } else if (operator.equals("=~")) {
-//            to-do
+            result = valueAsJE.matches(right);
         } else if (operator.equals("in")) {
-
+            String[] strs = right.trim().substring(1, right.length() - 1).split("\\s{0,},\\s{0,}");
+            Set<String> set = new HashSet<>();
+            for (String str : strs) {
+                set.add(str.trim());
+            }
+            result = set.contains(valueAsJE);
         } else if (operator.equals("nin")) {
-
+            String[] strs = right.trim().substring(1, right.length() - 1).split("\\s{0,},\\s{0,}");
+            Set<String> set = new HashSet<>();
+            for (String str : strs) {
+                set.add(str.trim());
+            }
+            result = !set.contains(valueAsJE);
         } else if (operator.equals("subsetof")) {
-
+            //if(je.isJsonPrimitive()) {
+            //} else if (je.isJsonArray()) {
+            //} else if (je.isJsonObject()) {
+            //}
         } else if (operator.equals("size")) {
-
+            if (je.isJsonPrimitive()) {
+                result = (valueAsString.length() == Integer.parseInt(right));
+            } else if (je.isJsonArray()) {
+                result = (je.getAsJsonArray().size() == Integer.parseInt(right));
+            } else if (je.isJsonObject()) {
+                result = (je.getAsJsonObject().entrySet().size() == Integer.parseInt(right));
+            }
         } else if (operator.equals("empty")) {
-
+            if (je.isJsonPrimitive()) {
+                result = valueAsString.equals("");
+            } else if (je.isJsonArray()) {
+                result = (je.getAsJsonArray().size() == 0);
+            } else if (je.isJsonObject()) {
+                result = (je.getAsJsonObject().entrySet().size() == 0);
+            }
         } else if (operator.equals("notempty")) {
-
-        } else {
-            throw new Exception("Unsupported Operator : " + operator);
+            if (je.isJsonPrimitive()) {
+                result = !valueAsString.equals("");
+            } else if (je.isJsonArray()) {
+                result = (je.getAsJsonArray().size() != 0);
+            } else if (je.isJsonObject()) {
+                result = (je.getAsJsonObject().entrySet().size() != 0);
+            }
         }
 
         return result;
@@ -457,7 +423,7 @@ public class JsonPath {
      * @return minView.actions[] : [(2,2),(3,3)]
      * minView.actions[].action[] : [(2,5)]
      */
-    public static Map<String, List<Filter>> getFilters(String path) throws Exception {
+    private static Map<String, List<Filter>> getFilters(String path) throws Exception {
         Map<String, List<Filter>> res = new LinkedHashMap<>();
 
         if (path == null || path.trim().length() == 0) {

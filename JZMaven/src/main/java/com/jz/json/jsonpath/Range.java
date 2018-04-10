@@ -1,9 +1,12 @@
 package com.jz.json.jsonpath;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+
+
+/**
+ * @author jzfeng
+ */
 
 //  x >= start && x <= end
 public class Range implements Filter {
@@ -46,7 +49,6 @@ public class Range implements Filter {
      *          $..book[?(@.author =~ /.*REES/i)]	All books matching regex (ignore case)
      */
 
-    //to-do: need identify it's a Range style, otherwise throw Exception(Wrong format of condition / range)
     public static List<Range> getRange(String r) {
         List<Range> result = new ArrayList<>();
         r = r.trim();
