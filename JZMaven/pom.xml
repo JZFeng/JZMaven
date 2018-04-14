@@ -1,152 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <!-- Parent to get preset params for framework without having to include
-        them in automation pom -->
-    <parent>
-        <groupId>com.ebay.testinfrastructure</groupId>
-        <artifactId>testinfra-parent</artifactId>
-        <version>stable-SNAPSHOT</version>
-    </parent>
-    <!-- Parent to get preset params for framework without having to include
-        them in automation pom -->
-    <groupId>com.ebay.viewitem.ui</groupId>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>viewitemui</artifactId>
-    <packaging>jar</packaging>
-    <name>vivqautomation</name>
+
+    <groupId>com.jz.jzmaven</groupId>
+    <artifactId>JZMaven</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <description>vivqautomation</description>
 
     <dependencies>
         <dependency>
-            <groupId>com.ebay.v3jars</groupId>
-            <artifactId>EsamsAPI</artifactId>
-            <version>3.0.6.1-E915_DEV_BASE</version>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.2</version>
         </dependency>
         <dependency>
-            <groupId>com.ebay.v3jars</groupId>
-            <artifactId>SecurityFramework</artifactId>
-            <version>2.8.4.1-E969_DEV_BASE</version>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>19.0</version>
         </dependency>
         <dependency>
-            <groupId>io.appium</groupId>
-            <artifactId>java-client</artifactId>
-            <version>2.1.0</version>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>selenium-java</artifactId>
-                    <groupId>org.seleniumhq.selenium</groupId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.9.10</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.ebay.testinfrastructure</groupId>
-            <artifactId>serviceautil</artifactId>
-            <version>stable-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>testng</artifactId>
-                    <groupId>org.testng</groupId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-api</artifactId>
+            <version>2.52.0</version>
         </dependency>
         <dependency>
-            <groupId>com.ebay.testinfrastructure</groupId>
-            <artifactId>uiandtestdata</artifactId>
-            <version>stable-SNAPSHOT</version>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-firefox-driver</artifactId>
+            <version>2.52.0</version>
         </dependency>
         <dependency>
-            <groupId>com.ebay.raptor.viexpsvc</groupId>
-            <artifactId>viexpsvcApplication</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-chrome-driver</artifactId>
+            <version>2.43.0</version>
         </dependency>
         <dependency>
-            <groupId>com.ebay.raptor.vivqdata</groupId>
-            <artifactId>vivqdata</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-htmlunit-driver</artifactId>
+            <version>2.43.0</version>
         </dependency>
         <dependency>
-            <groupId>com.ebay.restxo</groupId>
-            <artifactId>onecallxotypes</artifactId>
-            <version>4.1.0-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>com.oracle</artifactId>
-                    <groupId>ojdbc</groupId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>2.43.0</version>
         </dependency>
         <dependency>
-            <groupId>com.ebay.maui</groupId>
-            <artifactId>iafconsumer</artifactId>
-            <version>1.1.8</version>
-            <type>jar</type>
-            <scope>compile</scope>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-remote-driver</artifactId>
+            <version>2.52.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-support</artifactId>
+            <version>2.43.0</version>
         </dependency>
     </dependencies>
-
-    <!-- only repositories needed -->
-    <repositories>
-        <!-- Mirror of offical maven repo to get all latest jars of testNg/selenium
-            automatically -->
-        <repository>
-            <id>ebaycentral.central</id>
-            <url>http://ebaycentral.qa.ebay.com/content/repositories/central/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>testinfrastructure.releases</id>
-            <url>http://nxrepository.qa.ebay.com/nexus/content/repositories/testinfrastructure.releases/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>testinfrastructure.snapshots</id>
-            <url>http://nxrepository.qa.ebay.com/nexus/testinfrastructure.snapshots/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <updatePolicy>always</updatePolicy>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <!-- Repo for breeze components -->
-        <repository>
-            <id>tradingqe.releases</id>
-            <name>tradingqe releases repo</name>
-            <url>http://repository.qa.ebay.com/tradingqe/releases</url>
-            <layout>default</layout>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-
-    </repositories>
-    <!-- only repositories needed -->
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
+                <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <suiteXmlFiles>
-                        <suiteXmlFile>${project.basedir}/${testNG}</suiteXmlFile>
-                    </suiteXmlFiles>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
         </plugins>

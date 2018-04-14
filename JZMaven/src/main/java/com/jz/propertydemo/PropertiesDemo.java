@@ -1,4 +1,4 @@
-package properties;
+package com.jz.propertydemo;
 
 import java.io.FileInputStream;
 import java.io.InputStream;

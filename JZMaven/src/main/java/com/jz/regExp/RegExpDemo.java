@@ -1,6 +1,6 @@
-package com.jz.annotation.com.jz.regExp;
+package com.jz.regExp;
 
-import org.junit.Assert;
+import org.testng.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
