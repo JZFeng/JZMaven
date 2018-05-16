@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Documented
 public @interface Author {
-    String name();
+    String name() default "unnamed";
 
-    String group();
+    String group() default "unnamed";
 }
