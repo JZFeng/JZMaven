@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class HelloThread extends Thread {
+public class JoinDemo extends Thread {
     public String name;
 
-    HelloThread(String name) {
+    JoinDemo(String name) {
         this.name = name;
     }
 
@@ -27,7 +27,7 @@ public class HelloThread extends Thread {
         System.out.println("START");
         List<Thread> threads = new ArrayList<>();
         for(String name : Arrays.asList("Tom", "Jack", "Alice")) {
-            threads.add(new HelloThread(name));
+            threads.add(new JoinDemo(name));
         }
 
         for(Thread thread : threads) {
