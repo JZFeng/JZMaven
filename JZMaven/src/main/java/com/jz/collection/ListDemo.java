@@ -1,5 +1,7 @@
 package com.jz.collection;
 
+import main.java.com.jz.collection.Person;
+
 import java.util.ArrayList;
 import java.util.List;
 

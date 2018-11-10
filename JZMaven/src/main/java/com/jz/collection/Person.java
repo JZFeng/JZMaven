@@ -1,4 +1,4 @@
-package com.jz.collection;
+package main.java.com.jz.collection;
 
 import java.util.Objects;
 
