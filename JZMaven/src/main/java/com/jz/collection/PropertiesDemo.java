@@ -1,4 +1,4 @@
-package main.java.com.jz.collection;
+package com.jz.collection;
 
 import java.io.IOException;
 import java.util.PriorityQueue;

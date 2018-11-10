@@ -1,6 +1,5 @@
-package main.java.com.jz.collection;
+package com.jz.collection;
 
-import main.java.com.jz.collection.Person;
 
 import java.util.HashMap;
 import java.util.Map;
