@@ -2,7 +2,7 @@ package com.jz.collection;
 
 import java.util.Objects;
 
-public class Person {
+public class Person /*implements Comparable */ {
     public String name;
     public int age;
 
@@ -36,4 +36,32 @@ public class Person {
     public int hashCode() {
         return Objects.hash(this.name, this.age);
     }
+
+ /*   @Override
+    //if name is equal, compared by age; if name and age is the same, they are the same then.
+    public int compareTo(Object o) {
+        int result = -1;
+
+        if(this == o) {
+            return 0;
+        }
+
+        if(o instanceof Person) {
+            Person p = (Person) o;
+            result = this.name.compareTo(p.name);
+            if(result == 0) {
+                result = Integer.compare(this.age, p.age);
+            }
+        } else {
+            try {
+                throw new Exception("Object is not a Person");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        return result;
+    }
+    */
 }
