@@ -55,6 +55,7 @@ public class StackDemo {
 
         // iterate the string
         for (int i = 0; i < length; i++) {
+
             char c = infix.charAt(i);
 
             //convert rules to implementation;
@@ -101,12 +102,10 @@ public class StackDemo {
 
         postfix = postfix.trim();
         String[] strs = postfix.split(" ");
-        int result = 0;
 
         Deque<Integer> stack = new LinkedList<>();
 
         for (String str : strs) {
-
             if (str != null && digits.contains(str.charAt(0))) {
                 stack.push(Integer.valueOf(str));
             } else {
@@ -119,7 +118,7 @@ public class StackDemo {
             }
         }
 
-        return stack.peek();
+        return stack.pop();
     }
 
     private static String removeSpace(String str) {
@@ -156,20 +155,20 @@ public class StackDemo {
         return true;
     }
 
-    private static int operate(char operator, int a, int b) {
+    private static int operate(char operator, int left, int right) {
         int result = 0;
         switch (operator) {
             case '+':
-                result = a + b;
+                result = left + right;
                 break;
             case '-':
-                result = a - b;
+                result = left - right;
                 break;
             case '*':
-                result = a * b;
+                result = left * right;
                 break;
             case '/':
-                result = a / b;
+                result = left / right;
                 break;
             default:
                 System.out.println("Warning: Operator '" + operator + "' is NOT supported.");
