@@ -8,7 +8,8 @@ public class StackDemo {
 
     public static void main(String[] args) {
 
-
+        System.out.println(intToHex(12500));
+        System.out.println(Integer.toHexString(12500));
         String infix = "101 + 23 *  ( 19 - 5) ";
         int result = 101 + 23 * (19 - 5);
         System.out.println("Infix is : " + infix);
@@ -20,9 +21,10 @@ public class StackDemo {
 
     }
 
-    private static final Set<Character> chars = new HashSet<>(Arrays.asList('+', '-', '*', '/', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '(', ')'));
-    private static final Set<Character> digits = new HashSet<>(Arrays.asList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'));
-    private static final Set<Character> operators = new HashSet<>(Arrays.asList('+', '-', '*', '/'));
+    private static final Set<Character> CHARS = new HashSet<>(Arrays.asList('+', '-', '*', '/', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '(', ')'));
+    private static final Set<Character> DIGITS = new HashSet<>(Arrays.asList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'));
+    private static final Set<Character> OEPRATORS = new HashSet<>(Arrays.asList('+', '-', '*', '/'));
+    private static final String DIGITS_HEX = "0123456789ABCDEF";
 
 
     //stack overflow method
@@ -31,7 +33,7 @@ public class StackDemo {
     }
 
 
-    //infix to postfix, using stack to store operators
+    //infix to postfix, using stack to store OEPRATORS
     public static String infixtoPostfix(String infix) {
         if (infix == null || infix.length() == 0 || !isValidInfix(infix)) {
             return "";
@@ -43,7 +45,7 @@ public class StackDemo {
 
         StringBuilder sb = new StringBuilder();
 
-        //stack to store operators
+        //stack to store OEPRATORS
         Deque<Character> stack = new LinkedList<>();
 
         //define operator priority;
@@ -59,14 +61,14 @@ public class StackDemo {
             char c = infix.charAt(i);
 
             //convert rules to implementation;
-            if (digits.contains(c)) { //output digits
+            if (DIGITS.contains(c)) { //output DIGITS
                 sb.append(c);
-                if (i + 1 != length && operators.contains(infix.charAt(i + 1))) {
+                if (i + 1 != length && OEPRATORS.contains(infix.charAt(i + 1))) {
                     sb.append(" ");  //if the next character is operator, appending SPACE
                 }
             } else if (c == '(') {
                 stack.push(c);   // if it's '(' (highest priority), push into stack;
-            } else if (c == ')') { // if it's ')', pop and output all the operators down to '(';
+            } else if (c == ')') { // if it's ')', pop and output all the OEPRATORS down to '(';
                 while (!stack.isEmpty() && !stack.peek().equals('(')) {
                     sb.append(" " + stack.pop() + " ");
                 }
@@ -106,7 +108,7 @@ public class StackDemo {
         Deque<Integer> stack = new LinkedList<>();
 
         for (String str : strs) {
-            if (str != null && digits.contains(str.charAt(0))) {
+            if (str != null && DIGITS.contains(str.charAt(0))) {
                 stack.push(Integer.valueOf(str));
             } else {
                 if (stack.size() >= 2) {
@@ -147,7 +149,7 @@ public class StackDemo {
             if (c == ' ') {
                 continue;
             }
-            if (!chars.contains(c)) {
+            if (!CHARS.contains(c)) {
                 return false;
             }
         }
@@ -200,6 +202,22 @@ public class StackDemo {
 
         return sb.toString().trim();
 
+    }
+
+    public static String intToHex(int num) {
+        Deque<Character> stack = new LinkedList<>();
+        while(num != 0 ) {
+            int remaining = num % 16;
+            stack.push(DIGITS_HEX.charAt(remaining));
+            num = num / 16;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        while(!stack.isEmpty()) {
+            sb.append(stack.pop());
+        }
+
+        return sb.toString().trim();
     }
 
 }
