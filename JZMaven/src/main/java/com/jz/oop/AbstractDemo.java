@@ -8,5 +8,8 @@ public class AbstractDemo {
         System.out.println(ShapeUtil.isGreaterThan(s1, s2));
         System.out.println(s1.area() + s2.area());
         System.out.println(ShapeUtil.sum(new Shape[]{s1,s2}));
+
+        String str = "abcde";
+        System.out.println(str.substring(2,4));
     }
 }
