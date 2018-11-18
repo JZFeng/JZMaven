@@ -14,7 +14,7 @@ public class WorldClock {
     }
 
     public static String getCurrentDateTime(String zoneId) {
-        Instant instant = Instant.now();
+        Instant instant = Instant.ofEpochMilli(System.currentTimeMillis());
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return dateTimeFormatter.format(ZonedDateTime.ofInstant(instant, ZoneId.of(zoneId)));
     }
