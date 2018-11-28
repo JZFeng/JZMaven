@@ -1,11 +1,13 @@
 import com.jz.collection.StackDemo;
+import static org.testng.Assert.*;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import static com.jz.collection.StackDemo.evaluatePostfix;
 import static com.jz.collection.StackDemo.infixtoPostfix;
 
-public class TestInfixToPostfix {
+public class InfixToPostfixTest {
 
     @Test
     public void testInfixToPostfix()  {

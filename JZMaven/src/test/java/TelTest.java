@@ -1,14 +1,11 @@
-import org.testng.Assert;
-import org.testng.annotations.Test;
+
 import com.jz.regex.Tel;
-
+import org.testng.annotations.Test;
 import java.time.LocalTime;
+import static org.testng.Assert.*;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
 
-public class TestParseTel {
+public class TelTest {
 
     @Test
     public static void testParseTelephoneNumber() {
