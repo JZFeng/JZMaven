@@ -1,7 +1,5 @@
-import com.jz.collection.StackDemo;
 import static org.testng.Assert.*;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import static com.jz.collection.StackDemo.evaluatePostfix;
@@ -37,11 +35,11 @@ public class InfixToPostfixTest {
 
        for(int i = 0 ; i < infixs.length; i++) {
             String actual  = infixtoPostfix(infixs[i]);
-            Assert.assertTrue(expectedPostfixs[i].equals(actual), "\r\n  Actual:" + actual + " \r\nExpected:" + expectedPostfixs[i] + "\r\n");
+            assertTrue(expectedPostfixs[i].equals(actual), "\r\n  Actual:" + actual + " \r\nExpected:" + expectedPostfixs[i] + "\r\n");
         }
 
         for(int i = 0 ; i < expectedPostfixs.length; i++) {
-            Assert.assertTrue(expectedNums[i] == evaluatePostfix(expectedPostfixs[i]));
+            assertTrue(expectedNums[i] == evaluatePostfix(expectedPostfixs[i]));
         }
 
     }
