@@ -15,9 +15,9 @@ public class StackDemo {
         System.out.println("Infix is : " + infix);
         System.out.println("Expected Result : " + result + "\r\n");
 
-        String postfix = infixtoPostfix(infix);
+        String postfix = new StackDemo().infixtoPostfix(infix);
         System.out.println("Postfix is : " + postfix);
-        System.out.println("Actual Result : " + evaluatePostfix("23 19 5 - *"));
+        System.out.println("Actual Result : " + new StackDemo().evaluatePostfix("23 19 5 - *"));
 
     }
 
@@ -34,9 +34,10 @@ public class StackDemo {
 
 
     //infix to postfix, using stack to store OEPRATORS
-    public static String infixtoPostfix(String infix) {
+    public String infixtoPostfix(String infix) {
+
         if (infix == null || infix.length() == 0 || !isValidInfix(infix)) {
-            return "";
+            throw new IllegalArgumentException("Invalid Infix String");
         }
 
 
@@ -97,7 +98,7 @@ public class StackDemo {
 
     //evaluating postfix by using stack to store operands;
 //    101 23 19 5 - * +
-    public static int evaluatePostfix(String postfix) {
+    public int evaluatePostfix(String postfix) {
         if (postfix == null || postfix.length() == 0) {
             System.out.println("invalid postfix string.");
         }
