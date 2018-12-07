@@ -1,6 +1,7 @@
 package com.jz.designPattern.decorator.coffee;
 
-public class Sugar extends Decorator {
+public class Sugar implements ICoffee {
+
     ICoffee coffee;
 
     Sugar(ICoffee coffee) {

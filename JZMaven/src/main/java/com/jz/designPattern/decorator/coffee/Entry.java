@@ -2,8 +2,20 @@ package com.jz.designPattern.decorator.coffee;
 
 public class Entry {
     public static void main(String[] args) {
-        ICoffee coffee = new Sugar(new Cream(new Sugar(new PlainCoffee())));
-        System.out.println(coffee.getIngredients());
+        ICoffee coffee = new Tea(new Sugar(new Sugar( new Cream(new PlainCoffee()))));
+        System.out.println(removeLastAddSign(coffee.getIngredients()));
         System.out.println(coffee.getPrice());
+    }
+
+    private static String removeLastAddSign(String str) {
+        if(str == null || str.length() == 0) {
+            return "";
+        }
+
+        int index = str.lastIndexOf("+");
+        str = str.substring(0, index).trim();
+
+        return str;
+
     }
 }

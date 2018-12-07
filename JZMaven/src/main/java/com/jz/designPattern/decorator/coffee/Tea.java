@@ -1,20 +1,19 @@
 package com.jz.designPattern.decorator.coffee;
 
-public class Cream implements ICoffee {
+public class Tea implements ICoffee {
     ICoffee coffee;
 
-    Cream(ICoffee coffee) {
+    Tea(ICoffee coffee) {
         this.coffee = coffee;
     }
 
-
     @Override
     public String getIngredients() {
-        return coffee.getIngredients() + "Cream + ";
+        return coffee.getIngredients() + "Tea + ";
     }
 
     @Override
     public double getPrice() {
-        return coffee.getPrice() + 0.5;
+        return coffee.getPrice() + 1;
     }
 }
