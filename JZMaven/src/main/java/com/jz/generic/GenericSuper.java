@@ -29,6 +29,10 @@ public class GenericSuper {
 
   }
 
+/*    extends和super通配符的区别
+      <? extends T>允许调用方法获取T的引用
+      <? super T>允许调用方法传入T的引用*/
+
   public static void set(Pair<? super Integer> pair, Integer first, Integer last) {
     pair.setFirst(first);
     pair.setLast(last);
