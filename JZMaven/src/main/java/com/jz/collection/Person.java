@@ -54,8 +54,8 @@ public class Person /*implements Comparable */ {
             }
         } else {
             try {
-                throw new Exception("Object is not a Person");
-            } catch (Exception e) {
+                throw new exceptiondemo("Object is not a Person");
+            } catch (exceptiondemo e) {
                 e.printStackTrace();
             }
         }
