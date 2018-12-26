@@ -2,7 +2,7 @@ package com.jz.collection;
 
 import java.util.Objects;
 
-public class Person /*implements Comparable */ {
+public class Person implements Comparable {
     public String name;
     public int age;
 
@@ -13,7 +13,7 @@ public class Person /*implements Comparable */ {
 
     @Override
     public String toString() {
-        return "Name : " + name + " ; Age : " + age;
+        return "Name : " + name + " ; Age : " + age ;
     }
 
     @Override
@@ -64,4 +64,26 @@ public class Person /*implements Comparable */ {
         return result;
     }
     */
+
+
+    @Override
+    public int compareTo(Object o) {
+        if(!(o instanceof Person)) {
+            try {
+                throw new Exception("Object is not a Person instance");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        Person p = (Person)o;
+        int result = 0;
+        if(this.age == p.age) {
+            result = this.name.compareTo(p.name);
+        } else {
+            result = (this.age > p.age) ? 1 : -1;
+        }
+
+        return result;
+    }
 }
