@@ -8,7 +8,7 @@ public class Tel {
 
     private String areaCode;
     private String phoneNum;
-    private static final Pattern pattern = Pattern.compile("^(0\\d{2,3})\\-([1-9]\\d{5,7})$");
+    private static final Pattern pattern = Pattern.compile("^<!-- RcmdId\\s+ViewItemPageRaptor,RlogId\\s+(.*)\\s+-->$");
 
     public Tel(String areaCode, String phoneNum) {
         this.areaCode = areaCode;

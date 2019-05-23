@@ -9,6 +9,8 @@ import java.util.regex.Pattern;
 public class RegexDemo {
 
     public static void main(String[] args) {
+        Object object = new Object();
+
         String str1 = "The quick\tbrown,fox; jumps over the lazy dog.";
         String[] strs = str1.split("[\\s\\,\\;]+");
         System.out.println(Arrays.toString(strs));
