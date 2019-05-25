@@ -1,4 +1,4 @@
-package com.jz;
+package com.jz.jiuzhang;
 
 public class Amazon {
   private static String[] reverseArray2(String[] Array) {
