@@ -1,5 +1,5 @@
 
-import com.jz.regex.Tel;
+import com.jz.java.regex.Tel;
 import org.testng.annotations.Test;
 import java.time.LocalTime;
 import static org.testng.Assert.*;

@@ -1,9 +1,9 @@
 import static org.testng.Assert.*;
 import org.testng.annotations.Test;
-import com.jz.regex.RegexDemo.*;
+import com.jz.java.regex.RegexDemo.*;
 
-import static com.jz.regex.RegexDemo.isValidId;
-import static com.jz.regex.RegexDemo.isValidQQ;
+import static com.jz.java.regex.RegexDemo.isValidId;
+import static com.jz.java.regex.RegexDemo.isValidQQ;
 
 public class RegexDemoTest {
     @Test
