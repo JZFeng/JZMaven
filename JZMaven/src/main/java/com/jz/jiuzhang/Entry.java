@@ -4,6 +4,8 @@ import java.util.*;
 
 public class Entry {
   public static void main(String[] args) {
+    List<String> itemIds = new ArrayList<>();
+
     Solution solution = new Solution();
     int[] nums = {1,2,3};
     List<List<Integer>> results = solution.subsets(nums);
