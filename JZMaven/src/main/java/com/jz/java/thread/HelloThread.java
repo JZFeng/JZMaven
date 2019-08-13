@@ -19,11 +19,11 @@ public class HelloThread {
     t1.start();
     t1.join();
 
-    Thread t2 = new Thread(new MyThread("Tom"));
+    Thread t2 = new Thread(new TestThread("Tom"));
     t2.start();
     t2.join();
 
-    Thread t3 = new Thread(new MyThread("Bob"));
+    Thread t3 = new Thread(new TestThread("Bob"));
     t3.start();
     t3.join();
 
