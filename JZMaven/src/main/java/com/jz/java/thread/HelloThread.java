@@ -17,12 +17,15 @@ public class HelloThread {
       }
     });
     t1.start();
+    t1.join();
 
     Thread t2 = new Thread(new MyThread("Tom"));
     t2.start();
+    t2.join();
 
     Thread t3 = new Thread(new MyThread("Bob"));
     t3.start();
+    t3.join();
 
     System.out.println("Main End...");
   }
