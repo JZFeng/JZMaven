@@ -15,6 +15,9 @@ public class JoinDemo {
 
     for(Thread thread : threads) {
       thread.start();
+    }
+
+    for(Thread thread : threads) {
       thread.join();
     }
 
