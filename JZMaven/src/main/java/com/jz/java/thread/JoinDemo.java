@@ -10,7 +10,7 @@ public class JoinDemo {
     System.out.println("Main starts...");
     List<Thread> threads = new ArrayList<>();
     for(String name : Arrays.asList("Alice", "Bob", "Tom")) {
-      threads.add(new Thread(new TestThread(name)));
+      threads.add(new Thread(new TestThread2(name)));
     }
 
     for(Thread thread : threads) {
@@ -25,10 +25,10 @@ public class JoinDemo {
   }
 }
 
-class TestThread implements Runnable {
+class TestThread2 implements Runnable {
   String name ;
 
-  TestThread(String name) {
+  TestThread2(String name) {
     this.name = name;
   }
 

@@ -3,19 +3,22 @@ package com.jz.java.thread;
 public class InterruptDemo {
   public static void main(String[] args) throws InterruptedException {
     System.out.println("Main starts!");
-    Thread thread = new TestThread1();
+    TestThread1 thread = new TestThread1();
     thread.start();
-    Thread.sleep(10);
-    thread.interrupt();
+
+    Thread.sleep(5);
+    thread.isRunning = false;
+
     System.out.println("Main ends!");
   }
 }
 
 
 class TestThread1 extends Thread {
+  public volatile boolean isRunning = true;
 
   public void run() {
-    while (!isInterrupted()) {
+    while (isRunning) {
       System.out.println("Hello!");
     }
   }

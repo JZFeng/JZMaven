@@ -19,11 +19,11 @@ public class HelloThread {
     t1.start();
     t1.join();
 
-    Thread t2 = new Thread(new TestThread("Tom"));
+    Thread t2 = new Thread(new TestThread2("Tom"));
     t2.start();
     t2.join();
 
-    Thread t3 = new Thread(new TestThread("Bob"));
+    Thread t3 = new Thread(new TestThread2("Bob"));
     t3.start();
     t3.join();
 
@@ -32,10 +32,11 @@ public class HelloThread {
 
 }
 
-class MyThread implements Runnable {
+class TestThread implements Runnable {
+
   private String name;
 
-  MyThread(String name) {
+  TestThread(String name) {
     this.name = name;
   }
 
