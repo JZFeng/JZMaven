@@ -1,4 +1,4 @@
-package com.jz.java.thread;
+package com.jz.java.thread.basic;
 
 import java.time.LocalTime;
 
