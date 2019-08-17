@@ -16,7 +16,7 @@ public class WorkerThread extends Thread {
       } catch (InterruptedException e) {
         break;
       }
-      System.out.println(currentThread().getName() + ":" + name);
+      System.out.println(Thread.currentThread().getName() + ":" + name);
     }
   }
 }

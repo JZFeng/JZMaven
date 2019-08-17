@@ -3,7 +3,7 @@ package com.jz.java.thread.sync.waitnotify;
 import java.util.LinkedList;
 import java.util.Queue;
 
-//封装，线程安全的类。synchronized保护的是数据。
+//共享数据封装，线程安全的类。synchronized保护的是数据。
 public class TaskQueue {
   private final Queue<String> taskQueue = new LinkedList<>();
 
