@@ -1,7 +1,5 @@
 package com.jz.java.thread.sync.method;
 
-import com.jz.java.designpattern.factory.factorymethod.Add;
-
 public class SyncMethod {
 
   public static final int LOOP = 10000;
