@@ -22,4 +22,5 @@ public class Task  {
   public String getUrl() {
     return url;
   }
+
 }

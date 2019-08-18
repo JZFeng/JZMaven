@@ -11,14 +11,11 @@ public class Entry {
 
   private static final String ROOT_DOWNLOAD_PATH = "/Users/jzfeng/Documents/Java教程/";
 
-  private static final String DOWNLOAD_FILE_NAME = "Java多线程编程.txt";
-
   private static final String ROOT_URL_PREFIX = "https://www.feiyangedu.com";
 
-  public static void main(String[] args) throws IOException {
+  private static final String DOWNLOAD_FILE_NAME = "Java多线程编程.txt";
 
-    String path = "/Users/jzfeng/Documents/Java教程/Java多线程编程/线程的概念";
-    createFolderByPath(path);
+  public static void main(String[] args) throws IOException {
 
     File file = new File(ROOT_DOWNLOAD_PATH + DOWNLOAD_FILE_NAME);
 
@@ -29,6 +26,7 @@ public class Entry {
     }
 
     int num_of_lines = 0;
+
     BufferedReader br = new BufferedReader(new FileReader(file));
     String line = br.readLine();
 
@@ -37,7 +35,8 @@ public class Entry {
     while (line != null && line.trim().length() > 0) {
       num_of_lines++;
       String[] strs = line.split(",");
-      executeATask(new Task(strs[0], strs[1] + ".mp4", strs[2]));
+      Task task = new Task(strs[0], strs[1] + ".mp4", strs[2]);
+      executeATask(task);
       line = br.readLine();
     }
 
@@ -72,7 +71,7 @@ public class Entry {
     return true;
   }
 
-  private static void executeATask(Task task) throws IOException {
+  public static void executeATask(Task task) throws IOException {
     String url = task.getUrl();
     String folder = ROOT_DOWNLOAD_PATH +
         DOWNLOAD_FILE_NAME.substring(0, DOWNLOAD_FILE_NAME.indexOf(".")) + "/" +
