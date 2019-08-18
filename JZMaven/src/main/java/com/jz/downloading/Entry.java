@@ -9,34 +9,42 @@ import java.util.*;
 
 public class Entry {
 
-  private static final String file = "/Users/jzfeng/Documents/download.txt";
+  private static final String ROOT_DOWNLOAD_PATH = "/Users/jzfeng/Documents/Java教程/";
 
-  public static void main(String[] args) throws IOException, InterruptedException {
-    long start = System.currentTimeMillis();
-    int num_of_lines = 0;
-    boolean isValid = validateURLLinks(new File("/Users/jzfeng/Documents/download.txt"));
+  private static final String DOWNLOAD_FILE_NAME = "Java多线程编程.txt";
+
+  private static final String ROOT_URL_PREFIX = "https://www.feiyangedu.com";
+
+  public static void main(String[] args) throws IOException {
+
+    String path = "/Users/jzfeng/Documents/Java教程/Java多线程编程/线程的概念";
+    createFolderByPath(path);
+
+    File file = new File(ROOT_DOWNLOAD_PATH + DOWNLOAD_FILE_NAME);
+
+    boolean isValid = validateURLLinks(file);
     if (!isValid) {
-      throw new RuntimeException("Duplicate URLs in the download.txt file.");
+      throw new RuntimeException(
+          "Duplicate URLs in " + ROOT_DOWNLOAD_PATH + DOWNLOAD_FILE_NAME);
     }
 
-    BufferedReader br = new BufferedReader(new FileReader(new File(Entry.file)));
+    int num_of_lines = 0;
+    BufferedReader br = new BufferedReader(new FileReader(file));
     String line = br.readLine();
+
+    long start = System.currentTimeMillis();
 
     while (line != null && line.trim().length() > 0) {
       num_of_lines++;
       String[] strs = line.split(",");
-      String filename = strs[0] + "_" + strs[1] + ".mp4";
-      String url = "https://www.feiyangedu.com" + strs[2];
-
-      InputStream in = new URL(url).openStream();
-      Files.copy(in, Paths.get("/Users/jzfeng/Documents/Java教程/" +
-          filename), StandardCopyOption.REPLACE_EXISTING);
+      executeATask(new Task(strs[0], strs[1] + ".mp4", strs[2]));
       line = br.readLine();
     }
 
     long end = System.currentTimeMillis();
     br.close();
-    System.out.println("Downloaded " + num_of_lines + " files, " + (end - start) / 1000 + " seconds used.");
+    System.out.println("Downloaded " + num_of_lines + " files, " + (end - start) / 1000 +
+        " seconds used.");
 
   }
 
@@ -46,6 +54,11 @@ public class Entry {
     Set<String> set = new TreeSet<>();
     String line = br.readLine();
     while (line != null && line.trim().length() > 0) {
+      String[] strs = line.split(",");
+      if (strs.length != 3) {
+        throw new RuntimeException(line + " has more than three parameters.");
+      }
+
       String url = line.split(",")[2];
       if (!set.add(url)) {
         System.out.println("Duplicate URL is : " + url);
@@ -57,6 +70,67 @@ public class Entry {
     br.close();
 
     return true;
+  }
+
+  private static void executeATask(Task task) throws IOException {
+    String url = task.getUrl();
+    String folder = ROOT_DOWNLOAD_PATH +
+        DOWNLOAD_FILE_NAME.substring(0, DOWNLOAD_FILE_NAME.indexOf(".")) + "/" +
+        task.getFolder();
+
+    createFolderByPath(folder);
+
+    String filename = task.getFilename();
+
+    InputStream in = new URL(ROOT_URL_PREFIX + url).openStream();
+    Files.copy(in, Paths.get(folder + "/" +
+        filename), StandardCopyOption.REPLACE_EXISTING);
+    System.out.println(
+        "*****Download " + task.getFolder() + "/" + filename + " successfully!*****");
+  }
+
+  private static String removeExcessiveSlash(String str) {
+    if (str == null || str.length() == 0) {
+      return str;
+    }
+    str = str.trim();
+
+    StringBuilder sb = new StringBuilder();
+
+    for (int i = 0; i < str.length() - 1; i++) {
+      char c = str.charAt(i);
+      if (c == '/' && str.charAt(i + 1) == '/') {
+        continue;
+      } else {
+        sb.append(c);
+      }
+    }
+
+    sb.append(str.charAt(str.length() - 1));
+
+    return sb.toString().trim();
+
+  }
+
+  private static void createFolderByPath(String path) {
+    if (path == null || path.length() == 0) {
+      return;
+    }
+
+    if (path.startsWith(ROOT_DOWNLOAD_PATH)) {
+      path = path.substring(ROOT_DOWNLOAD_PATH.length()).trim();
+    }
+
+    String[] strs = path.split("/");
+    StringBuilder sb = new StringBuilder(ROOT_DOWNLOAD_PATH.substring(0,
+        ROOT_DOWNLOAD_PATH.length() - 1));
+    for (String str : strs) {
+      sb.append("/" + str);
+      File f = new File(sb.toString());
+      if (!f.exists()) {
+        f.mkdir();
+      }
+    }
   }
 
 }
