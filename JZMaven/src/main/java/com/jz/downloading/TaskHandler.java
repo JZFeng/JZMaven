@@ -21,7 +21,7 @@ public class TaskHandler extends Thread {
       Task task = taskQueue.getTask();
       try {
         Entry.executeATask(task);
-      } catch (IOException e) {
+      } catch (Exception e) {
         e.printStackTrace();
       }
     }

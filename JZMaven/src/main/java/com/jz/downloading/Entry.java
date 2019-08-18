@@ -13,9 +13,9 @@ public class Entry {
 
   private static final String ROOT_URL_PREFIX = "https://www.feiyangedu.com";
 
-  private static final String DOWNLOAD_FILE_NAME = "Java多线程编程.txt";
+  private static final String DOWNLOAD_FILE_NAME = "Java快速入门.txt";
 
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) throws Exception {
 
     File file = new File(ROOT_DOWNLOAD_PATH + DOWNLOAD_FILE_NAME);
 
@@ -71,7 +71,7 @@ public class Entry {
     return true;
   }
 
-  public static void executeATask(Task task) throws IOException {
+  public static void executeATask(Task task) throws Exception {
     String url = task.getUrl();
     String folder = ROOT_DOWNLOAD_PATH +
         DOWNLOAD_FILE_NAME.substring(0, DOWNLOAD_FILE_NAME.indexOf(".")) + "/" +
@@ -84,6 +84,9 @@ public class Entry {
     InputStream in = new URL(ROOT_URL_PREFIX + url).openStream();
     Files.copy(in, Paths.get(folder + "/" +
         filename), StandardCopyOption.REPLACE_EXISTING);
+
+    Thread.sleep(2000);
+
     System.out.println(
         "*****Download " + task.getFolder() + "/" + filename + " successfully!*****");
   }
