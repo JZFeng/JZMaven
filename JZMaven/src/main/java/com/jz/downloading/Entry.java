@@ -15,6 +15,8 @@ public class Entry {
 
   private static final String DOWNLOAD_FILE_NAME = "Java多线程编程.txt";
 
+  private static final int NUM_OF_THREADS = 5;
+
   public static void main(String[] args) throws Exception {
 
     File file = new File(ROOT_DOWNLOAD_PATH + DOWNLOAD_FILE_NAME);
@@ -31,17 +33,41 @@ public class Entry {
     String line = br.readLine();
 
     long start = System.currentTimeMillis();
+    System.out.println("Start Time is : " + start);
+
+    TaskQueue taskQueue = new TaskQueue();
+    List<TaskHandler> taskHandlers = new ArrayList<>();
+    for(int i = 0 ; i < NUM_OF_THREADS; i++) {
+      taskHandlers.add(new TaskHandler(taskQueue));
+    }
+    for(TaskHandler taskHandler : taskHandlers) {
+      taskHandler.start();
+    }
 
     while (line != null && line.trim().length() > 0) {
       num_of_lines++;
       String[] strs = line.split(",");
       Task task = new Task(strs[0], strs[1] + ".mp4", strs[2]);
-      executeATask(task);
+      taskQueue.addTask(task);
       line = br.readLine();
     }
 
-    long end = System.currentTimeMillis();
     br.close();
+
+
+    if(taskQueue.isEmpty()) {
+      Thread.sleep(2000);
+      for(TaskHandler taskHandler : taskHandlers) {
+        taskHandler.setStopFlag(true);
+      }
+    }
+
+    for(TaskHandler taskHandler : taskHandlers) {
+      taskHandler.join();
+    }
+
+    long end = System.currentTimeMillis();
+
     System.out.println("Downloaded " + num_of_lines + " files, " + (end - start) / 1000 +
         " seconds used.");
 
@@ -88,7 +114,7 @@ public class Entry {
 //    Thread.sleep(2000);
 
     System.out.println(
-        "*****Download " + task.getFolder() + "/" + filename + " successfully!*****");
+        "*****Downloaded " + task.getFolder() + "/" + filename + ";" +System.currentTimeMillis());
   }
 
   private static String removeExcessiveSlash(String str) {
