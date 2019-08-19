@@ -13,7 +13,7 @@ public class Entry {
 
   private static final String ROOT_URL_PREFIX = "https://www.feiyangedu.com";
 
-  private static final String DOWNLOAD_FILE_NAME = "Java快速入门.txt";
+  private static final String DOWNLOAD_FILE_NAME = "Java多线程编程.txt";
 
   public static void main(String[] args) throws Exception {
 
@@ -85,7 +85,7 @@ public class Entry {
     Files.copy(in, Paths.get(folder + "/" +
         filename), StandardCopyOption.REPLACE_EXISTING);
 
-    Thread.sleep(2000);
+//    Thread.sleep(2000);
 
     System.out.println(
         "*****Download " + task.getFolder() + "/" + filename + " successfully!*****");

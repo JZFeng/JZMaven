@@ -1,7 +1,5 @@
 package com.jz.downloading;
 
-import java.io.IOException;
-
 public class TaskHandler extends Thread {
   private TaskQueue taskQueue;
 
@@ -11,8 +9,8 @@ public class TaskHandler extends Thread {
     this.taskQueue = taskQueue;
   }
 
-  public void setStopped(boolean flag) {
-    this.isStopped = true;
+  public void setStopFlag(boolean flag) {
+    this.isStopped = flag;
   }
 
   @Override

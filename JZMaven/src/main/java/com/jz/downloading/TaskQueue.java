@@ -6,12 +6,12 @@ import java.util.Queue;
 public class TaskQueue {
   private final Queue<Task> queue = new LinkedList<>();
 
-  public synchronized Task getTask() {
-    while(queue.isEmpty()) {
+  public synchronized Task getTask()  {
+    while (queue.isEmpty()) {
       try {
         this.wait();
       } catch (InterruptedException e) {
-        break;
+        e.printStackTrace();
       }
     }
     return queue.remove();
@@ -19,6 +19,7 @@ public class TaskQueue {
 
   public synchronized void addTask(Task task) {
     queue.add(task);
+    this.notifyAll();
   }
 
   public synchronized boolean isEmpty() {
