@@ -31,18 +31,7 @@ public class Entry {
 
     BufferedReader br = new BufferedReader(new FileReader(file));
     String line = br.readLine();
-
-    long start = System.currentTimeMillis();
-    System.out.println("Start Time is : " + start);
-
     TaskQueue taskQueue = new TaskQueue();
-    List<TaskHandler> taskHandlers = new ArrayList<>();
-    for(int i = 0 ; i < NUM_OF_THREADS; i++) {
-      taskHandlers.add(new TaskHandler(taskQueue));
-    }
-    for(TaskHandler taskHandler : taskHandlers) {
-      taskHandler.start();
-    }
 
     while (line != null && line.trim().length() > 0) {
       num_of_lines++;
@@ -53,13 +42,15 @@ public class Entry {
     }
 
     br.close();
+    long start = System.currentTimeMillis();
+    System.out.println("Start Time is : " + start);
 
-
-    if(taskQueue.isEmpty()) {
-      Thread.sleep(2000);
-      for(TaskHandler taskHandler : taskHandlers) {
-        taskHandler.setStopFlag(true);
-      }
+    List<TaskHandler> taskHandlers = new ArrayList<>();
+    for(int i = 0 ; i < NUM_OF_THREADS; i++) {
+      taskHandlers.add(new TaskHandler(taskQueue));
+    }
+    for(TaskHandler taskHandler : taskHandlers) {
+      taskHandler.start();
     }
 
     for(TaskHandler taskHandler : taskHandlers) {
