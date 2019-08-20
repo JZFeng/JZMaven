@@ -5,6 +5,7 @@ import java.util.Queue;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+@Deprecated
 public class TaskQueue {
   private final Queue<Task> queue = new LinkedList<>();
 

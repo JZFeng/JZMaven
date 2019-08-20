@@ -1,11 +1,13 @@
 package com.jz.downloading;
 
+import java.util.concurrent.BlockingQueue;
+
 public class TaskHandler extends Thread {
-  private TaskQueue taskQueue;
+  private BlockingQueue<Task> taskQueue;
 
   private boolean isStopped = false;
 
-  TaskHandler(TaskQueue taskQueue) {
+  TaskHandler(BlockingQueue<Task> taskQueue) {
     this.taskQueue = taskQueue;
   }
 
@@ -18,7 +20,7 @@ public class TaskHandler extends Thread {
     while(!isStopped) {
       Task task = null;
       try {
-        task = taskQueue.getTask();
+        task = taskQueue.take();
       } catch (InterruptedException e) {
         e.printStackTrace();
       }

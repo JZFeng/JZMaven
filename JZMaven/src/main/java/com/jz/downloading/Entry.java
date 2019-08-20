@@ -6,6 +6,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public class Entry {
 
@@ -31,13 +33,13 @@ public class Entry {
 
     BufferedReader br = new BufferedReader(new FileReader(file));
     String line = br.readLine();
-    TaskQueue taskQueue = new TaskQueue();
+    BlockingQueue<Task> taskQueue = new LinkedBlockingDeque<>();
 
     while (line != null && line.trim().length() > 0) {
       num_of_lines++;
       String[] strs = line.split(",");
       Task task = new Task(strs[0], strs[1] + ".mp4", strs[2]);
-      taskQueue.addTask(task);
+      taskQueue.put(task);
       line = br.readLine();
     }
 
