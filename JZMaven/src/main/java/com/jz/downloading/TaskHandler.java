@@ -16,9 +16,15 @@ public class TaskHandler extends Thread {
   @Override
   public void run() {
     while(!isStopped) {
-      Task task = taskQueue.getTask();
+      Task task = null;
       try {
-//        System.out.println(currentThread().getName() + " downloading " + task.getFolder() +"/" + task.getFilename() + ".mp4");
+        task = taskQueue.getTask();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+
+      try {
+        System.out.println(currentThread().getName() + " downloading " + task.getFolder() +"/" + task.getFilename() + ".mp4");
         Entry.executeATask(task);
       } catch (Exception e) {
         e.printStackTrace();

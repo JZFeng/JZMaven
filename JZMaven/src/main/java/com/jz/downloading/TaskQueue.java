@@ -2,28 +2,46 @@ package com.jz.downloading;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class TaskQueue {
   private final Queue<Task> queue = new LinkedList<>();
 
-  public synchronized Task getTask()  {
-    while (queue.isEmpty()) {
-      try {
-        this.wait();
-      } catch (InterruptedException e) {
-        e.printStackTrace();
+  private final ReentrantLock lock = new ReentrantLock();
+
+  private final Condition condition = lock.newCondition();
+
+  public Task getTask() throws InterruptedException {
+    lock.lock();
+    try {
+      while (queue.isEmpty()) {
+        condition.await();
       }
+      return queue.remove();
+    } finally {
+      lock.unlock();
     }
-    return queue.remove();
+
   }
 
-  public synchronized void addTask(Task task) {
-    queue.add(task);
-    this.notifyAll();
+  public void addTask(Task task) {
+    lock.lock();
+    try{
+      queue.add(task);
+      condition.signalAll();
+    } finally {
+      lock.unlock();
+    }
   }
 
-  public synchronized boolean isEmpty() {
-    return queue.isEmpty();
+  public boolean isEmpty() {
+    lock.lock();
+    try{
+      return queue.isEmpty();
+    } finally {
+      lock.unlock();
+    }
   }
 
 }
