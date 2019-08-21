@@ -7,7 +7,7 @@ import java.util.List;
 public class JoinDemo {
 
   public static void main(String[] args) throws InterruptedException {
-    System.out.println("Main starts...");
+    System.out.println("WaitNotify starts...");
     List<Thread> threads = new ArrayList<>();
     for(String name : Arrays.asList("Alice", "Bob", "Tom")) {
       threads.add(new Thread(new TestThread2(name)));
@@ -21,7 +21,7 @@ public class JoinDemo {
       thread.join();
     }
 
-    System.out.println("Main ends...");
+    System.out.println("WaitNotify ends...");
   }
 }
 

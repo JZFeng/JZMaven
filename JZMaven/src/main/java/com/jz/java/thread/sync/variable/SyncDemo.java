@@ -15,7 +15,7 @@ public class SyncDemo {
     t1.join();
     t2.join();
     System.out.println("Count : " + count);
-    System.out.println("Main end");
+    System.out.println("WaitNotify end");
   }
 }
 

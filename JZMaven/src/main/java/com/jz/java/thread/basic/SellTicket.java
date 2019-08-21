@@ -16,7 +16,7 @@ public class SellTicket {
     window2.join();
     window3.join();
     window4.join();
-    System.out.println("Main thread done.");
+    System.out.println("WaitNotify thread done.");
 
   }
 

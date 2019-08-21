@@ -15,7 +15,7 @@ public class ReadWriteLockDemo {
     addThread1.join();
     decThread1.join();
     System.out.println(counter1.getCount());
-    System.out.println("Main End!");
+    System.out.println("WaitNotify End!");
 
   }
 }

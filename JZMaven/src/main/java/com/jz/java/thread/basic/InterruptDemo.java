@@ -2,14 +2,14 @@ package com.jz.java.thread.basic;
 
 public class InterruptDemo {
   public static void main(String[] args) throws InterruptedException {
-    System.out.println("Main starts!");
+    System.out.println("WaitNotify starts!");
     TestThread1 thread = new TestThread1();
     thread.start();
 
     Thread.sleep(5);
     thread.isRunning = false;
 
-    System.out.println("Main ends!");
+    System.out.println("WaitNotify ends!");
   }
 }
 

@@ -3,7 +3,7 @@ package com.jz.java.thread.sync.waitnotify;
 import java.util.Arrays;
 import java.util.List;
 
-public class Main {
+public class WaitNotify {
 
   public static void main(String[] args) throws InterruptedException {
     TaskQueue taskQueue = new TaskQueue();
@@ -34,7 +34,7 @@ public class Main {
     workerThread2.join();
     workerThread3.join();
     workerThread4.join();
-    System.out.println("Main End!");
+    System.out.println("WaitNotify End!");
 
   }
 }

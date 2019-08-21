@@ -1,4 +1,4 @@
-package com.jz.java.thread.sync.threadpool;
+package com.jz.java.thread.concurrent;
 
 import java.util.concurrent.*;
 

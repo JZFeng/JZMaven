@@ -1,4 +1,4 @@
-package com.jz.java.thread.sync.threadpool;
+package com.jz.java.thread.concurrent;
 
 import java.time.LocalTime;
 import java.util.concurrent.Executors;
@@ -6,7 +6,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Scheduled {
-  public static void main(String[] args) throws InterruptedException {
+  public static void main(String[] args)  {
     System.out.println(LocalTime.now());
     ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
     executor.scheduleAtFixedRate(new HelloTask("Tom"),2,5, TimeUnit.SECONDS);
@@ -16,7 +16,7 @@ public class Scheduled {
 }
 
 class HelloTask implements Runnable {
-  String name;
+  private String name;
   HelloTask(String name) {
     this.name = name;
   }

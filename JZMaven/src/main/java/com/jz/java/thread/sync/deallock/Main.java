@@ -12,7 +12,7 @@ public class Main {
     aThread.join();
     bThread.join();
     System.out.println(shareObject.getAmountA() + " ; " + shareObject.getAmountB());
-    System.out.println("Main END!");
+    System.out.println("WaitNotify END!");
 
   }
 }

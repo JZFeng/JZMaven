@@ -17,7 +17,7 @@ public class ReentrantLockDemo {
     addThread.join();
     decThread.join();
     System.out.println(counter.getCount());
-    System.out.println("Main End.");
+    System.out.println("WaitNotify End.");
   }
 
 }

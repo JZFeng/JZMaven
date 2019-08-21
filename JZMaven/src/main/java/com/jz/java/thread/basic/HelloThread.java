@@ -2,7 +2,7 @@ package com.jz.java.thread.basic;
 
 public class HelloThread {
   public static void main(String[] args) throws InterruptedException {
-    System.out.println("Main Start...");
+    System.out.println("WaitNotify Start...");
     Thread t1 = new Thread(new Runnable() {
       @Override
       public void run() {
@@ -27,7 +27,7 @@ public class HelloThread {
     t3.start();
     t3.join();
 
-    System.out.println("Main End...");
+    System.out.println("WaitNotify End...");
   }
 
 }
