@@ -1,19 +1,21 @@
 package com.jz.java.thread.sync.method;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 //数据封装,把同步逻辑封装到持有数据到实例中去
 //Counter class is a thead-safe class
 public class Counter {
-  private int count = 0;
+  private AtomicInteger count = new AtomicInteger(0);
 
-  public synchronized void add(int n) {
-    count += n;
+  public void add(int n) {
+    count.addAndGet(n);
   }
 
-  public synchronized void sub(int n) {
-    count -= n;
+  public void sub(int n) {
+    count.addAndGet(-n);
   }
 
   public int get() {
-    return count;
+    return count.get();
   }
 }
