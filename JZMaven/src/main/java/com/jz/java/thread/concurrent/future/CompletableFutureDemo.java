@@ -7,7 +7,7 @@ import java.util.function.Function;
 public class CompletableFutureDemo {
   public static void main(String[] args) {
     //Supplier和Consumer配对使用。
-    CompletableFuture cf = CompletableFuture.supplyAsync(new StockpriceLookupSupplier());
+    CompletableFuture cf = CompletableFuture.supplyAsync(new StockpriceSina());
 
     cf.thenAccept(new Consumer<Float>() {
       @Override

@@ -1,15 +1,13 @@
 package com.jz.java.thread.concurrent.future;
 
-import com.jz.java.thread.concurrent.future.DownloadUtil;
-
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.function.Supplier;
 
-public class StockLookupSupplier implements Supplier<String> {
+public class StockLookup implements Supplier<String> {
   private String name;
 
-  StockLookupSupplier(String name) {
+  StockLookup(String name) {
     this.name = name;
   }
 

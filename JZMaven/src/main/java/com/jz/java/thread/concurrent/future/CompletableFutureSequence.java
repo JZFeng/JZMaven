@@ -8,7 +8,7 @@ import java.util.function.Function;
 public class CompletableFutureSequence {
   public static void main(String[] args) {
     String name = "上证指数";
-    CompletableFuture<String> getStockCodeFuture = CompletableFuture.supplyAsync(new StockLookupSupplier(name));
+    CompletableFuture<String> getStockCodeFuture = CompletableFuture.supplyAsync(new StockLookup(name));
     CompletableFuture<Price> getStockpriceFuture = getStockCodeFuture.thenApplyAsync(new Function<String, Price>() {
       @Override
       public Price apply(String code) {
