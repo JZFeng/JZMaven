@@ -1,4 +1,4 @@
-package com.jz.java.thread.concurrent;
+package com.jz.java.thread.concurrent.future;
 
 import java.io.BufferedReader;
 import java.io.IOException;

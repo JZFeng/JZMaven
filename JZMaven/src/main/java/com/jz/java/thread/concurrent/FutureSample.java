@@ -6,7 +6,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.concurrent.*;
 
-public class FutureDemo {
+public class FutureSample {
   public static void main(String[] args) throws ExecutionException, InterruptedException {
     ExecutorService executorService = Executors.newFixedThreadPool(3);
     Future<String> future = executorService.submit(new DownloadTask("https://www.ebay.com"));

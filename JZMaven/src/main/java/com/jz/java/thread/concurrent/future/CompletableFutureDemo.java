@@ -1,15 +1,13 @@
-package com.jz.java.thread.concurrent;
+package com.jz.java.thread.concurrent.future;
 
-import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class CompletableFutureDemo {
   public static void main(String[] args) {
     //Supplier和Consumer配对使用。
-    CompletableFuture cf = CompletableFuture.supplyAsync(new StockpriceSupplier());
+    CompletableFuture cf = CompletableFuture.supplyAsync(new StockpriceLookupSupplier());
 
     cf.thenAccept(new Consumer<Float>() {
       @Override
@@ -38,17 +36,3 @@ public class CompletableFutureDemo {
 
 }
 
-class StockpriceSupplier implements Supplier<Float> {
-
-  @Override
-  public Float get() {
-    try {
-      String result = DownloadUtil.download("http://hq.sinajs.cn/list=sh000001").split(",")[3];
-      return Float.parseFloat(result);
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-
-}
