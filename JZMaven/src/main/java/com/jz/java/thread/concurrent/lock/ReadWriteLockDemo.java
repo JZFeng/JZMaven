@@ -1,4 +1,4 @@
-package com.jz.java.thread.concurrent;
+package com.jz.java.thread.concurrent.lock;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
