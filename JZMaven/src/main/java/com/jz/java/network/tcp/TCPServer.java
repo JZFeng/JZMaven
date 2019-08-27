@@ -4,19 +4,24 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.LocalDateTime;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class TCPServer {
   public static void main(String[] args) throws IOException {
     ServerSocket ss = new ServerSocket(9090);
     System.out.println("Server is ready!");
-    Executor pool = Executors.newFixedThreadPool(50);
+    ExecutorService pool = Executors.newFixedThreadPool(50);
 
     while (true) {
-      Socket socket = ss.accept();
-      TimeHandler timeHandler = new TimeHandler(socket);
-      pool.execute(timeHandler);
+      try {
+        Socket socket = ss.accept();
+        TimeHandler timeHandler = new TimeHandler(socket);
+        pool.submit(timeHandler);
+      } catch (Exception e) {
+        e.printStackTrace();
+        break;
+      }
     }
   }
 }
