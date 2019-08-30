@@ -25,7 +25,7 @@ public class SendMail {
     Transport.send(message);
   }
 
-  private Session createSSLSession() {
+  Session createSSLSession() {
     Properties properties = new Properties();
     properties.put("mail.smtp.host", smtp_host);
     properties.put("mail.smtp.port", "465");
