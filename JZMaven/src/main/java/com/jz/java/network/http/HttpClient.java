@@ -19,27 +19,35 @@ public class HttpClient {
     postMap.put("form_password", "password");
 
 
-    System.out.println(post("https://www.douban.com/accounts/login","application/x-www-form-urlencoded",toFormData(postMap)));
+    System.out.println(post("https://www.douban.com/accounts/login", "application/x-www-form-urlencoded", toFormData(postMap)));
 
   }
 
   private static Response get(String theUrl) throws IOException {
     System.out.println("GET: " + theUrl);
-    URL url = new URL(theUrl);
-    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-    conn.connect();
-
-    InputStream in = conn.getInputStream();
+    URL url;
+    HttpURLConnection conn = null;
     StringBuilder sb = new StringBuilder();
+    try {
+      url = new URL(theUrl);
+      conn = (HttpURLConnection) url.openConnection();
+      conn.connect();
 
-    BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-    String line = br.readLine();
-    while (line != null && line.length() > 0) {
-      sb.append(line).append("\n");
-      line = br.readLine();
+      InputStream in = conn.getInputStream();
+
+
+      BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+      String line = br.readLine();
+      while (line != null && line.length() > 0) {
+        sb.append(line).append("\n");
+        line = br.readLine();
+      }
+    } finally {
+      if(conn != null) {
+        conn.disconnect();
+      }
     }
 
-    conn.disconnect();
 
     return new Response(conn.getResponseCode(), sb.toString().getBytes());
   }
@@ -61,9 +69,9 @@ public class HttpClient {
       ByteArrayOutputStream responseBuffer = new ByteArrayOutputStream();
       InputStream in = conn.getInputStream();
       byte[] buffer = new byte[1024];
-      while(true) {
+      while (true) {
         int n = in.read(buffer);
-        if(n == -1) {
+        if (n == -1) {
           break;
         }
         responseBuffer.write(buffer, 0, n);
@@ -73,7 +81,9 @@ public class HttpClient {
 
 
     } finally {
-      conn.disconnect();
+      if(conn != null) {
+        conn.disconnect();
+      }
     }
 
 
