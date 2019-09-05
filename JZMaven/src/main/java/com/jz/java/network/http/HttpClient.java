@@ -32,9 +32,7 @@ public class HttpClient {
       url = new URL(theUrl);
       conn = (HttpURLConnection) url.openConnection();
       conn.connect();
-
       InputStream in = conn.getInputStream();
-
 
       BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
       String line = br.readLine();
@@ -47,7 +45,6 @@ public class HttpClient {
         conn.disconnect();
       }
     }
-
 
     return new Response(conn.getResponseCode(), sb.toString().getBytes());
   }
@@ -78,8 +75,6 @@ public class HttpClient {
       }
 
       return new Response(conn.getResponseCode(), responseBuffer.toByteArray());
-
-
     } finally {
       if(conn != null) {
         conn.disconnect();
