@@ -24,6 +24,7 @@ public class HttpClient {
   }
 
   private static Response get(String theUrl) throws IOException {
+    System.out.println("GET: " + theUrl);
     URL url = new URL(theUrl);
     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
     conn.connect();
@@ -34,7 +35,7 @@ public class HttpClient {
     BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
     String line = br.readLine();
     while (line != null && line.length() > 0) {
-      sb.append(line);
+      sb.append(line).append("\n");
       line = br.readLine();
     }
 
@@ -44,30 +45,31 @@ public class HttpClient {
   }
 
   private static Response post(String theUrl, String contentType, String contentData) throws IOException {
+    System.out.println("POST: " + theUrl);
     HttpURLConnection conn = null;
     try {
       URL url = new URL(theUrl);
       conn = (HttpURLConnection) url.openConnection();
       conn.setRequestMethod("POST");
       conn.setDoOutput(true);
+      byte[] postdata = contentData.getBytes(StandardCharsets.UTF_8);
       conn.setRequestProperty("Content-Type", contentType);
-      conn.setRequestProperty("Content-length", String.valueOf(contentData.length()));
-
+      conn.setRequestProperty("Content-length", String.valueOf(postdata.length));
       OutputStream out = conn.getOutputStream();
-      BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8));
-      bw.write(contentData);
-      bw.flush();
+      out.write(postdata);
 
+      ByteArrayOutputStream responseBuffer = new ByteArrayOutputStream();
       InputStream in = conn.getInputStream();
-      BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-      String line = br.readLine();
-      StringBuilder sb = new StringBuilder();
-      while(line != null && line.length() > 0 ) {
-        sb.append(line);
-        line = br.readLine();
+      byte[] buffer = new byte[1024];
+      while(true) {
+        int n = in.read(buffer);
+        if(n == -1) {
+          break;
+        }
+        responseBuffer.write(buffer, 0, n);
       }
 
-      return new Response(conn.getResponseCode(), sb.toString().getBytes());
+      return new Response(conn.getResponseCode(), responseBuffer.toByteArray());
 
 
     } finally {
@@ -78,7 +80,7 @@ public class HttpClient {
   }
 
 
-  static String toFormData(Map<String, String> map) throws IOException {
+  private static String toFormData(Map<String, String> map) throws IOException {
     List<String> list = new ArrayList<>(map.size());
     for (String key : map.keySet()) {
       list.add(key + "=" + URLEncoder.encode(map.get(key), "UTF-8"));
