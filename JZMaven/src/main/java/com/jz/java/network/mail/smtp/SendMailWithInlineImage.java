@@ -47,6 +47,7 @@ public class SendMailWithInlineImage {
     BodyPart imagepart = new MimeBodyPart();
     imagepart.setFileName(filename);
     imagepart.setDataHandler(new DataHandler(new ByteArrayDataSource(in, "image/jpeg")));
+    // 与HTML的<img src="cid:img01">关联:
     imagepart.setHeader("Content-ID", "<img01>");
     multipart.addBodyPart(imagepart);
 
