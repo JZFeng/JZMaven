@@ -1,7 +1,6 @@
 package com.jz.java.network.security;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 public class Base64Demo {
