@@ -10,11 +10,12 @@ import java.security.NoSuchAlgorithmException;
 
 public class Hmac {
   public static void main(String[] args) throws NoSuchAlgorithmException, UnsupportedEncodingException, InvalidKeyException {
-    KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA1");
-    String original = "helloworld";
+    String data = "helloworld";
+    String algorithm = "HmacSHA1";
+    KeyGenerator keyGenerator = KeyGenerator.getInstance(algorithm);
     SecretKey secretKey = keyGenerator.generateKey();
-    byte[] r = toHmac("HmacSHA1", secretKey, original.getBytes("UTF-8"));
-    System.out.println(String.format("0" + r.length  * 2 + "x", new BigInteger(1, r)));
+    byte[] r = toHmac("HmacSHA1", secretKey, data.getBytes("UTF-8"));
+    System.out.println(String.format("%0" + (r.length * 2) + "x", new BigInteger(1, r)));
 
   }
 
