@@ -1,4 +1,4 @@
-package com.jz.java.network.security.encoding;
+package com.jz.java.network.security;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
