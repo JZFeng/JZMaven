@@ -1,4 +1,4 @@
-package com.jz.java.network.security;
+package com.jz.java.network.security.encoding;
 
 import java.io.*;
 import java.math.BigInteger;

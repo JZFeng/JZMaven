@@ -1,4 +1,4 @@
-package com.jz.java.network.security;
+package com.jz.java.network.security.encoding;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
