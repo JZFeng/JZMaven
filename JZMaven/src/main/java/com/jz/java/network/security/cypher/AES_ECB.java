@@ -10,9 +10,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
-import static javax.crypto.Cipher.DECRYPT_MODE;
-
-public class AESECBSample {
+public class AES_ECB {
 
   private static final String CYPER_NAME = "AES/ECB/PKCS5Padding";
 
