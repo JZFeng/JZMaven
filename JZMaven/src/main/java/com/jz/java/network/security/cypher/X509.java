@@ -54,14 +54,22 @@ public class X509 {
     return ks;
   }
 
-  public static void main(String[] args) throws IOException, CertificateException, NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
+  public static void main(String[] args) throws IOException, CertificateException, NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException, SignatureException {
     byte[] message = "Hello，使用X.509证书进行加密和签名!".getBytes("UTF-8");
-    KeyStore ks = loadKeyStore("my.keystore", "456789");
-    X509 x509 = new X509(ks,"mycert", "1234566");
-    byte[] data = x509.encrypt(message);
-    System.out.println(Base64.getEncoder().encodeToString(data));
 
-    System.out.println(new String(x509.decrypt(data),"UTF-8"));
+    KeyStore ks = loadKeyStore("my.keystore", "456789");
+
+    X509 x509 = new X509(ks,"mycert", "123456");
+
+    byte[] data = x509.encrypt(message);
+
+    System.out.println("Encrypted Message : " + Base64.getEncoder().encodeToString(data));
+    System.out.println("Decrypted Message: " + new String(x509.decrypt(data),"UTF-8"));
+
+    byte[] signature = x509.sign(data);
+    boolean verified = x509.verify(data, signature);
+    System.out.println(verified);
+
 
   }
 }
