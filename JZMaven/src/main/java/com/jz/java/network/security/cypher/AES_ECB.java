@@ -1,9 +1,6 @@
 package com.jz.java.network.security.cypher;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
+import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
@@ -18,7 +15,11 @@ public class AES_ECB {
     String message = "Hello, world! encrypted using AES!";
     System.out.println("Original Message : " + message);
     byte[] input = message.getBytes("UTF-8");
-    byte[] key = "1234567890abcdef".getBytes("UTF-8");
+//    byte[] key = "1234567890abcdef".getBytes("UTF-8");
+
+    KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+    byte[] key = keyGenerator.generateKey().getEncoded();
+
     byte[] encripted = encrypt(key,input);
     System.out.println("Encrypted string: " + Base64.getEncoder().encodeToString(encripted));
     byte[] decrpted = decrypt(key, encripted);
