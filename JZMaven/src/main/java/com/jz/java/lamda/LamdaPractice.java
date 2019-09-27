@@ -9,10 +9,7 @@ import java.util.stream.Stream;
 public class LamdaPractice {
   public static void main(String[] args) {
     Stream<BigInteger> stream = Stream.generate(new FibSupplier());
-    long[] result = stream.limit(20).mapToLong(BigInteger::longValue).toArray();
-    for(long l : result) {
-      System.out.print(l + " ");
-    }
+    stream.limit(20).forEach(System.out::println);
 
 
   }
