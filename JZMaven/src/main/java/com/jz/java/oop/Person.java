@@ -1,8 +1,5 @@
 package com.jz.java.oop;
 
-import com.sun.javaws.jnl.PropertyDesc;
-import javafx.beans.property.Property;
-
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;

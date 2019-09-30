@@ -1,6 +1,5 @@
 package com.jz.java.collection;
 
-import com.sun.istack.internal.NotNull;
 
 import java.util.Iterator;
 
@@ -12,7 +11,7 @@ public class ReadOnlyList<E> implements Iterable<E> {
         this.array = array;
     }
 
-    @Override @NotNull
+    @Override 
     public Iterator<E> iterator() {
         return new ReadOnlyListIterator();
     }

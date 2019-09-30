@@ -28,8 +28,6 @@ public class Person implements Comparable {
         }
 
         return false;
-
-
     }
 
     @Override

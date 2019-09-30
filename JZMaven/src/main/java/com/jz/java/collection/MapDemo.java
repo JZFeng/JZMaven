@@ -15,8 +15,6 @@ public class MapDemo {
 
         System.out.println(map.get(new Person("Zhu", 20)));
 
-
-
     }
 
 }

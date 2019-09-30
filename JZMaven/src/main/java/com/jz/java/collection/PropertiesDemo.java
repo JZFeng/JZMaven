@@ -10,7 +10,6 @@ public class PropertiesDemo {
     public static void main(String[] args) throws IOException {
         Properties properties = new Properties();
         properties.load(new FileInputStream("/Users/jzfeng/git/JZMaven/JZMaven/src/main/java/com/jz/java/collection/settings.properties"));
-
         String url = properties.getProperty("url");
         String lan = properties.getProperty("lan");
         String courseTitle = properties.getProperty("course.title");
@@ -18,7 +17,6 @@ public class PropertiesDemo {
         System.out.println(SHIPPINGSERVICE);
         System.out.println(url + " ; " + lan + " ; " + courseTitle);
         System.out.println(properties.getProperty("desc", "default desc"));
-
     }
 
 }

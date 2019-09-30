@@ -1,7 +1,5 @@
 package com.jz.java.network.security.encoding;
 
-import jdk.internal.util.xml.impl.Input;
-
 import java.io.*;
 import java.math.BigInteger;
 import java.security.MessageDigest;
