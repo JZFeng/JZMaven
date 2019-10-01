@@ -14,11 +14,11 @@ public class Template {
         this.template = template;
     }
 
-    public String render(Map<String, Object> data) {
+    private String render(Map<String, String> data) {
         Matcher matcher = pattern.matcher(template);
         StringBuffer sb = new StringBuffer();
         while(matcher.find()) {
-            matcher.appendReplacement(sb, (String)data.get(matcher.group(1)));
+            matcher.appendReplacement(sb, data.get(matcher.group(1)));
         }
 
         matcher.appendTail(sb);
@@ -28,8 +28,8 @@ public class Template {
 
 
     public static void main(String[] args) {
-        Template template = new Template("Hello, ${name}! You are learning ${lang}");
-        Map<String, Object> data = new HashMap<>();
+        Template template = new Template("Hello, ${name}! You are learning ${lang}!");
+        Map<String, String> data = new HashMap<>();
         data.put("name", "Bob");
         data.put("lang", "Java");
 
