@@ -1,16 +1,12 @@
 package com.jz.java.logging;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-public class Person {
+public class Person extends BaseClass {
     private String name;
-    private final Log log = LogFactory.getLog(getClass());
 
     Person(String name) {
-        log.info("Creating a new person.");
+        log.info("Creating a new person");
         if(name == null) {
-            throw new IllegalArgumentException();
+          throw new IllegalArgumentException(name);
         }
         this.name = name;
     }
