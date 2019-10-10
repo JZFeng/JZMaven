@@ -5,7 +5,7 @@ import java.time.LocalTime;
 public class DeamonDemo {
   public static void main(String[] args) throws InterruptedException {
     System.out.println("WaitNotify start:");
-    DeamonThread thread = new DeamonThread();
+    Thread thread = new DeamonThread();
     thread.setDaemon(true);
     thread.start();
     Thread.sleep(5000);
