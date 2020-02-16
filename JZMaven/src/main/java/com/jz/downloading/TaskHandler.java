@@ -26,7 +26,7 @@ public class TaskHandler extends Thread {
       }
 
       try {
-        System.out.println(currentThread().getName() + " downloading " + task.getFolder() +"/" + task.getFilename() + ".mp4");
+//        System.out.println(currentThread().getName() + " downloading " + task.getFolder()  + task.getFilename() );
         Entry.executeATask(task);
       } catch (Exception e) {
         e.printStackTrace();
