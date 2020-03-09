@@ -12,9 +12,6 @@ public class UtilsTest {
   @Test
   public void testDeserializeList() throws Exception {
     String[] lists = new String[]{
-        "null",
-        "1->null",
-        "1->2->null",
         "1->2->3->4->null"
     };
     for(String list : lists) {

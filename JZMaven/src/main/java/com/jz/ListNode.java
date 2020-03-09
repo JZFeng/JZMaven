@@ -14,10 +14,10 @@ public class ListNode {
   public String toString(){
     StringBuilder sb = new StringBuilder();
 
-    sb.append(val + "->");
-    while(next != null) {
-      sb.append(next.val + "->");
-      next = next.next;
+    sb.append(this.val + "->");
+    while(this.next != null) {
+      sb.append(this.next.val + "->");
+      this.next = this.next.next;
     }
 
     sb.append("null");
