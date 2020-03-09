@@ -2,7 +2,6 @@ package com.jz;
 
 public class ListNode {
   int val;
-
   ListNode next;
 
   ListNode(int x) {
@@ -11,18 +10,19 @@ public class ListNode {
   }
 
   @Override
-  public String toString(){
-    StringBuilder sb = new StringBuilder();
-
-    sb.append(this.val + "->");
-    while(this.next != null) {
-      sb.append(this.next.val + "->");
-      this.next = this.next.next;
+  public String toString() {
+    if(this == null) {
+      return "null";
     }
 
-    sb.append("null");
+    StringBuilder sb = new StringBuilder();
+    ListNode cur = this;
+    while(cur != null) {
+      sb.append(cur.val + "->");
+      cur = cur.next;
+    }
 
-    return sb.toString();
+    return sb.toString() + "null";
   }
 
 }

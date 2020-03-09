@@ -2,20 +2,21 @@ package com.jz;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
 import static com.jz.Utils.*;
 import static org.testng.Assert.*;
-import com.jz.Utils.*;
 
 public class UtilsTest {
 
   @Test
   public void testDeserializeList() throws Exception {
-    String[] lists = new String[]{
+    String[] lists = new String[] {
+        "null",
+        "1->null",
+        "1->2->null",
         "1->2->3->4->null"
     };
-    for(String list : lists) {
-      ListNode head =  deserializeList(list);
+    for (String list : lists) {
+      ListNode head = deserializeList(list);
       String l = serializeList(head);
       assertTrue(list.equals(l), "Wrong deserialization list: " + list);
     }
@@ -24,13 +25,13 @@ public class UtilsTest {
 
   @Test
   public void testDeserializeTree() throws Exception {
-    String[] trees = new String[]{
+    String[] trees = new String[] {
         "3,9,20,#,#,15,7",
         "1",
         "1,2,3"
     };
 
-    for(String tree : trees) {
+    for (String tree : trees) {
       TreeNode root = deserializeTree(tree);
       String t = serializeTree(root);
       assertTrue(t.equals(tree));
