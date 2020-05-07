@@ -1,14 +1,11 @@
 package com.jz.java.designpattern.factory.factorymethod;
 
+import java.io.File;
+
 public class Entry {
   public static void main(String[] args) {
-    double num1 = 1.23;
-    double num2 = 4.56;
-
-    Operation operation = new AddFactory().createOperation(num1, num2);
-    System.out.println(operation.getResult());
-
-    operation = new SubFactory().createOperation(num1, num2);
-    System.out.println(operation.getResult());
+    File file = new File("/Users/jzfeng/Documents/网盘下载/机器人总动员.mp4");
+    System.out.println("File size : " + file.length());
   }
+
 }

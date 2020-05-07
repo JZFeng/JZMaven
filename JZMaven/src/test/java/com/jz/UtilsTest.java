@@ -8,13 +8,14 @@ import static org.testng.Assert.*;
 public class UtilsTest {
 
   @Test
-  public void testDeserializeList() throws Exception {
+  public void testDeserializeList()  {
     String[] lists = new String[] {
         "null",
         "1->null",
         "1->2->null",
         "1->2->3->4->null"
     };
+
     for (String list : lists) {
       ListNode head = deserializeList(list);
       String l = serializeList(head);
@@ -24,7 +25,7 @@ public class UtilsTest {
 
 
   @Test
-  public void testDeserializeTree() throws Exception {
+  public void testDeserializeTree()  {
     String[] trees = new String[] {
         "3,9,20,#,#,15,7",
         "1",
