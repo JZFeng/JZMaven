@@ -11,7 +11,7 @@ public class Entry {
 
         ISellAlcohol dynamicProxy = (ISellAlcohol) Proxy.newProxyInstance(MaoTai.class.getClassLoader(), MaoTai.class.getInterfaces(), invocationHandler);
 
-        dynamicProxy.sellALcohol();
+        dynamicProxy.sellAlcohol();
 
     }
 
