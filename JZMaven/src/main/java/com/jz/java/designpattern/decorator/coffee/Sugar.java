@@ -1,21 +1,21 @@
 package com.jz.java.designpattern.decorator.coffee;
 
-public class Sugar implements ICoffee {
+public class Sugar extends CoffeeDecorator {
 
-    ICoffee coffee;
+  ICoffee coffee;
 
-    Sugar(ICoffee coffee) {
-        this.coffee = coffee;
-    }
+  Sugar(ICoffee coffee) {
+    super(coffee);
+  }
 
 
-    @Override
-    public String getIngredients() {
-        return coffee.getIngredients() + "Sugar + ";
-    }
+  @Override
+  public String getIngredients() {
+    return super.getIngredients() + "Sugar + ";
+  }
 
-    @Override
-    public double getPrice() {
-        return coffee.getPrice() + 0.5;
-    }
+  @Override
+  public double getPrice() {
+    return super.getPrice() + 0.5;
+  }
 }
