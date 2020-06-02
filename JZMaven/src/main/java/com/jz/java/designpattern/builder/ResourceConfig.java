@@ -52,7 +52,7 @@ public class ResourceConfig {
         throw new Exception("name cannot be empty");
       }
 
-      if (maxTotal <= 0 || minIdle <= 0 || maxIdle <= 0 || maxIdle > maxTotal) {
+      if (maxTotal <= 0 || minIdle < 0 || maxIdle <= 0 || maxIdle > maxTotal) {
         throw new IllegalArgumentException("Parameters are wrong.");
       }
 
