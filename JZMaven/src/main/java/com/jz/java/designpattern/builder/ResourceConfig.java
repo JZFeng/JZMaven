@@ -28,11 +28,17 @@ public class ResourceConfig {
     private int minIdle = DEFAULT_MIN_IDLE;
 
     public Builder name(String name) {
+      if(name == null || name.length() == 0) {
+        throw new IllegalArgumentException("Name cannot be null or empty.");
+      }
       this.name = name;
       return this;
     }
 
     public Builder maxTotal(int maxTotal) {
+      if(maxTotal <= 0) {
+        throw new IllegalArgumentException("");
+      }
       this.maxTotal = maxTotal;
       return this;
     }
@@ -61,7 +67,7 @@ public class ResourceConfig {
   }
 
   public static void main(String[] args) throws Exception {
-    ResourceConfig resourceConfig  = new ResourceConfig.Builder().name("abc").maxTotal(10).maxIdle(10).minIdle(0).build();
+    ResourceConfig resourceConfig  = new ResourceConfig.Builder().name("default").minIdle(9).minIdle(0).build();
   }
 }
 
