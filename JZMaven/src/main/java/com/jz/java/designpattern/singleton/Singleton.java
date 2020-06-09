@@ -1,4 +1,4 @@
-package com.jz.java.designpattern.Singleton;
+package com.jz.java.designpattern.singleton;
 
 public class Singleton {
   private static volatile Singleton instance = null;

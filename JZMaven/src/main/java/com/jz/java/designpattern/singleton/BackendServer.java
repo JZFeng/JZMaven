@@ -1,4 +1,4 @@
-package com.jz.java.designpattern.Singleton;
+package com.jz.java.designpattern.singleton;
 
 import java.util.Map;
 import java.util.Random;

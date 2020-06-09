@@ -1,4 +1,4 @@
-package com.jz.java.designpattern.Snapshot;
+package com.jz.java.designpattern.snapshot;
 
 import java.util.Scanner;
 import java.util.Stack;

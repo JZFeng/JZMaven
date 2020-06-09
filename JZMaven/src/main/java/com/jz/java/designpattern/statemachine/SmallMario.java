@@ -1,4 +1,4 @@
-package com.jz.java.designpattern.StateMachine;
+package com.jz.java.designpattern.statemachine;
 
 public class SmallMario extends AbstractState {
   private static final SmallMario instance = new SmallMario();

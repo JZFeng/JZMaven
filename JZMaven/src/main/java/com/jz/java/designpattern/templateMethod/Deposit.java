@@ -1,4 +1,4 @@
-package com.jz.java.designpattern.TemplateMethod;
+package com.jz.java.designpattern.templateMethod;
 
 public class Deposit extends BankBusiness {
 
