@@ -1,7 +1,6 @@
 package com.jz.java.designpattern.decorator.coffee;
 
 public class Cream extends CoffeeDecorator {
-    ICoffee coffee;
 
     Cream(ICoffee coffee) {
         super(coffee);
