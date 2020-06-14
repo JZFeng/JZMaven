@@ -31,7 +31,7 @@ public class CompletableFutureSequence {
 
     getStockpriceFuture.join();
 
-    System.out.println("Main End");
+    System.out.println("Entry End");
 
 
   }

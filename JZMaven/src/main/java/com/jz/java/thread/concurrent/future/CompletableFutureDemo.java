@@ -30,7 +30,7 @@ public class CompletableFutureDemo {
     }
 
     cf.join();
-    System.out.println("Main End");
+    System.out.println("Entry End");
 
   }
 
