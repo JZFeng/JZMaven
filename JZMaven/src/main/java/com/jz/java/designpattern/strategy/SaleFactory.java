@@ -1,16 +1,9 @@
 package com.jz.java.designpattern.strategy;
 
-public class Context {
-    ISale sale = null;
+public class SaleFactory {
 
-    /*Context(ISale sale) {
-        this.sale = sale;
-    }*/
-
-    Context(String saleType) {
-        /*
-        Class clazz = Class.forName(saleType);
-        clazz.getConstructors();*/
+    public static ISale getSale(String saleType) {
+        ISale sale = null;
         switch(saleType) {
             case "Normal" :
                 sale = new Normal();
@@ -26,12 +19,7 @@ public class Context {
                 break;
         }
 
-
-    }
-
-
-    public double calculate(double originalPrice) {
-        return sale.calculate(originalPrice);
+        return sale;
     }
 
 }
