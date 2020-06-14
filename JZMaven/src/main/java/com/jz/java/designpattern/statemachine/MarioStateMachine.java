@@ -11,19 +11,19 @@ public class MarioStateMachine {
   }
 
   public void obtainMushRoom() throws Exception {
-    this.currentState.obtainMushRoom(this);
+    currentState.obtainMushRoom(this);
   }
 
   public void obtainCape() throws Exception {
-    this.currentState.obtainCape(this);
+    currentState.obtainCape(this);
   }
 
   public void obtainFireFlower() throws Exception {
-    this.currentState.obtainFireFlower(this);
+    currentState.obtainFireFlower(this);
   }
 
   public void meetMonster() throws Exception {
-    this.currentState.meetMonster(this);
+    currentState.meetMonster(this);
   }
 
   public int getScore() {
