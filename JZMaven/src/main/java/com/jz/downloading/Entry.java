@@ -61,22 +61,6 @@ public class Entry {
 
   }
 
-
-  public static void executeATask(Task task) throws Exception {
-    String url = task.getUrl();
-    String filename = task.getFilename();
-
-    InputStream in = new URL(url).openStream();
-    Files.copy(in, Paths.get(task.getFolder() +
-        filename), StandardCopyOption.REPLACE_EXISTING);
-
-//    Thread.sleep(2000);
-
-    System.out.println(
-        "*****Downloaded " + task.getFolder() + filename + ";" +
-            System.currentTimeMillis());
-  }
-
   private static String removeExcessiveSlash(String str) {
     if (str == null || str.length() == 0) {
       return str;
