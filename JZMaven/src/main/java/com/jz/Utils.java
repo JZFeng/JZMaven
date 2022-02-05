@@ -86,10 +86,10 @@ public class Utils {
     queue.offer(root);
     while (!queue.isEmpty()) {
       TreeNode tmp = queue.poll();
-      tmp.left = (index * 2 + 1 < strs.length && !strs[index * 2 + 1].equals("#")) ?
+      tmp.left = (index * 2 + 1 < length && !strs[index * 2 + 1].equals("#")) ?
           new TreeNode(Integer.parseInt(strs[index * 2 + 1])) :
           null;
-      tmp.right = (index * 2 + 2 < strs.length && !strs[index * 2 + 2].equals("#")) ?
+      tmp.right = (index * 2 + 2 < length && !strs[index * 2 + 2].equals("#")) ?
           new TreeNode(Integer.parseInt(strs[index * 2 + 2])) :
           null;
       if (tmp.left != null) {
