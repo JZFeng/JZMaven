@@ -135,11 +135,11 @@ public class LFUCache {
         /**
          * 虚拟头结点，它无前驱结点
          */
-        private ListNode first;
+        private ListNode head;
         /**
          * 虚拟尾结点，它无后继结点
          */
-        private ListNode last;
+        private ListNode tail;
 
         /**
          * 当前双向链表的有效结点数
@@ -148,11 +148,11 @@ public class LFUCache {
 
         public DoubleLinkedList() {
             // 虚拟头尾结点赋值多少无所谓
-            this.first = new ListNode(-1, -1);
-            this.last = new ListNode(-2, -2);
+            this.head = new ListNode(-1, -1);
+            this.tail = new ListNode(-2, -2);
 
-            first.next = last;
-            last.pre = first;
+            head.next = tail;
+            tail.pre = head;
             size = 0;
         }
 
@@ -162,12 +162,12 @@ public class LFUCache {
          * @param node
          */
         public void addFirst(ListNode node) {
-            ListNode oldFirst = first.next;
+            ListNode oldFirst = head.next;
             // 两侧结点指向它
-            first.next = node;
+            head.next = node;
             oldFirst.pre = node;
             // 它的前驱和后继指向两侧结点
-            node.pre = first;
+            node.pre = head;
             node.next = oldFirst;
             size++;
         }
@@ -178,12 +178,12 @@ public class LFUCache {
          * @return
          */
         public ListNode removeLast() {
-            ListNode oldLast = last.pre;
+            ListNode oldLast = tail.pre;
             ListNode last = oldLast.pre;
 
             // 两侧结点建立连接
-            last.next = this.last;
-            this.last.pre = last;
+            last.next = this.tail;
+            this.tail.pre = last;
 
             // 它的两个属性切断连接
             oldLast.pre = null;
