@@ -9,8 +9,6 @@ public class Entry {
     public static void main(String[] args) {
         TaskQueue taskQueue = new TaskQueue(10);
 
-
-
         new Thread(new Runnable() {
 
             private int i = 0;
