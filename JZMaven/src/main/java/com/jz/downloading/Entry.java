@@ -42,7 +42,7 @@ public class Entry {
     long start = System.currentTimeMillis();
     System.out.println("Start Time is : " + start);
 
-    List<TaskHandler> taskHandlers = new ArrayList<>();
+    List<TaskHandler> taskHandlers = new ArrayList<>(); //相当于线程池；
     for (int i = 0; i < NUM_OF_THREADS; i++) {
       taskHandlers.add(new TaskHandler(taskQueue));
     }

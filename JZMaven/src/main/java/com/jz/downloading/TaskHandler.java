@@ -17,10 +17,10 @@ public class TaskHandler extends Thread {
 
   @Override
   public void run() {
-    while(!isStopped) {
+    while(!isStopped) { //这个很关键，thread不停；
       Task task = null;
       try {
-        task = taskQueue.take();
+        task = taskQueue.take(); //从阻塞队列中拿任务；
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
