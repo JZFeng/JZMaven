@@ -7,6 +7,15 @@ package com.jz.jiuzhang;
 
 import java.util.*;
 
+class Node {
+    int val;
+    Node prev, next;
+
+    public Node(int v) {
+        val = v;
+    }
+}
+
 class MaxStack {
     TreeMap<Integer, List<Node>> map; //key为值，value为结点列表；
     DoubleLinkedList dll;
@@ -81,13 +90,7 @@ class DoubleLinkedList {
         node.next.prev = node.prev;
         return node;
     }
+
+
 }
 
-class Node {
-    int val;
-    Node prev, next;
-
-    public Node(int v) {
-        val = v;
-    }
-}
