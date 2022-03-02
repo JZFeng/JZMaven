@@ -9,30 +9,20 @@ import java.util.*;
 
 public class LFUCache {
 
-    /**
-     * key 就是题目中的 key
-     * value 是结点类
-     */
+    //因为是(key，val) pair,底层肯定是用Map
+    //要为每一个key记录freq；同时freq相同的时候，还需要考虑访问时间的先后；
+    //访问时间的先后，我们在LRU做过，用的是Map和DoubleLinkedList
+    //LFU实际上是在LRU基础了多了一个freq的维度；
+    //Map<Integer, ListNode> 还是key对应结点，实现快速删除；
+    // Map<Integer, DoubleLinkedList<ListNode>> frequency Map，key是freq，value是链表; 相当于一个个Bucket桶；
+
     private Map<Integer, ListNode> cache;
-
-    /**
-     * 访问次数哈希表，使用 ListNode[] 也可以，不过要占用很多空间
-     */
     private Map<Integer, DoubleLinkedList> freqMap;
-
-    /**
-     * 外部传入的容量大小
-     */
     private Integer capacity;
-
-    /**
-     * 全局最高访问次数，删除最少使用访问次数的结点时会用到
-     */
-    private Integer minFreq = 1;
+    private Integer minFreq = 1;//存储最小的freq以便空间满的时候删除节点时使用；
 
 
     public LFUCache(int capacity) {
-
         // 显式设置哈希表的长度 = capacity 和加载因子 = 1 是为了防止哈希表扩容带来的性能消耗
         // 这一步操作在理论上的可行之处待讨论，实验下来效果是比较好的
         cache = new HashMap<>(capacity, 1);
@@ -40,37 +30,35 @@ public class LFUCache {
         this.capacity = capacity;
     }
 
-    /**
-     * get 一次操作，访问次数就增加 1；
-     * 从原来的链表调整到访问次数更高的链表的表头
-     *
-     * @param key
-     * @return
-     */
     public int get(int key) {
-        // 测试测出来的，capacity 可能传 0
         if (capacity == 0) {
             return -1;
         }
 
-        if (cache.containsKey(key)) {
-            // 获得结点类
-            ListNode listNode = removeListNodeByKey(key);
-
-            // 挂接到新的访问次数的双向链表的头部
-            int freq = listNode.freq;
-            addListNodeByFreq(freq, listNode);
-
-            return listNode.value;
-        } else {
+        if (!cache.containsKey(key)) {
             return -1;
         }
+
+        ListNode node = cache.get(key);
+        int freq = node.freq;
+
+        //从freq这个桶里删掉，然后放到freq+1那个桶里；
+        //此处记得更新minFreq；
+        DoubleLinkedList dll = freqMap.get(freq);
+        dll.remove(node);
+        if (freq == minFreq && dll.size() == 0) {
+            minFreq++;
+        }
+
+        node.freq = node.freq + 1;
+        if (!freqMap.containsKey(node.freq)) {
+            freqMap.put(node.freq, new DoubleLinkedList());
+        }
+        freqMap.get(node.freq).addFirst(node);
+
+        return node.value;
     }
 
-    /**
-     * @param key
-     * @param value
-     */
     public void put(int key, int value) {
         if (capacity == 0) {
             return;
@@ -91,8 +79,8 @@ public class LFUCache {
         // 1、如果满了，先删除访问次数最小的的末尾结点，再删除 map 里对应的 key
         if (cache.size() == capacity) {
             // 1、从双链表里删除结点
-            DoubleLinkedList doubleLinkedList = freqMap.get(minFreq);
-            ListNode removeNode = doubleLinkedList.removeLast();
+            DoubleLinkedList minFreqList = freqMap.get(minFreq);
+            ListNode removeNode = minFreqList.removeLast();
 
             // 2、删除 map 里对应的 key
             cache.remove(removeNode.key);
@@ -128,72 +116,65 @@ public class LFUCache {
         }
     }
 
-    /**
-     * 双向链表
-     */
     private class DoubleLinkedList {
-        /**
-         * 虚拟头结点，它无前驱结点
-         */
         private ListNode head;
-        /**
-         * 虚拟尾结点，它无后继结点
-         */
         private ListNode tail;
-
-        /**
-         * 当前双向链表的有效结点数
-         */
         private int size;
 
         public DoubleLinkedList() {
             // 虚拟头尾结点赋值多少无所谓
-            this.head = new ListNode(-1, -1);
-            this.tail = new ListNode(-2, -2);
+            this.head = new ListNode(Integer.MIN_VALUE, Integer.MAX_VALUE);
+            this.tail = new ListNode(Integer.MAX_VALUE, Integer.MIN_VALUE);
 
             head.next = tail;
             tail.pre = head;
             size = 0;
         }
 
-        /**
-         * 把一个结点类添加到双向链表的开头（头部是最新使用数据）
-         *
-         * @param node
-         */
-        public void addFirst(ListNode node) {
-            ListNode oldFirst = head.next;
-            // 两侧结点指向它
-            head.next = node;
-            oldFirst.pre = node;
-            // 它的前驱和后继指向两侧结点
-            node.pre = head;
-            node.next = oldFirst;
-            size++;
+        //把一个结点类添加到双向链表的开头（头部是最新使用数据);
+        public ListNode addFirst(ListNode node) {
+            if (node != null) {
+                ListNode oldFirst = head.next;
+                head.next = node;
+                oldFirst.pre = node;
+                node.pre = head;
+                node.next = oldFirst;
+                size++;
+            }
+            return node;
         }
 
-        /**
-         * 把双向链表的末尾结点删除（尾部是最旧的数据，在缓存满的时候淘汰）
-         *
-         * @return
-         */
+        //把双向链表的末尾结点删除（尾部是最旧的数据，在缓存满的时候淘汰）
         public ListNode removeLast() {
-            ListNode oldLast = tail.pre;
-            ListNode last = oldLast.pre;
+            if (size > 0) {
+                ListNode oldLast = tail.pre;
+                oldLast.pre.next = tail;
+                tail.pre = oldLast.pre;
+                oldLast.pre = null;
+                oldLast.next = null;
 
-            // 两侧结点建立连接
-            last.next = this.tail;
-            this.tail.pre = last;
+                size--;
+                return oldLast;
+            }
 
-            // 它的两个属性切断连接
-            oldLast.pre = null;
-            oldLast.next = null;
+            return null;
+        }
 
-            // 重要：删除一个结点，当前双向链表的结点个数少 1
-            size--;
+        public ListNode remove(ListNode node) {
+            if (node != null) {
+                node.pre.next = node.next;
+                node.next.pre = node.pre;
+                node.next = null;
+                node.pre = null;
+                size--;
+                return node;
+            }
 
-            // 维护
-            return oldLast;
+            return null;
+        }
+
+        public int size() {
+            return size;
         }
     }
 
