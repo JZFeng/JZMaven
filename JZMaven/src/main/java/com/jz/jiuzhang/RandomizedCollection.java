@@ -7,12 +7,12 @@ import java.util.*;
 public class RandomizedCollection {
 
     List<Integer> rc;
-    Map<Integer, Set<Integer>> map;
+    Map<Integer, LinkedHashSet<Integer>> map;
     Random random;
 
     public RandomizedCollection() {
         rc = new ArrayList<Integer>();
-        map = new HashMap<Integer, Set<Integer>>();
+        map = new HashMap<Integer, LinkedHashSet<Integer>>();
         random = new Random();
     }
 

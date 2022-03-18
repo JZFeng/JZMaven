@@ -9,7 +9,7 @@ import java.util.concurrent.*;
 
 public class CyclicBarrierDemo {
     public static void main(String[] args) throws Exception {
-
+        //第二个参数：线程数为3的时候，需要触发的线程；
         CyclicBarrier cyclicBarrier = new CyclicBarrier(3, new TourGuideTask());
         ExecutorService executor = Executors.newFixedThreadPool(3);
         //登哥最大牌，到的最晚

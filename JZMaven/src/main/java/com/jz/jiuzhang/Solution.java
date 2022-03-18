@@ -6,47 +6,71 @@ import javax.swing.text.html.ListView;
 import java.util.*;
 
 
-public class Solution {
+class Solution {
+    //行数=height；列数= Power(2, height) - 1;
+    //每一行的start,end, root肯定是在中间；
 
     public static void main(String[] args) {
-        Solution solution = new Solution();
+        String url = "https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/solution/wu-zhong-fu-zi-fu-de-zui-chang-zi-chuan-by-leetc-2/";
+        System.out.println(url.length());
+    }
+
+
+    public TreeNode upsideDownBinaryTree(TreeNode root) {
+        if( root == null || root.left == null) {
+            return root;
+        }
+
+
+        TreeNode newRoot = upsideDownBinaryTree(root.left); //left变成新的根节点；
+        newRoot.left = root.right;
+        newRoot.right = root;
+        root.left = null;
+        root.right = null;
+
+        return newRoot;
+
+    }
+
+    public List<List<String>> printTree(TreeNode root) {
+        List<List<String>> res = new ArrayList<>();
+        int height = height(root);
+        int rows = height, cols = (int) (Math.pow(2, height) - 1);
+        //初始化
+        List<String> row = new ArrayList<>();
+        for(int i = 0 ; i < cols; i++) {
+            row.add("");
+        }
+        for(int i = 0 ; i < rows; i++) {
+            res.add(new ArrayList<>(row));
+        }
+
+        //height,也是numOfRow；
+        helper(root, res, 0, cols -1, 0);
+
+        return res;
+
+
+    }
+
+    private void helper( TreeNode root, List<List<String>> res, int start, int end , int curRow ) {
+        if(root == null ) {
+            return;
+        }
+
+        int mid = start + (end - start) / 2;
+        res.get(curRow).set(mid, root.val + "");
+        helper( root.left, res, start, mid - 1, curRow + 1 );
+        helper(root.right, res, mid + 1, end, curRow + 1);
 
     }
 
 
-    public boolean canPartitionKSubsets(int[] nums, int k) {
-        int sum = Arrays.stream(nums).sum();
-        if(sum % k != 0){
-            return false;
+    private int height(TreeNode root) {
+        if(root == null) {
+            return 0;
         }
 
-        boolean[] visited = new boolean[nums.length];
-
-        return helper(nums, visited, 0, k, 0, sum / k);
-
+        return Math.max( height(root.left) , height(root.right )) + 1;
     }
-
-    private boolean helper(int[] nums, boolean[] visited, int start, int remainingGroups, int curSum, int target) {
-        if( remainingGroups == 0 ) {
-            return true;
-        }
-        if(curSum == target) {
-            return helper(nums, visited, 0, remainingGroups - 1, 0, target);
-        }
-
-        for(int i = start; i < nums.length; i++) {
-            if( visited[i] || curSum + nums[i] > target ) {
-                continue;
-            }
-            visited[i] = true;
-            if( helper(nums, visited, i + 1, remainingGroups, curSum + nums[i], target) ) {
-                return true;
-            }
-            visited[i] = false;
-        }
-
-        return false;
-    }
-
-
 }
