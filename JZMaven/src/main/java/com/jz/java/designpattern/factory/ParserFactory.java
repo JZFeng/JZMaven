@@ -9,7 +9,7 @@ public class ParserFactory {
     String fileExtension = getFileExtension(configFilePath).toUpperCase();
 
     try {
-      parser = (IConfigParser) Class.forName("com.jz.java.designpattern.factory." +fileExtension + "Parser").newInstance();
+      parser = (IConfigParser) Class.forName("com.jz.java.designpattern.factory." + fileExtension + "Parser").newInstance();
     } catch (Exception e) {
       e.printStackTrace();
     }

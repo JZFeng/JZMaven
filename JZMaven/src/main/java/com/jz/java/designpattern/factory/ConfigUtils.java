@@ -2,10 +2,16 @@ package com.jz.java.designpattern.factory;
 
 class ConfigUtils {
   static String readConfigFromFile(String configFilePath) {
-    return "Config Content";
+    return configFilePath;
   }
 
   static String getFileExtension(String configFilePath) {
-    return "xml";
+    if(configFilePath.endsWith("xml")) {
+      return "xml";
+    }
+    if(configFilePath.endsWith("json")) {
+      return "json";
+    }
+    return "";
   }
 }
