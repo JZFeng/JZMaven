@@ -1,5 +1,7 @@
 package com.jz.java.designpattern.strategy;
 
+import com.jz.ListNode;
+
 public class Entry {
     public static void main(String[] args) {
         double originalPrice = 700;

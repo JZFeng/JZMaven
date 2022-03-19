@@ -14,6 +14,13 @@ class Solution {
         //这是个坑，一定要记得把beginWord和endWord加入Set
         List<List<String>> ladders = new ArrayList<>();
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        }).start();
+
         //Corner case，这是题意；
         if (!dict.contains(endWord)) {
             return ladders;

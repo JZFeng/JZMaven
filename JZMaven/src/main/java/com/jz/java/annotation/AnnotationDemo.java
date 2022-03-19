@@ -66,7 +66,6 @@ public class AnnotationDemo {
       if(!isValidZipcode(zipcode)) {
         System.out.println("Invalid zip code : " + zipcode);
       }
-
     }
 
 

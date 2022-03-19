@@ -11,6 +11,7 @@ public class FieldDemo {
         Class<? extends Object> clazz = null;
 
         Student student = new Student("JZ");
+        Class<? extends Student> clz = student.getClass();
         Field field = student.getClass().getDeclaredField("number");
         field.set(null, 10);
         System.out.println(field.get(student));
