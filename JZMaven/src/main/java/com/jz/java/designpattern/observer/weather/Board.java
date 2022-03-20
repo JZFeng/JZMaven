@@ -1,6 +1,6 @@
 package com.jz.java.designpattern.observer.weather;
 
-public class Board implements IWeatherListener, IClockListener {
+public class Board implements IWeatherSubscriber, IClockSubscriber {
 
     @Override
     public void updateWeather(int areaCode, long temperature) {
@@ -10,7 +10,6 @@ public class Board implements IWeatherListener, IClockListener {
     @Override
     public void updateSharpHour(int hour) {
         System.out.println("Playing audio on board: Now it's " + hour + " o'clock");
-
     }
 
 }

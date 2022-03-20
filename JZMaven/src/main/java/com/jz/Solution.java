@@ -7,7 +7,13 @@ import com.jz.Utils.*;
 
 class Solution {
 
+    public static void main(String[] args) {
+        long now = System.currentTimeMillis() / 1000l;
+        long daySeconds = 60 * 60 * 24;
+        long dayTime = now - (now + 8 * 3600) % daySeconds;
+        System.out.println(dayTime);
 
+    }
 
     public List<List<String>> findLadders(String beginWord, String endWord, List<String> dict) {
         Set<String> dictionary = new HashSet<>(dict);
