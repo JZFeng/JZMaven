@@ -34,7 +34,7 @@ public class CapeMario extends AbstractState{
 
   @Override
   public void meetMonster(MarioStateMachine stateMachine) {
-    stateMachine.setScore(0);
     stateMachine.setCurrentState(SmallMario.getInstance());
+    stateMachine.setScore(0);
   }
 }
