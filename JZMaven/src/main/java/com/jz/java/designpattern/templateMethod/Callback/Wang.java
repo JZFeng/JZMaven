@@ -24,7 +24,8 @@ public class Wang implements ICallback {
          * 小王调用小李中的方法，在这里注册回调接口
          * 这就相当于A类调用B的方法C
          */
-
+        //注意这里必须使用Wang.this,因为这里定义了一个匿名内部类。
+        // 但是这里需要传入外部类（也就是Wang的实例），所以用Wang.this;
         li.executeMessage(Wang.this, question );
       }
     });

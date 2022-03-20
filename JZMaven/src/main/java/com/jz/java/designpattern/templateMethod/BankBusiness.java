@@ -21,13 +21,12 @@ public abstract class BankBusiness {
   private void getNumber() {
     System.out.println("Get a number");
   }
-
-  //abstract method;
-  abstract void  handleBusiness(double money);
-
   private void review() {
     System.out.println("Please give a review.");
   }
+
+  //abstract method;
+  abstract void  handleBusiness(double money);
 
   //hook
   abstract boolean isVIP();
