@@ -31,13 +31,14 @@ public class Wang implements ICallback {
     });
     thread.start();
 
-    System.out.print("Wang goes out for shopping");
+    System.out.println("Wang goes out for shopping");
   }
 
 
 
   @Override
-  public void solve(String result) {
+  public String solve(String result) {
     System.out.println("Li solves this question and answer is " + result);
+    return result;
   }
 }

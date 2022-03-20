@@ -6,6 +6,5 @@ public class Entry {
     Wang wang = new Wang(li);
     String question = "1+1 =?";
     wang.askAQuestion(question);
-    li.executeMessage(wang, question);
   }
 }
