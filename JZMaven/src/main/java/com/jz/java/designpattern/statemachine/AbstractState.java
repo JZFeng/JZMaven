@@ -1,5 +1,6 @@
 package com.jz.java.designpattern.statemachine;
 
+//强制子类必须去实现；
 public abstract class AbstractState implements IMario {
 
   public abstract  State getName();

@@ -1,8 +1,9 @@
 package com.jz.java.designpattern.statemachine;
 
+//状态机需要传来传去;
 public class MarioStateMachine {
-  private int score;
 
+  private int score;
   private IMario currentState;
 
   public MarioStateMachine() {
@@ -10,28 +11,12 @@ public class MarioStateMachine {
     this.currentState = SmallMario.getInstance();
   }
 
-  public void obtainMushRoom() throws Exception {
-    currentState.obtainMushRoom(this);
-  }
-
-  public void obtainCape() throws Exception {
-    currentState.obtainCape(this);
-  }
-
-  public void obtainFireFlower() throws Exception {
-    currentState.obtainFireFlower(this);
-  }
-
-  public void meetMonster() throws Exception {
-    currentState.meetMonster(this);
-  }
-
   public int getScore() {
     return this.score;
   }
 
-  public State getCurrentState() {
-    return this.currentState.getName();
+  public IMario getCurrentState() {
+    return this.currentState;
   }
 
   public void setScore(int score) {

@@ -1,5 +1,8 @@
 package com.jz.java.designpattern.statemachine;
 
+//我们可以将状态类设计成单例，毕竟状态类中不包含任何成员变量
+//都是单例模式；因为一个游戏开始，只有那几种状态，设计成单例模式，很合理；
+
 public class CapeMario extends AbstractState{
 
   private static final CapeMario instance = new CapeMario();
@@ -31,6 +34,7 @@ public class CapeMario extends AbstractState{
 
   @Override
   public void meetMonster(MarioStateMachine stateMachine) {
-
+    stateMachine.setScore(0);
+    stateMachine.setCurrentState(SmallMario.getInstance());
   }
 }
