@@ -1,17 +1,16 @@
-package com.jz.java.designpattern.deligate.door;
+package com.jz.java.designpattern.delegator.door;
 
 public class AlarmDoor extends Door implements IAlarm {
 
-    AlarmAgent alarmAgent = null;
+    IAlarm alarmAgent = null;
 
-    AlarmDoor(AlarmAgent alarmAgent) {
+    AlarmDoor(IAlarm alarmAgent) {
         this.alarmAgent = alarmAgent;
     }
 
     @Override
     public void open() {
         System.out.println("Alarm Door Open.");
-
     }
 
     @Override
@@ -24,7 +23,6 @@ public class AlarmDoor extends Door implements IAlarm {
     @Override
     public void alarm() {
         alarmAgent.alarm();
-
     }
 
 }

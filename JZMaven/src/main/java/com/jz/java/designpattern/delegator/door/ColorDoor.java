@@ -1,4 +1,4 @@
-package com.jz.java.designpattern.deligate.door;
+package com.jz.java.designpattern.delegator.door;
 
 public class ColorDoor extends Door {
 

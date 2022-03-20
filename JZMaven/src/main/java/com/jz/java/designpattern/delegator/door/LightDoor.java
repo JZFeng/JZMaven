@@ -1,4 +1,4 @@
-package com.jz.java.designpattern.deligate.door;
+package com.jz.java.designpattern.delegator.door;
 
 //ʵ����Runnable�ӿڣ�����LightDoor�;߱��˶��̵߳Ĺ����ˡ�����߳�������ʾ���ϵĵơ�
 public class LightDoor extends Door implements Runnable {

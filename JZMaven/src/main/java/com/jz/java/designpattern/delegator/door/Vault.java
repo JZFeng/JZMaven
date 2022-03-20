@@ -1,4 +1,4 @@
-package com.jz.java.designpattern.deligate.door;
+package com.jz.java.designpattern.delegator.door;
 
 public class Vault implements IAlarm {
     AlarmAgent alarmAgent = null;
@@ -10,7 +10,6 @@ public class Vault implements IAlarm {
     @Override
     public void alarm() {
         this.alarmAgent.alarm();
-
     }
 
 }
