@@ -2,22 +2,21 @@ package com.jz.java.designpattern.chain.linkedListImpl;
 
 import com.jz.java.designpattern.chain.FeeRequest;
 
-public class HR extends Handler {
-    HR(FeeRequest feeRequest) {
+public class ProjectManager extends Handler {
+
+    public ProjectManager(FeeRequest feeRequest) {
         super(feeRequest);
     }
 
     @Override
     public boolean doHandle(FeeRequest feeRequest) {
         int amount = feeRequest.getFee();
-        if (amount > 1000) {
-            System.out.println("HumanResource is approving >1000 fee.");
+        if (amount <= 500 && amount > 0) {
+            System.out.println("Project manager is approving <= 500 fee.");
             return true;
         } else {
-            System.out.println("HumanResource cannot approve < 1000 fee.");
+            System.out.println("Project manager cannot approve >500 fee.");
             return false;
         }
     }
-
-
 }

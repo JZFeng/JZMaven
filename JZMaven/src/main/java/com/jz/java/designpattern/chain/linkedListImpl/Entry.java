@@ -7,8 +7,8 @@ public class Entry {
   public static void main(String[] args) {
     FeeRequest feeRequest = new FeeRequest("Wang", 1550);
 
-    Handler pjctManager = new PjctManager(feeRequest);
-    Handler dptManager = new DptManager(feeRequest);
+    Handler pjctManager = new ProjectManager(feeRequest);
+    Handler dptManager = new DepartmentManager(feeRequest);
     Handler hr = new HR(feeRequest);
 
     HandlerChainUsingLinkedList handlers = new HandlerChainUsingLinkedList(feeRequest);
@@ -18,7 +18,4 @@ public class Entry {
 
     handlers.handle();
   }
-
-
-
 }
