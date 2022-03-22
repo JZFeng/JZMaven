@@ -5,82 +5,84 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class ReadWriteLockDemo {
-  public static final int LOOP = 1000;
-  public static void main(String[] args) throws InterruptedException {
-    Counter1 counter1 = new Counter1();
-    AddThread1 addThread1 = new AddThread1(counter1);
-    DecThread1 decThread1 = new DecThread1(counter1);
-    addThread1.start();
-    decThread1.start();
-    addThread1.join();
-    decThread1.join();
-    System.out.println(counter1.getCount());
-    System.out.println("WaitNotify End!");
+    public static final int LOOP = 1000;
 
-  }
+    public static void main(String[] args) throws InterruptedException {
+        Counter counter = new Counter();
+        AddThread addThread = new AddThread(counter);
+        DecThread decThread = new DecThread(counter);
+        addThread.start();
+        decThread.start();
+        addThread.join();
+        decThread.join();
+        System.out.println(counter.getCount());
+        System.out.println("WaitNotify End!");
+
+    }
 }
 
-class AddThread1 extends Thread {
-  private Counter1 counter1;
+class AddThread extends Thread {
+    private Counter counter;
 
-  AddThread1(Counter1 counter1) {
-    this.counter1 = counter1;
-  }
-
-  @Override
-  public void run(){
-    for(int i = 0 ; i < ReadWriteLockDemo.LOOP; i++) {
-      counter1.add(1);
+    AddThread(Counter counter) {
+        this.counter = counter;
     }
-  }
-}
-class DecThread1 extends Thread {
-  private Counter1 counter1;
 
-  DecThread1(Counter1 counter1) {
-    this.counter1 = counter1;
-  }
-
-  @Override
-  public void run(){
-    for(int i = 0 ; i < ReadWriteLockDemo.LOOP; i++) {
-      counter1.dec(1);
+    @Override
+    public void run() {
+        for (int i = 0; i < ReadWriteLockDemo.LOOP; i++) {
+            counter.add(1);
+        }
     }
-  }
 }
 
-class Counter1 {
-  private int count = 0;
+class DecThread extends Thread {
+    private Counter counter;
 
-  private ReadWriteLock lock = new ReentrantReadWriteLock();
-  private Lock rlock = lock.readLock();
-  private Lock wlock = lock.writeLock();
-
-  public int getCount() {
-    rlock.lock();
-    try {
-      return count;
-    } finally {
-      rlock.unlock();
+    DecThread(Counter counter) {
+        this.counter = counter;
     }
-  }
 
-  public void add(int n) {
-    wlock.lock();
-    try{
-      count += n;
-    }finally {
-      wlock.unlock();
+    @Override
+    public void run() {
+        for (int i = 0; i < ReadWriteLockDemo.LOOP; i++) {
+            counter.dec(1);
+        }
     }
-  }
+}
 
-  public void dec(int n) {
-    wlock.lock();
-    try{
-      count -= n;
-    } finally {
-      wlock.unlock();
+class Counter {
+    private int count = 0;
+
+    private ReadWriteLock lock = new ReentrantReadWriteLock();
+    private Lock rlock = lock.readLock();
+    private Lock wlock = lock.writeLock();
+
+    public int getCount() {
+        rlock.lock();
+        try {
+            return count;
+        } finally {
+            rlock.unlock();
+        }
     }
-  }
+
+    public void add(int n) {
+        wlock.lock();
+        try {
+            count += n;
+        } finally {
+            wlock.unlock();
+        }
+    }
+
+    public void dec(int n) {
+        wlock.lock();
+        try {
+            count -= n;
+        } finally {
+            wlock.unlock();
+        }
+    }
 
 }

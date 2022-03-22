@@ -3,7 +3,7 @@
  * @Date 3/7/22-10:15 PM
  */
 
-package com.jz.jiuzhang;
+package com.jz.java.thread.concurrent.lock;
 
 //此题可以直接使用ArrayBlockingQueue或者LinkedBlockingQueue，但是面试还是要自己写的；
 //BlockingQueue经常使用在生产者消费者模型中；
@@ -12,19 +12,16 @@ package com.jz.jiuzhang;
 
 
 import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.*;
+import java.util.concurrent.locks.*;
 
-
-/*
 class BoundedBlockingQueue {
     ReentrantLock lock;
     Condition deque;
     Condition enque;
     LinkedList<Integer> queue;
     Integer size = 0;
-    Integer capacity ;
+    Integer capacity;
 
     public BoundedBlockingQueue(int capacity) {
         this.lock = new ReentrantLock();
@@ -38,7 +35,7 @@ class BoundedBlockingQueue {
         lock.lock();
         try {
             //阻塞；
-            while( size >= capacity ) {
+            while (size >= capacity) {
                 enque.await();
             }
             queue.add(element);
@@ -52,7 +49,7 @@ class BoundedBlockingQueue {
     public int dequeue() throws InterruptedException {
         lock.lock();
         try {
-            while( size <= 0 ) {
+            while (size <= 0) {
                 deque.await();
             }
             Integer res = queue.removeFirst();
@@ -74,10 +71,10 @@ class BoundedBlockingQueue {
         }
     }
 }
-*/
 
 
 
+/*
 class BoundedBlockingQueue {
     Semaphore enque ;
     Semaphore deque;
@@ -117,3 +114,5 @@ class BoundedBlockingQueue {
         }
     }
 }
+
+ */
