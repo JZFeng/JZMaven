@@ -3,7 +3,7 @@
  * @Date 2/26/22-1:12 PM
  */
 
-package com.jz.jiuzhang;
+package com.jz.java.dataStructure;
 
 import java.util.*;
 

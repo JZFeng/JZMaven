@@ -1,4 +1,4 @@
-package com.jz.jiuzhang;
+package com.jz.java.dataStructure;
 
 import java.util.*;
 
