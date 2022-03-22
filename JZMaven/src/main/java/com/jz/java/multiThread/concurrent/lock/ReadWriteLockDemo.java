@@ -1,29 +1,39 @@
 package com.jz.java.multiThread.concurrent.lock;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class ReadWriteLockDemo {
     public static final int LOOP = 100000;
+    public static final int NUM_OF_INC_THREADS = 3;
+    public static final int NUM_OF_DEC_THREADS = 2;
 
     public static void main(String[] args) throws InterruptedException {
         Counter counter = new Counter();
 
-        for(int i = 0; i < 100; i++) {
+        ExecutorService executorService = Executors.newFixedThreadPool(NUM_OF_INC_THREADS + NUM_OF_DEC_THREADS);
+        for (int i = 0; i < NUM_OF_INC_THREADS; i++) {
+            executorService.submit(new IncThread(counter));
+        }
+        for (int i = 0; i < NUM_OF_DEC_THREADS; i++) {
+            executorService.submit(new DecThread(counter));
+        }
+        for (int i = 0; i < 10; i++) {
+            Thread.sleep(2);
             System.out.println(counter.getCount());
         }
-
-        System.out.println(counter.getCount());
-        System.out.println("WaitNotify End!");
-
+        executorService.shutdown();
     }
+
 }
 
-class AddThread extends Thread {
+class IncThread implements Runnable {
     private Counter counter;
 
-    AddThread(Counter counter) {
+    IncThread(Counter counter) {
         this.counter = counter;
     }
 
@@ -35,7 +45,7 @@ class AddThread extends Thread {
     }
 }
 
-class DecThread extends Thread {
+class DecThread implements Runnable {
     private Counter counter;
 
     DecThread(Counter counter) {
