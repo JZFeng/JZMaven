@@ -1,4 +1,4 @@
-package com.jz.downloading;
+package com.jz.java.thread.concurrent.taskqueue.downloading;
 
 import java.io.IOException;
 import java.io.InputStream;

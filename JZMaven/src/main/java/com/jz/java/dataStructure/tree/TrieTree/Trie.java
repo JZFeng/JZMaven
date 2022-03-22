@@ -1,16 +1,16 @@
 /**
  * @Author jzfeng
- * @Date 10/27/21-3:49 PM
+ * @Date 3/22/22-12:38 AM
  */
 
-package com.jz.java;
+package com.jz.java.dataStructure.tree.TrieTree;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class Trie {
+public class Trie {
 
     public static void main(String[] args) {
         Trie trie = new Trie();
@@ -79,7 +79,7 @@ class Trie {
     public List<String> findWordsByPrefix(String prefix) {
         prefix = prefix.trim().toLowerCase();
         List<String> res = new ArrayList<>();
-        if(prefix == null || prefix.length() == 0) {
+        if (prefix == null || prefix.length() == 0) {
             return res;
         }
 
@@ -87,40 +87,41 @@ class Trie {
         List<String> words = helper(prefixNode);
 
         prefix = prefix.substring(0, prefix.length() - 1);
-        for(int i = 0 ; i < words.size(); i++) {
-            words.set(i , prefix + words.get(i));
+        for (int i = 0; i < words.size(); i++) {
+            words.set(i, prefix + words.get(i));
         }
 
         return words;
     }
 
     //从该node开始往下所有的word；
-    public List<String> helper(TrieNode node ) {
+    public List<String> helper(TrieNode node) {
         List<String> res = new ArrayList<>();
-        if( node == null) {
+        if (node == null) {
             return res;
         }
-        if( node.isWord ) {
+        if (node.isWord) {
             res.add(node.c + "");
         }
 
-        if(node.children.size() != 0) {
+        if (node.children.size() != 0) {
             List<List<String>> lists = new ArrayList<>();
-            for( Map.Entry<Character, TrieNode> entry: node.children.entrySet() ) {
+            for (Map.Entry<Character, TrieNode> entry : node.children.entrySet()) {
                 TrieNode value = entry.getValue();
                 List<String> words = helper(value);
                 lists.add(words);
             }
 
-            for( List<String> list : lists) {
-                for(String w : list) {
-                    res.add( (node.c == null ? "" : node.c)   + w );
+            for (List<String> list : lists) {
+                for (String w : list) {
+                    res.add((node.c == null ? "" : node.c) + w);
                 }
             }
         }
 
-        return  res;
+        return res;
     }
+
     //根据prefix找到节点；
     public TrieNode findNodeByPrefix(String prefix) {
         if (prefix == null || prefix.length() == 0) {
@@ -141,7 +142,6 @@ class Trie {
 }
 
 class TrieNode {
-
     Character c;
     Map<Character, TrieNode> children;
     Boolean isWord;
@@ -151,5 +151,4 @@ class TrieNode {
         this.children = children;
         this.isWord = isWord;
     }
-
 }

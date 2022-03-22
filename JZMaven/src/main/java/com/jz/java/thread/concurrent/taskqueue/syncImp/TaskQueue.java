@@ -3,7 +3,7 @@
  * @Date 9/27/20-3:46 PM
  */
 
-package com.jz.java.thread.concurrent.taskqueue;
+package com.jz.java.thread.concurrent.taskqueue.syncImp;
 
 import java.util.LinkedList;
 import java.util.Queue;

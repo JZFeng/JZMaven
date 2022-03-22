@@ -5,16 +5,15 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class ReadWriteLockDemo {
-    public static final int LOOP = 1000;
+    public static final int LOOP = 100000;
 
     public static void main(String[] args) throws InterruptedException {
         Counter counter = new Counter();
-        AddThread addThread = new AddThread(counter);
-        DecThread decThread = new DecThread(counter);
-        addThread.start();
-        decThread.start();
-        addThread.join();
-        decThread.join();
+
+        for(int i = 0; i < 100; i++) {
+            System.out.println(counter.getCount());
+        }
+
         System.out.println(counter.getCount());
         System.out.println("WaitNotify End!");
 

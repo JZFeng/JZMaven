@@ -3,7 +3,7 @@
  * @Date 9/27/20-4:03 PM
  */
 
-package com.jz.java.thread.concurrent.taskqueue;
+package com.jz.java.thread.concurrent.taskqueue.syncImp;
 
 public class Entry {
     public static void main(String[] args) {
