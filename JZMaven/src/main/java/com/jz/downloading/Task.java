@@ -31,15 +31,16 @@ public class Task {
     }
 
     public void execute() {
-
+        long startTime = System.currentTimeMillis();
         InputStream in = null;
         try {
             in = new URL(url).openStream();
             Files.copy(in, Paths.get(folder +
                     filename), StandardCopyOption.REPLACE_EXISTING);
+            in.close();
             System.out.println(
-                    "*****Downloaded " + folder + filename + ";" +
-                            System.currentTimeMillis());
+                    "*****Downloaded " + folder + filename + "; Time Taken: " +
+                            (System.currentTimeMillis() - startTime) / 1000  + " seconds" );
         } catch (IOException e) {
             e.printStackTrace();
         }
