@@ -20,8 +20,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * 　　　　4）读取锁和写入锁都支持锁获取期间的中断；
  * 　　　　5）Condition支持。仅写入锁提供了一个 Conditon 实现；读取锁不支持 Conditon ，readLock().newCondition() 会抛出 UnsupportedOperationException。
  */
-//cachedata必须是线程安全的；
+//Cachedata必须是线程安全的；
 class CacheData {
+
     Object data;
 
     volatile boolean cacheValid;    //缓存是否有效
