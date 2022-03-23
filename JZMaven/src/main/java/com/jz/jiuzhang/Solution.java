@@ -2,7 +2,6 @@ package com.jz.jiuzhang;
 
 import com.jz.TreeNode;
 
-import javax.swing.text.html.ListView;
 import java.util.*;
 
 
@@ -13,7 +12,6 @@ class Solution {
     public static void main(String[] args) {
         String url = "https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/solution/wu-zhong-fu-zi-fu-de-zui-chang-zi-chuan-by-leetc-2/";
         System.out.println(url.length());
-        ListNode node = new ListNode(1);
     }
 
     public TreeNode upsideDownBinaryTree(TreeNode root) {
