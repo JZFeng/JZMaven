@@ -10,12 +10,12 @@ import java.util.concurrent.*;
 public class CyclicBarrierDemo {
     public static void main(String[] args) throws Exception {
         //第二个参数：线程数为3的时候，需要触发的线程；
-        CyclicBarrier cyclicBarrier = new CyclicBarrier(3, new TourGuideTask());
         ExecutorService executor = Executors.newFixedThreadPool(3);
+        CyclicBarrier cyclicBarrier = new CyclicBarrier(3, new TourGuideTask());
         //登哥最大牌，到的最晚
-        executor.execute(new TravelTask(cyclicBarrier, "哈登", 5));
-        executor.execute(new TravelTask(cyclicBarrier, "保罗", 3));
-        executor.execute(new TravelTask(cyclicBarrier, "戈登", 1));
+        executor.submit(new TravelTask(cyclicBarrier, "哈登", 5));
+        executor.submit(new TravelTask(cyclicBarrier, "保罗", 3));
+        executor.submit(new TravelTask(cyclicBarrier, "戈登", 1));
         executor.shutdown();
     }
 }
