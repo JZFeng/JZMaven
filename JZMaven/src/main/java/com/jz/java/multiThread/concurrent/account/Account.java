@@ -45,34 +45,38 @@ public class Account {
     }
 
     public void deposit(double amount) {
-            if(amount > 0 ) {
+        try {
+            if (amount > 0) {
                 lock.lock();
                 balance += amount;
             } else {
                 System.out.println("存入金额必须为正数！");
             }
+        } finally {
+            lock.unlock();
+        }
     }
 
     public void withdraw(double amount) {
 
-            if(amount > 0) {
-                try {
-                    Thread.sleep(100);
-                    lock.lock();
-                    if(balance >= amount) {
-                        balance -= amount;
-                        System.out.println(Thread.currentThread().getName() + "取走" + amount + "，账户余额为" + balance);
-                    } else{
-                        System.out.println(Thread.currentThread().getName() +"取钱，但余额不足！");
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    lock.unlock();
+        if (amount > 0) {
+            try {
+                Thread.sleep(100);
+                lock.lock();
+                if (balance >= amount) {
+                    balance -= amount;
+                    System.out.println(Thread.currentThread().getName() + "取走" + amount + "，账户余额为" + balance);
+                } else {
+                    System.out.println(Thread.currentThread().getName() + "取钱，但余额不足！");
                 }
-            } else {
-                System.out.println("取款金额必须为正！");
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                lock.unlock();
             }
+        } else {
+            System.out.println("取款金额必须为正！");
+        }
     }
 
     public Account() {
@@ -85,17 +89,17 @@ public class Account {
 
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) {
+        if (this == obj) {
             return true;
         }
-        if(obj == null) {
+        if (obj == null) {
             return false;
         }
-        if(obj instanceof Account) {
+        if (obj instanceof Account) {
             return false;
         }
 
-        Account account = (Account)obj;
+        Account account = (Account) obj;
 
         return name.equals(account.name) && balance == account.balance;
     }

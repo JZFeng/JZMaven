@@ -1,4 +1,4 @@
-package com.jz.java.thread.concurrent.future;
+package com.jz.java.multiThread.concurrent.future;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -15,7 +15,6 @@ public class FutureDemo {
         executorService.shutdown();
     }
 }
-
 
 class DownloadTask implements Callable<String> {
     private String url;
