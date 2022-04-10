@@ -1,43 +1,40 @@
 package com.jz.jiuzhang;
 
-import com.jz.TreeNode;
 
 import java.util.*;
 
+//用一个变量存下个元素，即可搞定啦 可用iterator hasNext(), 和next()
+class PeekingIterator implements Iterator<Integer> {
+    Iterator<Integer> itr;
+    Integer cur;
 
-class Solution {
-
-    public static void main(String[] args) {
-        String s = "abcd";
-        int[] indices = new int[]{0,2};
-        String[] sources = new String[]{"a", "cd"};
-        String[] targets = new String[]{"eee", "ffff"};
-        Solution solution = new Solution();
-        String res = solution.findReplaceString(s, indices, sources, targets);
-        System.out.println(res);
-
-    }
-    public String findReplaceString(String s, int[] indices, String[] sources, String[] targets) {
-        int len = s.length();
-        int[] matches = new int[len];
-        Arrays.fill(matches, -1);
-        for (int i = 0; i < indices.length; i++) {
-            if (s.substring(indices[i], indices[i] + sources[i].length()).equals(sources[i])) {
-                matches[indices[i]] = i;
-            }
-        }
-
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < len; ) {
-            if(matches[i] != -1) {
-                sb.append(targets[matches[i]]);
-                i += sources[matches[i]].length();
-            } else {
-                sb.append(s.charAt(i));
-                i++;
-            }
-        }
-        return sb.toString();
+    public PeekingIterator(Iterator<Integer> iterator) {
+        // initialize any member here.
+        this.itr = iterator;
+        cur = (itr.hasNext() ? itr.next() : null);
     }
 
+    // Returns the next element in the iteration without advancing the iterator.
+    public Integer peek() {
+        return cur;
+    }
+
+    // hasNext() and next() should behave the same as in the Iterator interface.
+    // Override them if needed.
+    @Override
+    public Integer next() {
+        Integer next = null;
+        if (hasNext()) {
+            next = cur;
+            cur = (itr.hasNext() ? itr.next() : null);
+        }
+
+        return next;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return cur == null ? false : true;
+    }
 }
+
