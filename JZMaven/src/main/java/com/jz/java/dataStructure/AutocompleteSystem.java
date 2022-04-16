@@ -29,11 +29,11 @@ class AutocompleteSystem {
 
         List<TrieNode> visited = new ArrayList<>();
         for (char c : sentence.toCharArray()) {
-            if (tmp.children[c] == null) {
-                tmp.children[c] = new TrieNode();
+            if (!tmp.children.containsKey(c)) {
+                tmp.children.put(c, new TrieNode());
             }
 
-            tmp = tmp.children[c];
+            tmp = tmp.children.get(c);
             visited.add(tmp);
         }
 
@@ -56,7 +56,7 @@ class AutocompleteSystem {
 
         sb.append(c);
         if (cur != null) {
-            cur = cur.children[c];
+            cur = cur.children.get(c);
         }
 
         if (cur == null) return res;
@@ -69,13 +69,13 @@ class AutocompleteSystem {
 }
 
 class TrieNode implements Comparable<TrieNode> {
-    TrieNode[] children;
+    Map<Character,TrieNode> children;
     String s;
     int times;
     List<TrieNode> hot;
 
     public TrieNode() {
-        children = new TrieNode[128];
+        children = new HashMap<>();
         s = null;
         times = 0;
         hot = new ArrayList<>();
@@ -101,3 +101,8 @@ class TrieNode implements Comparable<TrieNode> {
         }
     }
 }
+/**
+ * Your AutocompleteSystem object will be instantiated and called as such:
+ * AutocompleteSystem obj = new AutocompleteSystem(sentences, times);
+ * List<String> param_1 = obj.input(c);
+ */
