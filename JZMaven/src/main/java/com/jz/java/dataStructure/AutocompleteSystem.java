@@ -27,20 +27,18 @@ class AutocompleteSystem {
     public void add(String sentence, int t) {
         TrieNode tmp = root;
 
-        List<TrieNode> visited = new ArrayList<>();
+        List<TrieNode> path = new ArrayList<>();
         for (char c : sentence.toCharArray()) {
             if (!tmp.children.containsKey(c)) {
                 tmp.children.put(c, new TrieNode());
             }
-
             tmp = tmp.children.get(c);
-            visited.add(tmp);
+            path.add(tmp);
         }
-
         tmp.s = sentence;
         tmp.times += t;
-
-        for (TrieNode node : visited) {
+        //添加好sentence之后，把该node加到path上所有node的hot列表中；
+        for (TrieNode node : path) {
             node.update(tmp);
         }
     }
@@ -59,7 +57,10 @@ class AutocompleteSystem {
             cur = cur.children.get(c);
         }
 
-        if (cur == null) return res;
+        if (cur == null) {
+            return res;
+        }
+
         for (TrieNode node : cur.hot) {
             res.add(node.s);
         }
@@ -73,6 +74,7 @@ class TrieNode implements Comparable<TrieNode> {
     String s;
     int times;
     List<TrieNode> hot;
+    static final int HOT_SIZE = 3;
 
     public TrieNode() {
         children = new HashMap<>();
@@ -96,7 +98,7 @@ class TrieNode implements Comparable<TrieNode> {
 
         Collections.sort(hot);
 
-        if (hot.size() > 3) {
+        if (hot.size() > HOT_SIZE) {
             hot.remove(hot.size() - 1);
         }
     }

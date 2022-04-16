@@ -3,38 +3,77 @@ package com.jz.jiuzhang;
 
 import java.util.*;
 
-//用一个变量存下个元素，即可搞定啦 可用iterator hasNext(), 和next()
-class PeekingIterator implements Iterator<Integer> {
-    Iterator<Integer> itr;
-    Integer cur;
-
-    public PeekingIterator(Iterator<Integer> iterator) {
-        // initialize any member here.
-        this.itr = iterator;
-        cur = (itr.hasNext() ? itr.next() : null);
+class Solution {
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        String[] products = new String[]{"mobile","mouse","moneypot","monitor","mousepad"};
+        String word = "mouse";
+        List<List<String>> lists = solution.suggestedProducts(products, word);
+        lists.forEach(System.out::println);
     }
 
-    // Returns the next element in the iteration without advancing the iterator.
-    public Integer peek() {
-        return cur;
-    }
 
-    // hasNext() and next() should behave the same as in the Iterator interface.
-    // Override them if needed.
-    @Override
-    public Integer next() {
-        Integer next = null;
-        if (hasNext()) {
-            next = cur;
-            cur = (itr.hasNext() ? itr.next() : null);
+    private static final int size = 3;
+    private TrieNode root;
+    private List<List<String>> res;
+
+    public void insert(String word) {
+        TrieNode cur = root;
+        for (char c : word.toCharArray()) {
+            if (!cur.next.containsKey(c)) {
+                cur.next.put(c, new TrieNode());
+            }
+            cur = cur.next.get(c);
+            cur.queue.offer(word);
+            if (cur.queue.size() > size) {
+                cur.queue.poll();
+            }
         }
 
-        return next;
+        cur.isEnd = true;
     }
 
-    @Override
-    public boolean hasNext() {
-        return cur == null ? false : true;
+    public void startWith(String word) {
+        TrieNode cur = root;
+        boolean exist = true;
+        for (char c : word.toCharArray()) {
+            if (!exist || !cur.next.containsKey(c)) {
+                exist = false;
+                res.add(new ArrayList<>());
+                continue;
+            }
+            cur = cur.next.get(c);
+            List<String> tmp = new ArrayList<>();
+            while (!cur.queue.isEmpty()) {
+                tmp.add(cur.queue.poll());
+            }
+            Collections.reverse(tmp);
+//            cur.queue.addAll(tmp);
+            res.add(tmp);
+        }
+    }
+
+    public List<List<String>> suggestedProducts(String[] products, String searchWord) {
+        Arrays.sort(products);
+        res = new ArrayList<>();
+        root = new TrieNode();
+        for (String s : products) {
+            insert(s);
+        }
+
+        startWith(searchWord);
+
+        return res;
     }
 }
 
+class TrieNode {
+    Map<Character, TrieNode> next = new HashMap<>();
+    boolean isEnd;
+    PriorityQueue<String> queue;
+
+    public TrieNode() {
+        next = new HashMap<>();
+        queue = new PriorityQueue<>((o1, o2) -> o2.compareTo(o1));
+    }
+}
