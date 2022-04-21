@@ -7,6 +7,9 @@ package com.jz.java.dataStructure;
 
 import java.util.*;
 
+/**
+ * https://leetcode.com/problems/accounts-merge/
+ */
 class AccountsMerge {
     public List<List<String>> accountsMerge(List<List<String>> accounts) {
         //建立一个 根据邮箱地址到Index的映射
