@@ -1,7 +1,5 @@
 package com.jz.java.designpattern.chain.linkedListImpl;
 
-import com.jz.java.designpattern.chain.FeeRequest;
-
 //相当于链表节点；
 public abstract class Handler {
     private Handler next = null;

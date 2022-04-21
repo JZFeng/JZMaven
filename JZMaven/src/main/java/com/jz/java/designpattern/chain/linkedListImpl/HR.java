@@ -1,7 +1,5 @@
 package com.jz.java.designpattern.chain.linkedListImpl;
 
-import com.jz.java.designpattern.chain.FeeRequest;
-
 public class HR extends Handler {
     HR(FeeRequest feeRequest) {
         super(feeRequest);
