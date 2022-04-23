@@ -6,74 +6,88 @@ import java.util.*;
 class Solution {
     public static void main(String[] args) {
         Solution solution = new Solution();
-        String[] products = new String[]{"mobile","mouse","moneypot","monitor","mousepad"};
-        String word = "mouse";
-        List<List<String>> lists = solution.suggestedProducts(products, word);
-        lists.forEach(System.out::println);
+        String s = "tree";
+        String res = solution.frequencySort(s);
+        System.out.println(res);
+
     }
 
+    public String frequencySort(String s) {
+        if (s == null || s.length() == 0) {
+            return "";
+        }
 
-    private static final int size = 3;
-    private TrieNode root;
-    private List<List<String>> res;
+        int len = s.length();
+        Map<Character, Integer> map = new HashMap<>();
+        for (int i = 0; i < len; i++) {
+            char c = s.charAt(i);
+            map.put(c, map.getOrDefault(c, 0) + 1);
+        }
 
-    public void insert(String word) {
-        TrieNode cur = root;
-        for (char c : word.toCharArray()) {
-            if (!cur.next.containsKey(c)) {
-                cur.next.put(c, new TrieNode());
-            }
-            cur = cur.next.get(c);
-            cur.queue.offer(word);
-            if (cur.queue.size() > size) {
-                cur.queue.poll();
+        int maxFreq = Collections.max(map.values());
+        List<List<Character>> buckets = new ArrayList<>();
+        for (int i = 0; i <= maxFreq; i++) {
+            buckets.add(new ArrayList<>());
+        }
+
+        for (Character key : map.keySet()) {
+            int freq = map.get(key);
+            buckets.get(freq).add(key);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = buckets.size() - 1; i >= 0; i--) {
+            for (Character c : buckets.get(i)) {
+                for (int j = 0; j < i; j++) {
+                    sb.append(c);
+                }
             }
         }
 
-        cur.isEnd = true;
+        return sb.toString().trim();
     }
 
-    public void startWith(String word) {
-        TrieNode cur = root;
-        boolean exist = true;
-        for (char c : word.toCharArray()) {
-            if (!exist || !cur.next.containsKey(c)) {
-                exist = false;
-                res.add(new ArrayList<>());
-                continue;
-            }
-            cur = cur.next.get(c);
-            List<String> tmp = new ArrayList<>();
-            while (!cur.queue.isEmpty()) {
-                tmp.add(cur.queue.poll());
-            }
-            Collections.reverse(tmp);
-//            cur.queue.addAll(tmp);
-            res.add(tmp);
-        }
-    }
 
-    public List<List<String>> suggestedProducts(String[] products, String searchWord) {
-        Arrays.sort(products);
-        res = new ArrayList<>();
-        root = new TrieNode();
-        for (String s : products) {
-            insert(s);
-        }
-
-        startWith(searchWord);
-
-        return res;
-    }
 }
 
 class TrieNode {
-    Map<Character, TrieNode> next = new HashMap<>();
-    boolean isEnd;
-    PriorityQueue<String> queue;
+    Map<Character, TrieNode> children = new HashMap();
+    boolean isWord = false;
+}
 
-    public TrieNode() {
-        next = new HashMap<>();
-        queue = new PriorityQueue<>((o1, o2) -> o2.compareTo(o1));
+class StreamChecker {
+    TrieNode root = new TrieNode();
+    Deque<Character> stream = new ArrayDeque();
+
+    public StreamChecker(String[] words) {
+        for (String word : words) {
+            TrieNode cur = root;
+            for (int i = word.length() - 1; i >= 0 ; i--) {
+                char ch = word.charAt(i);
+                if (!cur.children.containsKey(ch)) {
+                    cur.children.put(ch, new TrieNode());
+                }
+                cur = cur.children.get(ch);
+            }
+
+            cur.isWord = true;
+        }
+    }
+
+    public boolean query(char letter) {
+        stream.addFirst(letter);
+
+        TrieNode cur = root;
+        for (char c : stream) {
+            if (cur.isWord) {
+                return true;
+            }
+            if (!cur.children.containsKey(c)) {
+                return false;
+            }
+            cur = cur.children.get(c);
+        }
+
+        return cur.isWord;
     }
 }
