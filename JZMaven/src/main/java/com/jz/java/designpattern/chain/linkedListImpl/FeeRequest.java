@@ -1,4 +1,4 @@
-package com.jz.java.designpattern.chain;
+package com.jz.java.designpattern.chain.linkedListImpl;
 
 public class FeeRequest {
   private String user;
