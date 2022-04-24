@@ -34,7 +34,7 @@ public class Client {
             }
         });
 
-        proxyActor.basicAct(3000f);
+        proxyActor.basicAct(100f);
         proxyActor.dangerAct(6000f);
     }
 }

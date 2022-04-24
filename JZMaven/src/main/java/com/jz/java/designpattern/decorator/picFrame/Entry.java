@@ -7,7 +7,7 @@ public class Entry {
      */
     public static void main(String[] args) {
         Picture picture = new Picture(1000);
-        picture.setFrame(new CircleFrame());
+        picture.setFrame(new TriangleFrame());
         picture.paint();
     }
 
