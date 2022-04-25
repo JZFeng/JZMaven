@@ -28,11 +28,21 @@ import java.util.*;
  * 针对稀疏网，当 边数量接近点的数量时，采用邻接表存图，优先队列实现Dijkstra更好
  */
 public class Dijkstra {
+
+    public static void main(String[] args) {
+        Dijkstra dijkstra = new Dijkstra();
+        int[][] edges = new int[][]{{1,0,1},{1,2,1},{2,3,1}};
+        dijkstra.dijkstra(4,edges, 1);
+    }
+
+
     //邻接表存储图
     List<int[]>[] graph;
 
     //源点到其他点的最短距离，dis[s] = 0, 其他为 +∞
     int[] dist;
+
+    Integer[] prev;
 
     //结点 0 - n-1 是否访问
     boolean[] visited;
@@ -47,6 +57,7 @@ public class Dijkstra {
      * @param edges 有向边 + 权值，如[1, 2, 5]表示 结点 1->2 的边权值为 5
      * @param s    源点 0 <= s < n
      */
+
 
     public void dijkstra(int n, int[][] edges, int s) {
         // 1. 抽象化。根据edge信息建图。
@@ -65,6 +76,8 @@ public class Dijkstra {
         // 源点到自身的距离为0
         dist[s] = 0;
 
+        prev = new Integer[n];
+
         // 3. 初始化访问标志，默认为false
         visited = new boolean[n];
 
@@ -82,6 +95,7 @@ public class Dijkstra {
             if (visited[u]) {
                 continue;
             }
+
             visited[u] = true;
             // 遍历所有 u 能够到达的点，刚开始为 u = s
             for (int[] q : graph[u]) {
@@ -90,6 +104,7 @@ public class Dijkstra {
                 if (dist[v] > dist[u] + w) {
                     // s->v 的距离 > s->u 的距离 + u->v 的距离，更新最短距离，注意时 s-> 其他点 距离为 +∞
                     dist[v] = dist[u] + w;
+                    prev[v] = u;
                     // 加入优先队列，s->v 的距离 dis[v]
                     pq.add(new int[]{v, dist[v]});
                 }
