@@ -3,14 +3,15 @@ package com.jz.jiuzhang;
 
 import java.util.*;
 
+
 public class Solution {
     //无向图。首先判断 edges.length == n - 1;
     //此题可以转换为无向图找环的问题；
-    public boolean validTree2(int n, int[][] edges) {
+    public boolean validTree(int n, int[][] edges) {
         DSU dsu = new DSU(n);
-        for(int[] edge : edges) {
+        for (int[] edge : edges) {
             int a = edge[0], b = edge[1];
-            if( dsu.find(a) == dsu.find(b) ) {
+            if (dsu.find(a) == dsu.find(b)) {
                 return false;
             }
             dsu.union(a, b);
@@ -41,7 +42,7 @@ public class Solution {
         }
     }
 
-    public boolean validTree1(int n, int[][] edges) {
+    public boolean validTree2(int n, int[][] edges) {
         if (n == 0) {
             return false;
         }
@@ -72,7 +73,7 @@ public class Solution {
         return (visited.size() == n);
     }
 
-    public boolean validTree(int n , int[][] edges) {
+    public boolean validTree1(int n, int[][] edges) {
         if (n == 0) {
             return false;
         }
@@ -80,14 +81,14 @@ public class Solution {
             return false;
         }
 
-        Map<Integer, List<Integer>> graph = buildGraph(n , edges);
+        Map<Integer, List<Integer>> graph = buildGraph(n, edges);
         boolean[] visited = new boolean[n];
-        if( hasCycle(graph, 0, visited, -1) ) {
+        if (hasCycle(graph, 0, visited, -1)) {
             return false;
         }
 
-        for(int i = 0 ; i < n ; i++) {
-            if(!visited[i]) {
+        for (int i = 0; i < n; i++) {
+            if (!visited[i]) {
                 return false;
             }
         }
@@ -97,9 +98,18 @@ public class Solution {
 
     private boolean hasCycle(Map<Integer, List<Integer>> graph, int cur, boolean[] visited, int parent) {
         visited[cur] = true;
-        for(int i = 0 ; i < graph.get(cur).size(); i++) {
-            if(!visited[i])
+        for (int neighbor : graph.get(cur)) {
+            if (!visited[neighbor]) {
+                if (hasCycle(graph, neighbor, visited, cur)) {
+                    return true;
+                }
+            } else {
+                if (parent != neighbor) {
+                    return true;
+                }
+            }
         }
+        return false;
     }
 
 
