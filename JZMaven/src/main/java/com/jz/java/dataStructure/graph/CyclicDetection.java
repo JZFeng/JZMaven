@@ -43,5 +43,28 @@ public class CyclicDetection {
         return false;
     }
 
+    public boolean isCyclicUndirectedGraph2(int n ) {
+        DSU dsu = new DSU(n);
+        Set<List<Integer>> edges = new HashSet<>();
+        for(int i = 0 ; i < n ; i++) {
+            for(int neighbor : graph.getOrDefault(i, new ArrayList<>())) {
+                List<Integer> edge = new ArrayList<>();
+                edge.add(i);
+                edge.add(neighbor);
+                Collections.sort(edge);
+                edges.add(edge);
+            }
+        }
+
+        for(List<Integer> edge : edges) {
+            int a = edge.get(0), b = edge.get(1);
+            if(dsu.find(a) == dsu.find(b) ) {
+                return true;
+            }
+            dsu.union(a, b);
+        }
+
+        return false;
+    }
 
 }
