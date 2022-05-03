@@ -3,77 +3,129 @@ package com.jz.jiuzhang;
 
 import java.util.*;
 
-class Solution {
-    public static void main(String[] args) {
-        Solution solution = new Solution();
-        String[] products = new String[]{"mobile","mouse","moneypot","monitor","mousepad"};
-        String word = "mouse";
-        List<List<String>> lists = solution.suggestedProducts(products, word);
-        lists.forEach(System.out::println);
+
+public class Solution {
+    //无向图。首先判断 edges.length == n - 1;
+    //此题可以转换为无向图找环的问题；
+    public boolean validTree(int n, int[][] edges) {
+        DSU dsu = new DSU(n);
+        for (int[] edge : edges) {
+            int a = edge[0], b = edge[1];
+            if (dsu.find(a) == dsu.find(b)) {
+                return false;
+            }
+            dsu.union(a, b);
+        }
+
+        return edges.length == n - 1;
     }
 
+    class DSU {
+        int[] parent;
 
-    private static final int size = 3;
-    private TrieNode root;
-    private List<List<String>> res;
-
-    public void insert(String word) {
-        TrieNode cur = root;
-        for (char c : word.toCharArray()) {
-            if (!cur.next.containsKey(c)) {
-                cur.next.put(c, new TrieNode());
-            }
-            cur = cur.next.get(c);
-            cur.queue.offer(word);
-            if (cur.queue.size() > size) {
-                cur.queue.poll();
+        DSU(int n) {
+            parent = new int[n];
+            for (int i = 0; i < n; i++) {
+                parent[i] = i;
             }
         }
 
-        cur.isEnd = true;
-    }
+        public int find(int x) {
+            if (parent[x] != x) {
+                parent[x] = find(parent[x]);
+            }
+            return parent[x];
+        }
 
-    public void startWith(String word) {
-        TrieNode cur = root;
-        boolean exist = true;
-        for (char c : word.toCharArray()) {
-            if (!exist || !cur.next.containsKey(c)) {
-                exist = false;
-                res.add(new ArrayList<>());
-                continue;
-            }
-            cur = cur.next.get(c);
-            List<String> tmp = new ArrayList<>();
-            while (!cur.queue.isEmpty()) {
-                tmp.add(cur.queue.poll());
-            }
-            Collections.reverse(tmp);
-//            cur.queue.addAll(tmp);
-            res.add(tmp);
+        public void union(int x, int y) {
+            parent[find(x)] = find(y);
         }
     }
 
-    public List<List<String>> suggestedProducts(String[] products, String searchWord) {
-        Arrays.sort(products);
-        res = new ArrayList<>();
-        root = new TrieNode();
-        for (String s : products) {
-            insert(s);
+    public boolean validTree2(int n, int[][] edges) {
+        if (n == 0) {
+            return false;
         }
 
-        startWith(searchWord);
+        if (edges.length != n - 1) {
+            return false;
+        }
 
-        return res;
+        //构建图
+        Map<Integer, List<Integer>> graph = buildGraph(n, edges);
+
+        // bfs
+        Queue<Integer> queue = new LinkedList<>();
+        Set<Integer> visited = new HashSet<>();
+        queue.offer(0);
+
+        while (!queue.isEmpty()) {
+            int node = queue.poll();
+            visited.add(node);
+            for (Integer neighbor : graph.get(node)) {
+                if (visited.contains(neighbor)) {
+                    continue;
+                }
+                queue.offer(neighbor);
+            }
+        }
+
+        return (visited.size() == n);
     }
-}
 
-class TrieNode {
-    Map<Character, TrieNode> next = new HashMap<>();
-    boolean isEnd;
-    PriorityQueue<String> queue;
+    public boolean validTree1(int n, int[][] edges) {
+        if (n == 0) {
+            return false;
+        }
+        if (edges.length != n - 1) {
+            return false;
+        }
 
-    public TrieNode() {
-        next = new HashMap<>();
-        queue = new PriorityQueue<>((o1, o2) -> o2.compareTo(o1));
+        Map<Integer, List<Integer>> graph = buildGraph(n, edges);
+        boolean[] visited = new boolean[n];
+        if (hasCycle(graph, 0, visited, -1)) {
+            return false;
+        }
+
+        for (int i = 0; i < n; i++) {
+            if (!visited[i]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean hasCycle(Map<Integer, List<Integer>> graph, int cur, boolean[] visited, int parent) {
+        visited[cur] = true;
+        for (int neighbor : graph.get(cur)) {
+            if (!visited[neighbor]) {
+                if (hasCycle(graph, neighbor, visited, cur)) {
+                    return true;
+                }
+            } else {
+                if (parent != neighbor) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    private Map<Integer, List<Integer>> buildGraph(int n, int[][] edges) {
+        Map<Integer, List<Integer>> graph = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            graph.put(i, new ArrayList<Integer>());
+        }
+
+        for (int i = 0; i < edges.length; i++) {
+            int u = edges[i][0];
+            int v = edges[i][1];
+            graph.get(u).add(v);
+            graph.get(v).add(u);
+        }
+
+        return graph;
     }
 }

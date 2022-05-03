@@ -1,31 +1,31 @@
 package com.jz.java.dataStructure;
 
-class UnionFind {
+class DSU {
 
-    private int[] father = null;
+    private int[] parent;
     private int count;
 
-    public UnionFind(int n) {
+    public DSU(int n) {
         // initialize your data structure here.
-        father = new int[n];
+        parent = new int[n];
         for (int i = 0; i < n; ++i) {
-            father[i] = i;
+            parent[i] = i;
         }
     }
 
     private int find(int x) {
-        if (father[x] == x) {
-            return x;
+        if (parent[x] != x) {
+            parent[x] = find(parent[x]);
         }
-        return father[x] = find(father[x]);
+        return parent[x];
     }
 
 
-    public void connect(int a, int b) {
-        int root_a = find(a);
-        int root_b = find(b);
+    public void union(int x, int y) {
+        int root_a = find(x);
+        int root_b = find(y);
         if (root_a != root_b) {
-            father[root_a] = root_b;
+            parent[root_a] = root_b;
             count--;
         }
     }
