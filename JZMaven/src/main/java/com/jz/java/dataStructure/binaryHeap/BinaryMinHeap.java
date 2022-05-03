@@ -83,8 +83,8 @@ public class BinaryMinHeap {
                 tmp = data[parentIndex];
                 data[parentIndex] = data[nodeIndex];
                 data[nodeIndex] = tmp;
-                siftUp(parentIndex);
             }
+            siftUp(parentIndex);
         }
     }
 

@@ -31,8 +31,7 @@ public class Trie {
 
     public void insert(String word) {
         TrieNode cur = root;
-        for (int i = 0; i < word.length(); i++) {
-            char c = word.charAt(i);
+        for (char c : word.toCharArray()) {
             if (!cur.children.containsKey(c)) {
                 cur.children.put(c, new TrieNode(c, new HashMap<>(), false));
             }
@@ -42,14 +41,8 @@ public class Trie {
     }
 
     public boolean search(String word) {
-        if (word == null || word.length() == 0) {
-            return true;
-        }
-
-        word = word.toLowerCase();
         TrieNode cur = root;
-        for (int i = 0; i < word.length(); i++) {
-            char c = word.charAt(i);
+        for (char c : word.toLowerCase().toCharArray()) {
             if (!cur.children.containsKey(c)) {
                 return false;
             }
@@ -60,13 +53,8 @@ public class Trie {
     }
 
     public boolean startsWith(String prefix) {
-        if (prefix == null || prefix.length() == 0) {
-            return true;
-        }
-
         TrieNode cur = root;
-        for (int i = 0; i < prefix.length(); i++) {
-            char c = prefix.charAt(i);
+        for (char c : prefix.toLowerCase().toCharArray()) {
             if (!cur.children.containsKey(c)) {
                 return false;
             }
