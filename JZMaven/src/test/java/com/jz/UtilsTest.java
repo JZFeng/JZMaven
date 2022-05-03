@@ -10,15 +10,14 @@ public class UtilsTest {
   @Test
   public void testDeserializeList()  {
     String[] lists = new String[] {
-        "null",
-        "1->null",
-        "1->2->null",
-        "1->2->3->4->null"
+        "1"
+//        "1,2",
+//        "1,2,3,4"
     };
 
     for (String list : lists) {
-      ListNode head = deserializeList(list);
-      String l = serializeList(head);
+      ListNode head = ListNode.of(list);
+      String l = head.toString();
       assertTrue(list.equals(l), "Wrong deserialization list: " + list);
     }
   }
@@ -33,8 +32,8 @@ public class UtilsTest {
     };
 
     for (String tree : trees) {
-      TreeNode root = deserializeTree(tree);
-      String t = serializeTree(root);
+      TreeNode root = TreeNode.of(tree);
+      String t = root.toString();
       assertTrue(t.equals(tree));
     }
   }

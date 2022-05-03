@@ -1,28 +1,48 @@
 package com.jz;
 
 public class ListNode {
-  int val;
-  ListNode next;
+    public static String SEPARATOR = ",";
 
-  ListNode(int x) {
-    val = x;
-    next = null;
-  }
+    public int val;
+    public ListNode next;
 
-  @Override
-  public String toString() {
-    if(this == null) {
-      return "null";
+    public ListNode(int x) {
+        val = x;
+        next = null;
     }
 
-    StringBuilder sb = new StringBuilder();
-    ListNode cur = this;
-    while(cur != null) {
-      sb.append(cur.val + "->");
-      cur = cur.next;
+    @Override
+    public String toString() {
+       if(this == null) {
+         return "";
+       }
+        ListNode cur = this;
+        if (cur == null) {
+            return "";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        while (cur != null) {
+            sb.append(this.val + SEPARATOR);
+            cur = cur.next;
+        }
+        return sb.substring(0, sb.length() - 1);
     }
 
-    return sb.toString() + "null";
-  }
+    public static ListNode of(String str) {
+        if (str == null || str.length() == 0) {
+            return null;
+        }
+
+        String[] strs = str.split(SEPARATOR);
+        ListNode dummy = new ListNode(Integer.MIN_VALUE);
+        ListNode cur = dummy;
+        for (int i = 0; i < strs.length; i++) {
+            cur.next = new ListNode(Integer.parseInt(strs[i]));
+            cur = cur.next;
+        }
+
+        return dummy.next;
+    }
 
 }
