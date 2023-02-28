@@ -1,8 +1,9 @@
 package com.jz;
 
-import org.testng.Assert;
+import com.jz.pojo.ListNode;
+import com.jz.pojo.TreeNode;
 import org.testng.annotations.Test;
-import static com.jz.Utils.*;
+
 import static org.testng.Assert.*;
 
 public class UtilsTest {

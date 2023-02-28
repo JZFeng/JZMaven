@@ -1,4 +1,4 @@
-package com.jz;
+package com.jz.pojo;
 
 import java.util.LinkedList;
 import java.util.Objects;

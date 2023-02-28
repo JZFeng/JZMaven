@@ -1,5 +1,8 @@
 package com.jz;
 
+import com.jz.pojo.ListNode;
+import com.jz.pojo.TreeNode;
+
 import java.util.*;
 
 public class Utils {

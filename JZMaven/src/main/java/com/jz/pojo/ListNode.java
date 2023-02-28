@@ -1,4 +1,4 @@
-package com.jz;
+package com.jz.pojo;
 
 public class ListNode {
     public static String SEPARATOR = ",";
