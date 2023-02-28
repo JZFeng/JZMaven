@@ -15,14 +15,14 @@ public class DSUWithPathCompression {
         }
     }
 
-    public int find(int x ) {
-        if(parent[x] != x) {
-            parent[x] = find(parent[x]);
+    public int find(int id ) {
+        if(parent[id] != id) {
+            parent[id] = find(parent[id]);
         }
-        return parent[x];
+        return parent[id];
     }
 
-    public void union(int x, int y) {
-        parent[find(x)] = find(y);
+    public void union(int a, int b) {
+        parent[find(a)] = find(b);
     }
 }
