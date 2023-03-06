@@ -1,4 +1,4 @@
-import com.jz.java.regex.ID;
+import com.jz.regex.ID;
 import org.testng.annotations.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;

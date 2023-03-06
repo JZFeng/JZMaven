@@ -1,7 +1,7 @@
 package com.jz;
 
-import com.jz.pojo.ListNode;
-import com.jz.pojo.TreeNode;
+import com.jz.algo.pojo.ListNode;
+import com.jz.algo.pojo.TreeNode;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
