@@ -3,7 +3,6 @@ package com.jz.algo.sort;
 // Java program for implementation of Heap Sort
 //http://www.geeksforgeeks.org/heap-sort/
 
-import com.jz.Solution;
 
 import java.util.Arrays;
 

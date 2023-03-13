@@ -31,7 +31,7 @@ public class Dijkstra {
     public Dijkstra(int[][] edges, int n){
         // 1. 抽象化。根据edge信息建图。
         // 注意：有时候edge并不会直接给出，比如一些题目给出的是字符串表示的结点，那么需要使用 Map<String, Integer> 来给字符串编号，再抽象化
-        this.graph = new List<>[n];
+        this.graph = new List[n];
         this.n = n;
         for (int i = 0; i < n; i++) {
             graph[i] = new ArrayList<>();
