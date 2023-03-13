@@ -1,40 +1,51 @@
 package com.jz.algo.sort;
 
 public class MergeSort {
-	public int[] mergeSort(int[] nums) {
-		return divide(nums, 0, nums.length - 1);
-	}
 
-	private int[] divide(int[] nums, int left, int right) {
-		if( left >= right) {
-			return  new int[]{nums[left]};
-		}
+    int[] temp;
 
-		int mid = left + (right - left ) / 2;
-		int[] l = divide(nums, left, mid);
-		int[] r = divide(nums, mid + 1, right);
+    public void mergeSort(int[] nums) {
+        // use a shared temp array, the extra memory is O(n) at least
+        this.temp = new int[nums.length];
+        mergeSort(nums, 0, nums.length - 1);
+    }
 
-		return merge(l, r);
-	}
+    private void mergeSort(int[] nums, int start, int end) {
+        if (start >= end) {
+            return;
+        }
 
+        int left = start, right = end;
+        int mid = (start + end) / 2;
 
-	public int[] merge(int[] nums1, int[] nums2) {
-		int m = nums1.length, n = nums2.length;
-		int[] res = new int[m + n];
-		int i = 0, j = 0, index = 0;
-		while (i < m && j < n) {
-			if (nums1[i] < nums2[j]) {
-				res[index++] = nums1[i++];
-			} else {
-				res[index++] = nums2[j++];
-			}
-		}
-		while (i < m) {
-			res[index++] = nums1[i++];
-		}
-		while (j < n) {
-			res[index++] = nums2[j++];
-		}
-		return res;
-	}
+        mergeSort(nums, start, mid);
+        mergeSort(nums, mid + 1, end);
+        merge(nums, start, mid, end);
+    }
+
+    private void merge(int[] nums, int start, int mid, int end) {
+        int left = start;
+        int right = mid + 1;
+        int index = start;
+
+        // merge two sorted subarrays in nums to temp array
+        while (left <= mid && right <= end) {
+            if (nums[left] < nums[right]) {
+                temp[index++] = nums[left++];
+            } else {
+                temp[index++] = nums[right++];
+            }
+        }
+        while (left <= mid) {
+            temp[index++] = nums[left++];
+        }
+        while (right <= end) {
+            temp[index++] = nums[right++];
+        }
+
+        // copy temp back to nums
+        for (index = start; index <= end; index++) {
+            nums[index] = temp[index];
+        }
+    }
 }
