@@ -1,47 +1,40 @@
 package com.jz.algo.sort;
 
 public class MergeSort {
-	public static void sortInteger(int[] nums) {
-		int[] tmp = new int[nums.length];
-		mergeSort(nums, 0, nums.length - 1, tmp);
+	public int[] mergeSort(int[] nums) {
+		return divide(nums, 0, nums.length - 1);
 	}
-	
-	private static void mergeSort(int[] nums, int start, int end, int[] tmp) {
-		if (nums == null || nums.length <= 1 ) {
-			return; 
+
+	private int[] divide(int[] nums, int left, int right) {
+		if( left >= right) {
+			return  new int[]{nums[left]};
 		}
-		if ( start >= end) {
-			return;
-		}
-		
-		int mid = start + (end - start) / 2; 
-		mergeSort(nums, start, mid, tmp);
-		mergeSort(nums, mid + 1, end, tmp);
-		merge(nums, start, mid, end ,tmp);
+
+		int mid = left + (right - left ) / 2;
+		int[] l = divide(nums, left, mid);
+		int[] r = divide(nums, mid + 1, right);
+
+		return merge(l, r);
 	}
-	
-	private static void merge(int[] nums, int start, int mid, int end, int[] tmp) {
-		int left = start;
-		int right = mid + 1;
-		int index = left; 
-		while (left <= mid && right <= end) {
-			if(nums[left] <= nums[right]) {
-				tmp[index++] = nums[left++];
+
+
+	public int[] merge(int[] nums1, int[] nums2) {
+		int m = nums1.length, n = nums2.length;
+		int[] res = new int[m + n];
+		int i = 0, j = 0, index = 0;
+		while (i < m && j < n) {
+			if (nums1[i] < nums2[j]) {
+				res[index++] = nums1[i++];
 			} else {
-				tmp[index++] = nums[right++];
+				res[index++] = nums2[j++];
 			}
 		}
-		
-		while (left <= mid) {
-			tmp[index++] = nums[left++]; 
+		while (i < m) {
+			res[index++] = nums1[i++];
 		}
-		while (right <= end) {
-			tmp[index++] = nums[right++];
+		while (j < n) {
+			res[index++] = nums2[j++];
 		}
-		
-		for(int i = start; i <= end; i++) {
-			nums[i] = tmp[i];
-		}
-		
+		return res;
 	}
 }
