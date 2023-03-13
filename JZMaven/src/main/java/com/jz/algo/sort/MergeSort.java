@@ -16,7 +16,7 @@ public class MergeSort {
         }
 
         int left = start, right = end;
-        int mid = (start + end) / 2;
+        int mid = left + (right - left) / 2;
 
         mergeSort(nums, start, mid);
         mergeSort(nums, mid + 1, end);
