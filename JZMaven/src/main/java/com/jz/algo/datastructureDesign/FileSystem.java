@@ -3,12 +3,13 @@
  * @Date 4/10/22-3:35 PM
  */
 
-package com.jz.algo;
+package com.jz.algo.datastructureDesign;
 
 import java.util.*;
 
 /**
- * 解题思路分析：
+ [1166. Design File System](https://leetcode.com/problems/design-file-system/)
+ 解题思路分析：
  * 本题考察的重点在于如何设计数据结构。我们知道文件目录是按照树形结构来设计的，因此我们的数据结构也应该设计为树形结构。
  *
  * 首先定义一个节点类，该类代表了某一级的目录（文件夹）或者是某个文件。类中需要包含以下信息：

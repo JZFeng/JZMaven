@@ -1,4 +1,4 @@
-package com.jz.algo;
+package com.jz.algo.datastructureDesign;
 
 import java.util.BitSet;
 

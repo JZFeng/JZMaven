@@ -3,15 +3,16 @@
  * @Date 3/8/22-12:23 AM
  */
 
-package com.jz.algo;
+package com.jz.algo.datastructureDesign;
 
 import java.util.*;
 
-//这题和LFU类似；
-//首先 想到的是Map<Integer, Integer> num2freq;
-//其次，维护一个maxFreq
-//那么问题来了，当maxFreq一样的时候，怎么找到最新的那个元素呢？
-//那就使用Map<Integer, Stack<Integer>> freq2stack吧；
+/*[895. Maximum Frequency Stack](https://leetcode.com/problems/maximum-frequency-stack/)
+这题和LFU类似；
+首先 想到的是Map<Integer, Integer> num2freq;
+其次，维护一个maxFreq
+那么问题来了，当maxFreq一样的时候，怎么找到最新的那个元素呢？
+那就使用Map<Integer, Stack<Integer>> freq2stack吧；*/
 class FreqStack {
 
     int maxFreq ;

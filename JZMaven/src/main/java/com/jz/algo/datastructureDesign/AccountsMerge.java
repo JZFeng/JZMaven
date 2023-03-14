@@ -3,12 +3,12 @@
  * @Date 3/30/22-10:36 AM
  */
 
-package com.jz.algo;
+package com.jz.algo.datastructureDesign;
 
 import java.util.*;
 
 /**
- * https://leetcode.com/problems/accounts-merge/
+ [721. Accounts Merge](https://leetcode.com/problems/accounts-merge/)
  */
 class AccountsMerge {
     public List<List<String>> accountsMerge(List<List<String>> accounts) {

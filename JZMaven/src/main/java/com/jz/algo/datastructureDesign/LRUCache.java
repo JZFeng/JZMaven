@@ -1,12 +1,13 @@
-package com.jz.algo;
+package com.jz.algo.datastructureDesign;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-//经典的LRUCache, 双向链表+ hashmap；
-//node里要有key，value，pre，next；
-//hashmap存放的是key和node，根据key，O(1)时间访问到node，然后移动node的位置（此处实现为，链表头部为最近访问过的节点）
+/*(146. LRU Cache)[https://leetcode.com/problems/lru-cache/]
+经典的LRUCache, 双向链表+ hashmap；
+node里要有key，value，pre，next；
+hashmap存放的是key和node，根据key，O(1)时间访问到node，然后移动node的位置（此处实现为，链表头部为最近访问过的节点）*/
 public class LRUCache {
     Map<Integer, ListNode> map = null;
     int capacity = 0;

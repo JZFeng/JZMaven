@@ -3,10 +3,11 @@
  * @Date 4/10/22-4:13 PM
  */
 
-package com.jz.algo;
+package com.jz.algo.datastructureDesign;
 
 import java.util.*;
 
+// [642. Design Search Autocomplete System](https://leetcode.com/problems/design-search-autocomplete-system/)
 class AutocompleteSystem {
 
     TrieNode root;

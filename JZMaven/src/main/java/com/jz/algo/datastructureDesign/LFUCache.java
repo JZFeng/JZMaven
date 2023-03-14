@@ -3,18 +3,20 @@
  * @Date 2/25/22-9:34 AM
  */
 
-package com.jz.algo;
+package com.jz.algo.datastructureDesign;
 
 import java.util.*;
 
 public class LFUCache {
-
-    //因为是(key，val) pair,底层肯定是用Map
-    //要为每一个key记录freq；同时freq相同的时候，还需要考虑访问时间的先后；
-    //访问时间的先后，我们在LRU做过，用的是Map和DoubleLinkedList
-    //LFU实际上是在LRU基础了多了一个freq的维度；
-    //Map<Integer, ListNode> 还是key对应结点，实现快速删除；
-    // Map<Integer, DoubleLinkedList<ListNode>> frequency Map，key是freq，value是链表; 相当于一个个Bucket桶；
+/*
+    [460. LFU Cache](https://leetcode.com/problems/lfu-cache/)
+    因为是(key，val) pair,底层肯定是用Map
+    要为每一个key记录freq；同时freq相同的时候，还需要考虑访问时间的先后；
+    访问时间的先后，我们在LRU做过，用的是Map和DoubleLinkedList
+    LFU实际上是在LRU基础了多了一个freq的维度；
+    Map<Integer, ListNode> 还是key对应结点，实现快速删除；
+     Map<Integer, DoubleLinkedList<ListNode>> frequency Map，key是freq，value是链表; 相当于一个个Bucket桶；
+*/
 
     private Map<Integer, ListNode> cache;
     private Map<Integer, DoubleLinkedList> freqMap;

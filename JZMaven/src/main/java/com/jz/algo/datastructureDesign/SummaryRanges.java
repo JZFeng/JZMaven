@@ -3,11 +3,11 @@
  * @Date 3/7/23-4:48 PM
  */
 
-package com.jz.algo;
+package com.jz.algo.datastructureDesign;
 
 import java.util.*;
 /*
-352. Data Stream as Disjoint Intervals
+[352. Data Stream as Disjoint Intervals]
 https://leetcode.com/problems/data-stream-as-disjoint-intervals/
  */
 class SummaryRanges {

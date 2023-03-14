@@ -1,13 +1,10 @@
-/**
- * @Author jzfeng
- * @Date 2/26/22-1:12 PM
- */
 
-package com.jz.algo;
+package com.jz.algo.datastructureDesign;
 
 import java.util.*;
 
 /*
+[432. All O`one Data Structure]https://leetcode.com/problems/all-oone-data-structure/
 很像LFU的机制.
 用Bucket组成一个double linked list. 按照Bucket的count从小到大排序.
 

@@ -1,11 +1,11 @@
-package com.jz.algo;
+package com.jz.algo.datastructureDesign;
 
 import java.util.*;
 
-//之前做过RandomizedSet，用的是ArrayList和Map (val, index)键值对；
-//只是这题把它换成了Map  （val, Set）键值对；
+/*[381. Insert Delete GetRandom O(1) - Duplicates allowed](https://leetcode.com/problems/insert-delete-getrandom-o1-duplicates-allowed/)
+之前做过RandomizedSet，用的是ArrayList和Map (val, index)键值对；
+只是这题把它换成了Map  （val, Set）键值对；*/
 public class RandomizedCollection {
-
     List<Integer> rc;
     Map<Integer, LinkedHashSet<Integer>> map;
     Random random;

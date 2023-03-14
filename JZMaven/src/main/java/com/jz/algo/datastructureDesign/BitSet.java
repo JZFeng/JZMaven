@@ -3,7 +3,7 @@
  * @Date 2/9/23-3:06 PM
  */
 
-package com.jz.algo;
+package com.jz.algo.datastructureDesign;
 
 import java.util.*;
 
@@ -15,6 +15,7 @@ class BitSet {
 
 
     /*
+    [2166. Design Bitset](https://leetcode.com/problems/design-bitset/)
     反向掩膜法:
     我们每次维护一个常规数组存储01信息的同时，把以O(1)的时间复杂度维护一个反向的掩膜
     这个反向的掩膜在fix，unfix的变更过程中时间复杂度都是O(1)，而flip过程中就相当于把常规数组换成反向掩膜
