@@ -19,15 +19,15 @@ import java.util.*;
  */
 
 public class FileSystem {
-    Node root;
+    FileNode root;
 
     public FileSystem() {
-        root = new Node();
+        root = new FileNode();
     }
 
     public List<String> ls(String path) {
         String[] dirs = path.split("/");
-        Node cur = root;
+        FileNode cur = root;
         for (String dir : dirs) {
             if ("".equals(dir)) {
                 continue;
@@ -43,15 +43,15 @@ public class FileSystem {
 
     public void mkdir(String path) {
         String[] dirs = path.split("/");
-        Node cur = root;
+        FileNode cur = root;
         for (String dir : dirs) {
             if ("".equals(dir)) {
                 continue;
             }
 
-            Node child = cur.fileList.get(dir);
+            FileNode child = cur.fileList.get(dir);
             if (child == null) {
-                child = new Node();
+                child = new FileNode();
                 cur.fileList.put(dir, child);
             }
 
@@ -61,16 +61,16 @@ public class FileSystem {
 
     public void addContentToFile(String filePath, String content) {
         String[] dirs = filePath.split("/");
-        Node cur = root;
+        FileNode cur = root;
         for (int i = 0; i < dirs.length; i++) {
             String dir = dirs[i];
             if ("".equals(dir)) {
                 continue;
             }
 
-            Node child = cur.fileList.get(dir);
+            FileNode child = cur.fileList.get(dir);
             if (child == null) {
-                child = new Node();
+                child = new FileNode();
                 cur.fileList.put(dir, child);
             }
 
@@ -86,7 +86,7 @@ public class FileSystem {
 
     public String readContentFromFile(String filePath) {
         String[] dirs = filePath.split("/");
-        Node cur = root;
+        FileNode cur = root;
         for (String dir : dirs) {
             if ("".equals(dir)) {
                 continue;
@@ -99,14 +99,14 @@ public class FileSystem {
 }
 
 
-class Node {
+class FileNode {
     // 该目录下的所有子目录和文件
     // key是子目录或者文件名称，key为子目录或文件的节点对象
-    Map<String, Node> fileList ;
+    Map<String, FileNode> fileList ;
     // 如果当前目录是文件，记录文件内容
     StringBuilder text;
 
-    Node() {
+    FileNode() {
         this.fileList = new TreeMap<>();
         this.text = new StringBuilder();
     }

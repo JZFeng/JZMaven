@@ -45,7 +45,7 @@ public class SegmentTree {
     }
 
     public int sumRange(Node node, int start, int end) {
-        if(start == end) return 0;
+        if(start > end) return 0;
         if(node.start == start && node.end == end) return node.sum;
 
         int mid = node.start + (node.end - node.start) / 2;
@@ -58,7 +58,6 @@ public class SegmentTree {
         }
     }
 }
-
 
 class Node {
     int start, end, sum;

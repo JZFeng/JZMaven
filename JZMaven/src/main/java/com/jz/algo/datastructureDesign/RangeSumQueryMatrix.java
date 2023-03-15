@@ -6,11 +6,11 @@
 package com.jz.algo.datastructureDesign;
 
 //[304. Range Sum Query 2D - Immutable](https://leetcode.com/problems/range-sum-query-2d-immutable/description/)
-class RangeQueryMatrix {
+class RangeSumQueryMatrix {
 
     int[][] dp;
 
-    public RangeQueryMatrix(int[][] matrix) {
+    public RangeSumQueryMatrix(int[][] matrix) {
         int m = matrix.length, n = matrix[0].length;
         this.dp = new int[m + 1][ n + 1];
         for (int i = 0; i < m ; i++) {
