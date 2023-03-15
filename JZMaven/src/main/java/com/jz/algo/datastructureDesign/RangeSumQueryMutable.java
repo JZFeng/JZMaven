@@ -48,8 +48,13 @@ class SegmentTree {
     public void update(int i, int val){
         update(root, i, val);
     }
-    //如果是区间修改（这里需要用到lazy propogation来优化到logn,可以使用差分数组和全局变量表示有没有修改；
-    // if(isChanged) {restore from diff array}
+/*    如果是区间修改（这里需要用到lazy propogation来优化到logn)；
+     简而言之，在更新某个区间的所有值时，并没有立刻更新每个叶节点的值，
+    而是将更新操作暂存在这个区间所对应的父节点上，之后特定的时机再将操作下传给子节点。
+
+    有了延迟标记，另一个问题就是什么时候下传延迟标记？
+    答案是在访问任何节点的子节点的时候，“访问”既包括区间更新时的访问，也包括区间查询时的访问。*/
+
 
     public int sumRange(int start, int end){
         return sumRange(root,start, end);
