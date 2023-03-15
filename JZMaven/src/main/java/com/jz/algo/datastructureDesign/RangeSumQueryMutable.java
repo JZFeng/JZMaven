@@ -1,5 +1,10 @@
 package com.jz.algo.datastructureDesign;
 
+
+
+/*
+[307. Range Sum Query - Mutable](https://leetcode.com/problems/range-sum-query-mutable/)
+ */
 class RangeSumQueryMutable {
     //代理模式，传入一个类，所有的操作都交给这个类去处理；
     SegmentTree st;
