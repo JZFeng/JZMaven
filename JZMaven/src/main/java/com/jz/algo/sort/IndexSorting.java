@@ -6,7 +6,7 @@
 package com.jz.algo.sort;
 
 public class IndexSorting {
-    //https://leetcode.com/problems/missing-number/
+    //[268. Missing Number](https://leetcode.com/problems/missing-number/)
     public int missingNumber(int[] nums) {
         int len = nums.length;
 
