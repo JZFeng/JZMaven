@@ -18,8 +18,6 @@ class CASLock {
             currentThread = Thread.currentThread();
             System.out.println(currentThread + " tryLock");
         }
-
-
     }
 
     public void unlock() { //1为locked，0为unlocked

@@ -52,6 +52,5 @@ public class ProxyDemo {
         lenovo.sale(10000d);
         //增加功能的代理对象；
         proxy_lenovo.sale(10000d);
-
     }
 }
