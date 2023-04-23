@@ -1,6 +1,5 @@
 package com.jz.designpattern.statemachine;
 
-
 //都是单例模式；因为一个游戏开始，只有那几种状态，设计成单例模式，很合理；
 //状态机模式包括：状态，事件，动作；
 //马里奥的不同形态就是状态机中的“状态”
@@ -35,6 +34,4 @@ public class SmallMario extends AbstractState {
     stateMachine.setCurrentState(CapeMario.getInstance());
     stateMachine.setScore(stateMachine.getScore() + 200);
   }
-
-
 }
