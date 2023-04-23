@@ -8,6 +8,4 @@ public class Entry {
         System.out.println(ingredients);
         System.out.println(price);
     }
-
-
 }

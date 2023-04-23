@@ -1,6 +1,5 @@
 package com.jz.designpattern.delegator.door;
 
-//ʵ����Runnable�ӿڣ�����LightDoor�;߱��˶��̵߳Ĺ����ˡ�����߳�������ʾ���ϵĵơ�
 public class LightDoor extends Door implements Runnable {
 
     public LightDoor() {
@@ -35,10 +34,6 @@ public class LightDoor extends Door implements Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
         }
-
     }
-
-
 }
