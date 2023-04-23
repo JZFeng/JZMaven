@@ -16,6 +16,4 @@ public class DepartmentManager extends Handler {
             return false;
         }
     }
-
-
 }

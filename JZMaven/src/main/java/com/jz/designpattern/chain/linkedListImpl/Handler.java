@@ -2,7 +2,7 @@ package com.jz.designpattern.chain.linkedListImpl;
 
 //相当于链表节点；
 public abstract class Handler {
-    private Handler next = null;
+    public Handler next = null;
     private FeeRequest feeRequest;
 
     Handler(FeeRequest feeRequest) {
@@ -18,13 +18,6 @@ public abstract class Handler {
 
     //模版方法
     public final boolean handle() {
-        boolean handled = doHandle(feeRequest);
-
-        if (!handled && next != null) {
-            handled = next.handle();
-        }
-
-        return handled;
+        return doHandle(feeRequest);
     }
-
 }

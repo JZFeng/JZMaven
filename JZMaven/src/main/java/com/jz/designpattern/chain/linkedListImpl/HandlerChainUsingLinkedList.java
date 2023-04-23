@@ -26,13 +26,15 @@ public class HandlerChainUsingLinkedList {
 
     public boolean handle() {
         boolean handled = false;
-        Handler current = head;
-        while (current != null) {
-            handled = current.handle();
+        Handler cur = head;
+        while (cur != null) {
+            handled = cur.handle();
             if (handled) {
                 break;
             }
+            cur = cur.next;
         }
+
         return handled;
     }
 }
