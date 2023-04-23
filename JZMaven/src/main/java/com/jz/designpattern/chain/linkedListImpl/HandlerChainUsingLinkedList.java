@@ -12,7 +12,7 @@ public class HandlerChainUsingLinkedList {
     }
 
     public void addHandler(Handler handler) {
-        handler.setNext(null);
+        handler.next = null;
 
         if (head == null) {
             head = handler;
@@ -20,7 +20,7 @@ public class HandlerChainUsingLinkedList {
             return;
         }
 
-        tail.setNext(handler);
+        tail.next = handler;
         tail = handler;
     }
 

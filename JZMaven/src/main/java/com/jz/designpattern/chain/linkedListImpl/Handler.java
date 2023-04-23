@@ -9,15 +9,11 @@ public abstract class Handler {
         this.feeRequest = feeRequest;
     }
 
-    public void setNext(Handler next) {
-        this.next = next;
-    }
-
     //该节点先进行处理；
     public abstract boolean doHandle(FeeRequest feeRequest);
 
     //模版方法
     public final boolean handle() {
-        return doHandle(feeRequest);
+        return this.doHandle(feeRequest);
     }
 }
