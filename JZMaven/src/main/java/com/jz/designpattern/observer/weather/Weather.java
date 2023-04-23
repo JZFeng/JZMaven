@@ -31,7 +31,15 @@ public class Weather {
             areaTemp = getRegionTemp(areaCode);
 
             for(IWeatherSubscriber subscriber: weatherSubscribers) {
-                subscriber.updateWeather(areaCode, areaTemp);
+                int finalAreaCode = areaCode;
+                long finalAreaTemp = areaTemp;
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        subscriber.updateWeather(finalAreaCode, finalAreaTemp);
+                    }
+                }).start();
             }
         }
     }
