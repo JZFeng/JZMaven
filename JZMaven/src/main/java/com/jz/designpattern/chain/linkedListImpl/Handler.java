@@ -1,7 +1,7 @@
 package com.jz.designpattern.chain.linkedListImpl;
 
 //相当于链表节点；
-public abstract class Handler {
+public abstract class Handler implements IHandler {
     public Handler next = null;
     private FeeRequest feeRequest;
 
@@ -9,7 +9,7 @@ public abstract class Handler {
         this.feeRequest = feeRequest;
     }
 
-    //该节点先进行处理；
+    //需要扩展的方法，通过abstract暴露出来;
     public abstract boolean doHandle(FeeRequest feeRequest);
 
     //模版方法

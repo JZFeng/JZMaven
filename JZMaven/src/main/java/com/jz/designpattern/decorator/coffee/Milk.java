@@ -9,6 +9,4 @@ public class Milk extends CoffeeDecorator {
   public String getIngredients() {
     return coffee.getIngredients() + "Milk + ";
   }
-
-
 }
