@@ -30,7 +30,6 @@ public abstract class BankBusiness {
 
   //hook
   abstract boolean isVIP();
-
 }
 
 

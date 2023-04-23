@@ -10,5 +10,4 @@ public class Entry {
         BankBusiness withdraw = new Withdraw(money);
         withdraw.process();
     }
-
 }
