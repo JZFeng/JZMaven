@@ -5,6 +5,7 @@
 
 package com.jz.multiThread.concurrent.lock;
 
+//[1188. Design Bounded Blocking Queue](https://leetcode.com/problems/design-bounded-blocking-queue/)
 //此题可以直接使用ArrayBlockingQueue或者LinkedBlockingQueue，但是面试还是要自己写的；
 //BlockingQueue经常使用在生产者消费者模型中；
 //可以参照LinkedBlockingQueue或者ArrayBlockingQueue的源码去写；

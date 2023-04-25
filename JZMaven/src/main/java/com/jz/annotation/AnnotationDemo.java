@@ -67,8 +67,6 @@ public class AnnotationDemo {
         System.out.println("Invalid zip code : " + zipcode);
       }
     }
-
-
   }
 
 
@@ -87,8 +85,6 @@ public class AnnotationDemo {
       Object value = read.invoke(person); //invoke getting, get the return value;
       checkMethod(read, person);
     }
-
-
   }
 
   public static void checkField(Field field, Person person) throws IllegalAccessException {
