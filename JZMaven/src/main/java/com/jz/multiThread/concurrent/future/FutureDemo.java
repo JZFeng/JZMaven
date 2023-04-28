@@ -39,8 +39,6 @@ class DownloadTask implements Callable<String> {
 
         return sb.toString();
     }
-
-
 }
 
 
