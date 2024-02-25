@@ -1,53 +1,24 @@
 package com.jz;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
-class Dummy {
-}
-
-//Backtracking;
 class Solution {
-    //把不变的数据都变成全局变量，这样dfs的参数会少很多；
-    int[] tasks;
-    int sessionTime;
-    int minSession;
-
-    public int minSessions(int[] tasks, int sessionTime) {
-        this.tasks = tasks;
-        this.sessionTime = sessionTime;
-        this.minSession = tasks.length; //初始化；
-        int[] sessions = new int[tasks.length]; //最多tasks.length;
-
-        Arrays.sort(tasks); //剪枝1: 倒序排列
-
-        helper(tasks.length - 1, sessions, 0);
-        return minSession;
-    }
-
-    private void helper(int start, int[] sessions, int curSession) {
-        if (start < 0) {
-            minSession = Math.min(minSession, curSession);
-            return;
-        }
-        if (curSession >= minSession) { //剪枝2:全局剪枝
-            return;
-        }
-
-        //暴力尝试把任务 挨个分给工人(这里是work session)
-        //这是内循环，需要知道当前工人数（所以参数里传入curSessions）
-        for (int i = 0; i < curSession; i++) {
-            if (i != 0 && sessions[i] == sessions[i - 1]) {
-                continue;  //剪枝3
-            }
-            if (sessions[i] + tasks[start] <= sessionTime) {
-                sessions[i] += tasks[start];
-                helper(start - 1, sessions, curSession);
-                sessions[i] -= tasks[start];//backtracking
-            }
-        }
-        sessions[curSession] += tasks[start];
-        helper(start - 1, sessions, curSession + 1);
-        sessions[curSession] -= tasks[start];//backtracking
+    public static void main(String[] args) throws IOException {
+        InetAddress byName = InetAddress.getByName("jz-ubuntu");
+        byName = InetAddress.getByName("192.168.1.101");
+        System.out.println(byName.getHostName());
+        System.out.println(byName.getHostAddress());
+        System.out.println(byName);
     }
 }
 
