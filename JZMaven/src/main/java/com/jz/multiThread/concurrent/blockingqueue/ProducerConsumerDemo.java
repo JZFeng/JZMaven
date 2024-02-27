@@ -4,7 +4,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class BlockingQueueDemo {
+public class ProducerConsumerDemo {
     private static AtomicInteger total_count = new AtomicInteger();
 
     public static void main(String[] args) throws Exception {
