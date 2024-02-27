@@ -14,7 +14,7 @@ public class DelayQueueDemo {
         dq.offer(new DelayedTask("task in 1s", 1));
         dq.offer( new DelayedTask("task in 3s",3));
         dq.offer(new DelayedTask("task in 5s", 5));
-        dq.offer(new DelayedTask("task in at a future time", "2024-02-27 12:28:00"));
+        dq.offer(new DelayedTask("task at a future time", "2024-02-27 13:14:00"));
         while (!dq.isEmpty()){
             DelayedTask task = dq.poll();
             if(task != null){
@@ -45,7 +45,8 @@ class DelayedTask implements Delayed {
 
     @Override //还有多久出队列;
     public long getDelay(TimeUnit unit) {
-        return executionTimeStamp - System.currentTimeMillis();
+        long diff =  executionTimeStamp - System.currentTimeMillis();
+        return unit.convert(diff, TimeUnit.MICROSECONDS);
     }
 
     @Override
