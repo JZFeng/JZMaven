@@ -1,8 +1,8 @@
 package com.jz.designpattern.chain.linkedListImpl;
 
 public class HR extends Handler {
-    HR(FeeRequest feeRequest) {
-        super(feeRequest);
+    HR(FeeRequest feeRequest, String name, int level) {
+        super(feeRequest, name, level);
     }
 
     @Override

@@ -1,8 +1,8 @@
 package com.jz.designpattern.chain.linkedListImpl;
 
 public class DepartmentManager extends Handler {
-    DepartmentManager(FeeRequest feeRequest) {
-        super(feeRequest);
+    DepartmentManager(FeeRequest feeRequest, String name, int level) {
+        super(feeRequest, name, level);
     }
 
     @Override

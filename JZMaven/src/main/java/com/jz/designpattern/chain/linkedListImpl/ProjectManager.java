@@ -2,8 +2,8 @@ package com.jz.designpattern.chain.linkedListImpl;
 
 public class ProjectManager extends Handler {
 
-    public ProjectManager(FeeRequest feeRequest) {
-        super(feeRequest);
+    ProjectManager(FeeRequest feeRequest, String name, int level) {
+        super(feeRequest, name, level);
     }
 
     @Override

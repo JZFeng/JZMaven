@@ -2,18 +2,18 @@ package com.jz.designpattern.chain.linkedListImpl;
 
 public class Entry {
 
-  public static void main(String[] args) {
-    FeeRequest feeRequest = new FeeRequest("Wang", 1550);
+    public static void main(String[] args) {
+        FeeRequest feeRequest = new FeeRequest("Wang", 850);
 
-    Handler pjctManager = new ProjectManager(feeRequest);
-    Handler dptManager = new DepartmentManager(feeRequest);
-    Handler hr = new HR(feeRequest);
+        Handler pjctManager = new ProjectManager(feeRequest, "Magic", 1);
+        Handler dptManager = new DepartmentManager(feeRequest, "John", 2);
+        Handler hr = new HR(feeRequest, "Jefery", 3);
 
-    HandlerChainUsingLinkedList handlers = new HandlerChainUsingLinkedList(feeRequest);
-    handlers.addHandler(pjctManager);
-    handlers.addHandler(dptManager);
-    handlers.addHandler(hr);
+        HandlerChain handlerChain = new HandlerChain(feeRequest);
+        handlerChain.addHandler(pjctManager);
+        handlerChain.addHandler(dptManager);
+        handlerChain.addHandler(hr);
 
-    handlers.handle();
-  }
+        handlerChain.handle();
+    }
 }
