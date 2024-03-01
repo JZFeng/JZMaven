@@ -11,7 +11,7 @@ import java.lang.reflect.Proxy;
 
 public class Client {
     public static void main(String[] args) {
-        Actor actor = new Actor();
+        IActor actor = new Actor();
         IActor proxyActor = (IActor)Proxy.newProxyInstance(actor.getClass().getClassLoader(), actor.getClass().getInterfaces(), new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
