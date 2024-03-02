@@ -1,4 +1,4 @@
-package com.jz.designpattern.chain.linkedListImpl;
+package com.jz.designpattern.chain;
 
 public class HR extends Handler {
     HR(FeeRequest feeRequest, String name, int level) {

@@ -1,4 +1,4 @@
-package com.jz.designpattern.chain.linkedListImpl;
+package com.jz.designpattern.chain;
 
 import java.util.*;
 

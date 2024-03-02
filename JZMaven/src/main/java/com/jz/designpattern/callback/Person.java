@@ -1,4 +1,4 @@
-package com.jz.designpattern.templateMethod.Callback;
+package com.jz.designpattern.callback;
 
 public class Person implements ICallback {
     private Genius genius;

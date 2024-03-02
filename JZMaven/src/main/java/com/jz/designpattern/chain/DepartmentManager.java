@@ -1,4 +1,9 @@
-package com.jz.designpattern.chain.linkedListImpl;
+package com.jz.designpattern.chain;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 
 public class DepartmentManager extends Handler {
     DepartmentManager(FeeRequest feeRequest, String name, int level) {

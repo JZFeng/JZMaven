@@ -1,13 +1,14 @@
-package com.jz.designpattern.chain.linkedListImpl;
+package com.jz.designpattern.chain;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data @AllArgsConstructor @NoArgsConstructor
 
 public class FeeRequest {
     private String user;
     private int fee;
-
-    public FeeRequest(String user, int fee) {
-        this.user = user;
-        this.fee = fee;
-    }
 
     public int getFee() {
         return fee;

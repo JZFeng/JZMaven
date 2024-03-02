@@ -22,12 +22,15 @@ public class Client {
                 Object res = null;
                 if( methodName.equals("basicAct") ) {
                     if(money > 2000f) {
-                        res = method.invoke(actor, money);
+                        res = method.invoke(actor, money /2 ); //通过反射调用。
+//                        res = methodProxy.invoke(actor, objects);
+                        System.out.println(o.getClass().getName());
                     }
                 }
                 if(methodName.equals("dangerAct")) {
                     if(money > 5000f) {
-                        res = method.invoke(actor, money);
+                        //res = method.invoke(actor, money / 2);//通过反射调用。
+                        res = methodProxy.invoke(actor, objects);
                     }
                 }
                 return res;

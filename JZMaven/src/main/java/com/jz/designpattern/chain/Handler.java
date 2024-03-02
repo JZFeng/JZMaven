@@ -1,4 +1,4 @@
-package com.jz.designpattern.chain.linkedListImpl;
+package com.jz.designpattern.chain;
 
 //抽象类，是所有Handler的父类；
 //通过abstract，暴露需要扩展的方法；
