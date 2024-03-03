@@ -6,6 +6,8 @@ public class Pizza {
     private boolean hasPepperoni;
     private boolean hasCheese;
 
+    //构建一个复杂对象的时候，建议使用builder模式。
+    //构造函数定义为private；
     private Pizza(Builder builder) {
         this.size = builder.size;
         this.hasCheese = builder.hasCheese;
@@ -13,6 +15,7 @@ public class Pizza {
         this.hasPepperoni = builder.hasPepperoni;
     }
 
+    //public的静态内部类；
     public static class Builder {
         private static final int DEFAULT_SIZE = 6;
 
@@ -43,7 +46,7 @@ public class Pizza {
         }
 
         public Pizza build() {
-            //parameter check here
+            //检查所有的参数；
             //eg , size must be equal or greater than 6 inch;
             if (size < 6 || hasCheese == false) {
                 throw new IllegalArgumentException("Minimum Pizza size : 6 inch; must have cheese");
