@@ -8,7 +8,7 @@ public class Entry {
     String filename = "DBConfig.json";
     String configFileContent = readConfigFromFile(filename);
 
-    IConfigParser parser = ParserFactory.createParser(filename);
+    IParser parser = ParserFactory.createParser(filename);
     parser.parse(configFileContent);
   }
 
