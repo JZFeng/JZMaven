@@ -7,5 +7,6 @@ import java.util.List;
 public class SpuBo {
     private List<String> brands;
     private List<String> categories;
+    private String spuDetails;
     private Long spuId;
 }

@@ -1,18 +1,24 @@
 package com.jz.multiThread.async;
 
+import java.util.concurrent.CompletableFuture;
+
 public class Entry {
     public static void main(String[] args) {
         BrandService brandService = new BrandService();
         CategoryService categoryService = new CategoryService();
+        SpuDetailsService spuDetailsService = new SpuDetailsService();
         SpuBo spuBo = new SpuBo();
 
         spuBo.setSpuId(1000L);
         System.out.println(spuBo);
-        brandService.getBrandsAsync().thenAccept(spuBo::setBrands).join();
-        categoryService.getCategoriesAsync().thenAccept(spuBo::setCategories).join();
+
+
+        CompletableFuture.allOf(
+                brandService.getBrandsAsync().thenAccept(spuBo::setBrands),
+                categoryService.getCategoriesAsync().thenAccept(spuBo::setCategories),
+                spuDetailsService.getSpuDetailsByID(spuBo.getSpuId()).thenAccept(spuBo::setSpuDetails)
+        ).join();
 
         System.out.println(spuBo);
-
-
     }
 }
