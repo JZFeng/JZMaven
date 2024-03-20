@@ -24,7 +24,7 @@ public abstract class Task{
             conn.setDoOutput(false);
             conn.setRequestMethod("GET");
 
-            String res = doHandle();
+            String res = this.doHandle();
 
             conn.disconnect();
             return res;
