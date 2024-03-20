@@ -1,8 +1,9 @@
 package com.jz.lamda;
 
+
 import org.junit.Test;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.Assert.assertArrayEquals;
 
 public class StringFormatTest {
   @Test

@@ -1,7 +1,7 @@
 import com.jz.regex.ID;
 import org.testng.annotations.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 public class IDTest {

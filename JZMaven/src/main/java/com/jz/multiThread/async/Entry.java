@@ -15,7 +15,7 @@ public class Entry {
 
         CompletableFuture.allOf(
                 brandService.getBrandsAsync().thenAccept(spuBo::setBrands),
-                categoryService.getCategoriesAsync().thenAccept(spuBo::setCategories),
+                categoryService.getCategoriesAsync().thenAcceptAsync(spuBo::setCategories),
                 spuDetailsService.getSpuDetailsByID(spuBo.getSpuId()).thenAccept(spuBo::setSpuDetails)
         ).join();
 
