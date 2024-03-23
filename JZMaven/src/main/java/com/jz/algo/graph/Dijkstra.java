@@ -65,7 +65,6 @@ public class Dijkstra {
                 continue;
             }
 
-            visited[u] = true;
             // 遍历所有 u 能够到达的点，刚开始为 u = start
             for (int[] neighbor : graph[u]) {
                 int v = neighbor[0], w = neighbor[1];
@@ -73,10 +72,12 @@ public class Dijkstra {
                     // edge relaxation;
                     distance[v] = distance[u] + w;
                     prev[v] = u;
-                    // 加入优先队列，start->v 的距离 dis[v]
+                    // 加入优先队列，start->v 的距离 dis[v];
+                    // 因为dist初始值设的很大，所以所有联通的节点一定会加入到队列中。
                     pq.add(new int[]{v, distance[v]});
                 }
             }
+            visited[u] = true;
         }
     }
 
