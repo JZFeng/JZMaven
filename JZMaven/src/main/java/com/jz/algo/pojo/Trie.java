@@ -7,72 +7,40 @@ package com.jz.algo.pojo;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
+class Dummy{}
 
-public class Trie {
-
-    TrieNode root;
-
-    public Trie() {
-        this.root = new TrieNode(null, new HashMap<>());
-    }
-
-    public void insert(String word) {
-        int len = word.length();
-        TrieNode cur = root;
-        for (int i = 0; i < len; i++) {
-            char c = word.charAt(i);
-            if (!cur.children.containsKey(c)) {
-                TrieNode node = new TrieNode(c, new HashMap<>());
-                cur.children.put(c, node);
-            }
-            cur = cur.children.get(c);
-        }
-        cur.isWord = true;
-    }
-
-    public boolean search(String word) {
-        if (word == null || word.length() == 0) {
-            return false;
-        }
-        int len = word.length();
-        TrieNode cur = root;
-        for (int i = 0; i < len; i++) {
-            char c = word.charAt(i);
-            if (!cur.children.containsKey(c)) {
+class Solution {
+    public boolean isPalindrome(ListNode head) {
+        ListNode middle = findMiddle(head);
+        ListNode node = reverse(middle.next);
+        while (node != null) {
+            if( head.val != node.val){
                 return false;
             }
-            cur = cur.children.get(c);
+            node = node.next;
+            head = head.next;
         }
-
-        return cur.isWord;
-    }
-
-    public boolean startsWith(String prefix) {
-        if (prefix == null || prefix.length() == 0) {
-            return false;
-        }
-        int len = prefix.length();
-        TrieNode cur = root;
-        for (int i = 0; i < len; i++) {
-            char c = prefix.charAt(i);
-            if (!cur.children.containsKey(c)) {
-                return false;
-            }
-            cur = cur.children.get(c);
-        }
-
         return true;
     }
-}
 
-class TrieNode {
-    Character c;
-    Map<Character, TrieNode> children;
-    boolean isWord;
+    private ListNode  findMiddle(ListNode head) {
+        ListNode fast = head.next , slow = head;
+        while (fast != null && fast.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
+        }
+        return slow;
+    }
 
-    TrieNode(Character c, Map<Character, TrieNode> children) {
-        this.c = c;
-        this.children = children;
-        this.isWord = false;
+    private ListNode reverse(ListNode head) {
+        ListNode pre  = null, cur = head;
+        while (cur != null) {
+            ListNode node =cur.next;
+            cur.next = pre;
+            pre = cur;
+            cur = node;
+        }
+        return pre;
     }
 }
