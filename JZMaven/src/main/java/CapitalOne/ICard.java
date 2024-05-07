@@ -1,0 +1,4 @@
+package CapitalOne;
+
+interface ICard {
+}

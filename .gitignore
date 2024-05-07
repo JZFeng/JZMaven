@@ -1,3 +1,2 @@
-*.class
-/JZMaven/.idea
-
+/target
+classes
