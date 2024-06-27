@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Data @AllArgsConstructor @NoArgsConstructor
 public class Person implements ICallback {
     String name;
+
     public void ask(String question, Genius genius) {
         Thread thread = new Thread(new Runnable() {
             @Override

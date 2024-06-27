@@ -3,11 +3,12 @@ package com.jz.network.tcp;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 public class TCPClient {
     public static void main(String[] args) throws IOException {
         String cmd;
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in))) {
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8))) {
             cmd = bufferedReader.readLine();
         }
 

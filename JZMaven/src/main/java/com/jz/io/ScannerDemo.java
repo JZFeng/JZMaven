@@ -1,10 +1,11 @@
 package com.jz.io;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class ScannerDemo {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8 );
         System.out.print("Input your name: ");
         String name = scanner.nextLine();
         System.out.print("Input your age: ");
