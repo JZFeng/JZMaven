@@ -1,13 +1,13 @@
 package com.jz.designpattern.callback;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data @AllArgsConstructor @NoArgsConstructor
 public class Person implements ICallback {
-    private Genius genius;
-
-    Person(Genius genius) {
-        this.genius = genius;
-    }
-
-    public void ask(String question) {
+    String name;
+    public void ask(String question, Genius genius) {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -18,13 +18,13 @@ public class Person implements ICallback {
         });
         thread.start();
 
-        System.out.println("去干其他事情了");
+        System.out.println(this.name + " 去干其他事情了");
     }
 
 
     @Override
     public String callback(String result) {
-        System.out.println("Genius solves this question and answer is " + result);
+        System.out.println("天才 solves this question and answer is " + result);
         return result;
     }
 }

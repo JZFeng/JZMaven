@@ -3,8 +3,8 @@ package com.jz.designpattern.callback;
 public class Genius {
 
     public void executeMessage(String question, ICallback callback)  {
-        System.out.println("Received question is " + question);
-        System.out.println("Working on the question: " + question);
+        System.out.println("天才Received question is " + question);
+        System.out.println("天才Working on the question: " + question);
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {

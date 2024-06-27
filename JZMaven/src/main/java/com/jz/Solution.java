@@ -14,40 +14,32 @@ import java.util.stream.Collectors;
 class Dummy{}
 
 class Solution {
-
     public static void main(String[] args) {
         Solution solution = new Solution();
-        System.out.println(solution.numberToWords(Integer.MAX_VALUE));
+        int[] nums = new int[]{1,2,3,4,3};
+        int[] res = solution.nextGreaterElement(nums);
+        Arrays.stream(res).forEach(System.out::println);
+        List<Integer> list = new ArrayList<>();
     }
-
-
-    public String numberToWords(int num) {
-        // edge case
-        if (num == 0){
-            return "Zero";
+    public int[] nextGreaterElement(int[] nums) {
+        if(nums == null || nums.length == 0) {
+            return new int[]{};
         }
 
-        return helper(num).trim();
-    }
+        int[] res = new int[nums.length];
+        Deque<Integer> stack = new ArrayDeque<Integer>();
 
-    //用String比较方便;
-    String[] ones = {"", " One", " Two", " Three", " Four", " Five", " Six", " Seven", " Eight", " Nine", " Ten", " Eleven", " Twelve", " Thirteen", " Fourteen", " Fifteen", " Sixteen", " Seventeen", " Eighteen", " Nineteen"};
-    String[] tens = {"", " Ten", " Twenty", " Thirty", " Forty", " Fifty", " Sixty", " Seventy", " Eighty", " Ninety"};
-    String[] thousands = {"", " Thousand", " Million", " Billion"};
-    //helper function
-    public String helper(int n) {
-        //三位数的结果;
-        if (n < 20)  return ones[n];
-        if (n < 100) return tens[n / 10] + helper(n % 10);
-        if (n < 1000) return helper(n / 100) + " Hundred" + helper(n % 100);
-
-        for (int i = 3; i >= 0; i--) {
-            if (n >= Math.pow(1000, i)) {
-                return helper((int)(n / Math.pow(1000, i))) + thousands[i] + helper((int)(n % Math.pow(1000, i)));
+        for (int i = nums.length - 1; i >= 0; i--) {
+            //维护单调性
+            while(!stack.isEmpty() && nums[i] >= stack.peek()) {
+                stack.pop();
             }
+            //记录结果
+            res[i] = ( stack.isEmpty() ? -1 : stack.peek() );
+
+            stack.push(nums[i]);
         }
 
-        return "";
+        return res;
     }
 }
-
