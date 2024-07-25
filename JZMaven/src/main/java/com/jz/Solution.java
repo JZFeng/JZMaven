@@ -11,35 +11,70 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
-class Dummy{}
+
+class Dummy {
+}
+
 
 class Solution {
-    public static void main(String[] args) {
-        Solution solution = new Solution();
-        int[] nums = new int[]{1,2,3,4,3};
-        int[] res = solution.nextGreaterElement(nums);
-        Arrays.stream(res).forEach(System.out::println);
-        List<Integer> list = new ArrayList<>();
-    }
-    public int[] nextGreaterElement(int[] nums) {
-        if(nums == null || nums.length == 0) {
-            return new int[]{};
+    public String findShortestWay(int[][] maze, int[] ball, int[] hole) {
+        int m = maze.length, n = maze[0].length;
+        int ex = hole[0], ey = hole[1];
+
+        int[][] dirs = {{1, 0}, {0, -1}, {0, 1}, {-1, 0}};
+        char[] dch = {'d', 'l', 'r', 'u'};
+        boolean[][] visted = new boolean[m][n];
+
+        PriorityQueue<Node> pq = new PriorityQueue<>((x, y) -> (x.dist == y.dist) ? x.path.compareTo(y.path) : x.dist - y.dist);
+        pq.offer(new Node(ball[0], ball[1], 0, ""));
+
+        int[][] dist = new int[m][n];
+        for (int i = 0; i < m; i++) {
+            Arrays.fill(dist[i], Integer.MAX_VALUE);
         }
 
-        int[] res = new int[nums.length];
-        Deque<Integer> stack = new ArrayDeque<Integer>();
+        while (!pq.isEmpty()) {
+            Node node = pq.poll();
 
-        for (int i = nums.length - 1; i >= 0; i--) {
-            //维护单调性
-            while(!stack.isEmpty() && nums[i] >= stack.peek()) {
-                stack.pop();
+            if (visted[node.x][node.y]) continue;
+            if (node.x == ex && node.y == ey) return node.path;
+
+            for (int i = 0; i < 4; i++) {
+                int x = node.x, y = node.y, d = node.dist, dx = dirs[i][0], dy = dirs[i][1];
+
+                while (isValid(maze, x,y)) {
+                    x += dx;y += dy; d++;
+                    if (x == ex && y == ey) {
+                        return node.path + dch[i];
+                    }
+                }
+                x += dx;y += dy; d--;
+                if( d < dist[x][y] ) {
+                    dist[x][y] = d;
+                    pq.offer(new Node(x,y, dist[x][y], node.path + dch[i]));
+                }
+
+                visted[node.x][node.y] = true;
             }
-            //记录结果
-            res[i] = ( stack.isEmpty() ? -1 : stack.peek() );
-
-            stack.push(nums[i]);
         }
 
-        return res;
+        return "impossible";
+    }
+
+    private boolean isValid(int[][] maze, int x, int y) {
+        int m = maze.length, n = maze[0].length;
+        return x >= 0 && x < m && y >= 0 && y < n && maze[x][y] != 1;
+    }
+}
+
+class Node {
+    int x, y, dist;
+    String path;
+
+    Node(int x, int y, int dist, String path) {
+        this.x = x;
+        this.y = y;
+        this.dist = dist;
+        this.path = path;
     }
 }
